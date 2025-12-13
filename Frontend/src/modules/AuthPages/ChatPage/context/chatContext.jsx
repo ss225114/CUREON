@@ -71,10 +71,15 @@ export const ChatProvider = ({ children }) => {
     }
   };
 
-  const deleteChat = (chatId) => {
-    setChats((prev) => prev.filter((chat) => chat.conversationId !== chatId));
-    if (activeChat === chatId) {
-      setActiveChat(chats.length > 1 ? chats[1]?.conversationId : null);
+  const deleteChat = async (chatId) => {
+    const data = await apiClient.delete(`/chat/delete-chat/${chatId}`);
+    console.log(data);
+    
+    if (data.data.success) {
+      setChats((prev) => prev.filter((chat) => chat.conversationId !== chatId));
+      if (activeChat === chatId) {
+        setActiveChat(chats.length > 1 ? chats[1]?.conversationId : null);
+      }
     }
   };
 
