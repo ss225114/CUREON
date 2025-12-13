@@ -129,7 +129,7 @@ export const forget_password = async (req, res) => {
         { email: email },
         { $set: { token: randomstr } }
       );
-      sendResetPasswordEmail(userData.name, userData.email, randomstr);
+      sendResetPasswordEmail(userData.fullName, userData.email, randomstr);
       return res
         .status(200)
         .json({ message: "Please check your mail and reset password" });
@@ -156,8 +156,14 @@ export const reset_password = async (req, res) => {
         { $set: { password: hashedPassword, token: "" } },
         { new: true }
       );
-      const access_token = generateToken(userData._id, res);
-      return res.status(200).json({ access_token: access_token });
+      const { access_token, refresh_token } = generateToken(userData._id, res);
+      return res
+        .status(200)
+        .json({
+          success: true,
+          access_token: access_token,
+          refresh_token: refresh_token,
+        });
     } else {
       return res.status(400).json({ msg: "This link has been expired" });
     }
@@ -184,5 +190,29 @@ export const refreshToken = async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const resendOtp = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const otp = otpGen();
+    const time = new Date();
+    await User.findOneAndUpdate(
+      { email },
+      {
+        token: otp,
+        otpGeneratedTime: time,
+      },
+      { new: true }
+    );
+    await otpMail(email, otp);
+    return res.status(201).json({
+      email: email,
+      message: "Otp sent to mail Id. Verify mail to complete registration",
+    });
+  } catch (err) {
+    console.error("Error:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };

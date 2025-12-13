@@ -16,9 +16,9 @@ load_dotenv()
 
 # API keys
 PINECONE_API_KEY = os.environ.get('PINECONE_API_KEY')
-OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+# OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 os.environ["PINECONE_API_KEY"] = PINECONE_API_KEY
-os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
+# os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 
 # Embeddings & vector store
 embeddings = download_embeddings()

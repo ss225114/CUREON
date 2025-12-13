@@ -1,147 +1,90 @@
 import React from "react";
 
-const CureonFooter = () => {
+const Footer = () => {
   return (
-    <footer className="bg-gradient-to-br from-gray-900 to-blue-900 text-white">
-      {/* Main Footer Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Brand and Description Section */}
-          <div className="space-y-6">
-            <div className="flex items-center space-x-3">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
-                Cureon
-              </h1>
-            </div>
-
-            <p className="text-xl leading-relaxed text-blue-100 max-w-md">
-              Empowering your medical health journey with care, technology, and
-              compassion, one step at-a-time.
-            </p>
-
-            <div className="pt-4">
-              <p className="text-blue-200 font-medium italic">
-                Designed with care for your health
-              </p>
-            </div>
-          </div>
-
-          {/* Contact Information Section */}
-          <div className="space-y-8">
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-6 border-l-4 border-cyan-400 pl-3">
-                Contact Us
-              </h3>
-
-              <div className="space-y-4">
-                <div className="flex items-center space-x-4 group cursor-pointer">
-                  <div className="w-8 h-8 bg-blue-700 rounded-lg flex items-center justify-center group-hover:bg-cyan-500 transition-colors duration-300">
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                      />
-                    </svg>
-                  </div>
-                  <span className="text-blue-100 group-hover:text-white transition-colors duration-300">
-                    +91 98765 43210
-                  </span>
-                </div>
-
-                <div className="flex items-center space-x-4 group cursor-pointer">
-                  <div className="w-8 h-8 bg-blue-700 rounded-lg flex items-center justify-center group-hover:bg-cyan-500 transition-colors duration-300">
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                      />
-                    </svg>
-                  </div>
-                  <span className="text-blue-100 group-hover:text-white transition-colors duration-300">
-                    support@cureon.com
-                  </span>
-                </div>
-
-                <div className="flex items-center space-x-4">
-                  <div className="w-8 h-8 bg-blue-700 rounded-lg flex items-center justify-center">
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                    </svg>
-                  </div>
-                  <span className="text-blue-100">
-                    123 Health Street, Kolkata, India
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
+    <footer className="bg-[#293379] dark:bg-gray-900 backdrop-blur-md text-white/90 p-8 mt-auto shadow-inner transition-colors">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Left Section — Brand + Motto */}
+        <div>
+          <h2 className="text-xl font-bold mb-2">Cureon</h2>
+          <p className="text-white/70 dark:text-gray-300 text-sm">
+            Empowering your medical health journey with care, technology, and
+            compassion, one step at-a-time.
+          </p>
+          <p className="text-white/60 dark:text-gray-400 text-xs mt-3">
+            Designed with{" "}
+            <i className="fa-solid fa-heart text-[#fa003f] dark:text-red-400"></i>{" "}
+            for your health
+          </p>
         </div>
 
-        {/* Divider */}
-        <div className="border-t border-blue-700 my-12"></div>
+        {/* Right Section — Contact + Socials */}
+        <div>
+          <h3 className="text-lg font-semibold mb-2">Contact Us</h3>
+          <p className="text-sm text-white/80 dark:text-gray-300">
+            <i className="fa-solid fa-mobile"></i> +91 00000 00000
+          </p>
+          <p className="text-sm text-white/80 dark:text-gray-300">
+            <i className="fa-solid fa-envelope"></i> support@cureon.com
+          </p>
+          <p className="text-sm text-white/80 dark:text-gray-300">
+            <i className="fa-solid fa-location-dot"></i> 123 Health Street,
+            Kolkata, India
+          </p>
 
-        {/* Bottom Section */}
-        <div className="flex flex-col lg:flex-row justify-between items-center space-y-6 lg:space-y-0">
-          {/* Legal Links */}
-          <div className="flex flex-wrap justify-center lg:justify-start gap-6 text-blue-200">
+          {/* Social Icons */}
+          <div className="flex justify-center md:justify-start gap-3 mt-3">
             <a
               href="#"
-              className="hover:text-cyan-400 transition-colors duration-300 font-medium"
+              className="w-9 h-9 rounded-full bg-white/10 dark:bg-gray-700 flex items-center justify-center hover:bg-[#1877F2] transition-all duration-300"
             >
-              Privacy Policy
+              <i className="fa-brands fa-facebook-f"></i>
             </a>
             <a
               href="#"
-              className="hover:text-cyan-400 transition-colors duration-300 font-medium"
+              className="w-9 h-9 rounded-full bg-white/10 dark:bg-gray-700 flex items-center justify-center hover:bg-black transition-all duration-300"
             >
-              Terms of Service
+              <i className="fa-brands fa-x-twitter"></i>
             </a>
             <a
               href="#"
-              className="hover:text-cyan-400 transition-colors duration-300 font-medium"
+              className="w-9 h-9 rounded-full bg-white/10 dark:bg-gray-700 flex items-center justify-center hover:bg-gradient-to-tr from-[#feda75] via-[#fa7e1e] to-[#d62976] transition-all duration-300"
             >
-              Cookie Policy
+              <i className="fa-brands fa-instagram"></i>
             </a>
-          </div>
-
-          {/* Copyright */}
-          <div className="text-blue-200 text-center lg:text-right">
-            <p className="font-medium">© 2025 Cureon. All rights reserved.</p>
           </div>
         </div>
+      </div>
+
+      {/* Policy Links Row */}
+      <div className="flex flex-wrap justify-center gap-6 text-sm text-white/80 dark:text-gray-300 mt-10">
+        <a
+          href="#"
+          className="hover:text-[#fa003f] dark:hover:text-red-400 transition-colors"
+        >
+          Privacy Policy
+        </a>
+        <a
+          href="#"
+          className="hover:text-[#fa003f] dark:hover:text-red-400 transition-colors"
+        >
+          Terms of Service
+        </a>
+        <a
+          href="#"
+          className="hover:text-[#fa003f] dark:hover:text-red-400 transition-colors"
+        >
+          Cookie Policy
+        </a>
+      </div>
+
+      {/* Bottom Bar */}
+      <div className="border-t border-white/20 dark:border-gray-600 mt-1 pt-3 text-center text-white/70 dark:text-gray-400 text-xs">
+        &copy; {new Date().getFullYear()}{" "}
+        <span className="font-semibold">Cureon</span>. All rights reserved.
       </div>
     </footer>
   );
 };
 
-export default CureonFooter;
+export default Footer;

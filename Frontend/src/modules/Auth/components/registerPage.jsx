@@ -15,6 +15,7 @@ import Lottie from "lottie-react";
 import animabot from "@/assets/static/animabot.json";
 import axios from "axios";
 import { useAuth } from "../context/authContext";
+import apiClient from "@/lib/apiClient";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -26,20 +27,9 @@ export default function RegisterPage() {
   const [isOtpDialogOpen, setIsOtpDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   axios
-  //     .post("http://localhost:5000/auth/register", form)
-  //     .then((res) => {
-  //       console.log(res.data);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err.reponse);
-  //     });
-  // };
-
-  //newhandlesubmit
+  const [resendSuccess, setResendSuccess] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [showResendToast, setShowResendToast] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -119,6 +109,38 @@ export default function RegisterPage() {
   const handleOtpChange = (e) => {
     const value = e.target.value.replace(/\D/g, "").slice(0, 6);
     setOtp(value);
+  };
+
+  const resendOtp = async () => {
+    if (!form.email) {
+      setError("Email not found");
+      return;
+    }
+
+    setResendLoading(true);
+    setResendSuccess(false);
+    setError("");
+
+    try {
+      const response = await apiClient.post("/auth/resend-otp", {
+        email: form.email,
+      });
+
+      if (response.data.success || response.data.message) {
+        setResendSuccess(true);
+        setShowResendToast(true);
+
+        // Auto-hide toast after 3 seconds
+        setTimeout(() => {
+          setShowResendToast(false);
+        }, 3000);
+      }
+    } catch (err) {
+      console.error("Resend OTP error:", err);
+      setError(err.response?.data?.message || "Failed to resend OTP");
+    } finally {
+      setResendLoading(false);
+    }
   };
 
   return (
@@ -201,13 +223,6 @@ export default function RegisterPage() {
                 </p>
               </div>
 
-              {/* <Button
-                className="w-full hover:bg-blue-700 dark:hover:bg-blue-600 text-white transition-colors duration-300"
-                style={{ backgroundColor: "#293379" }}
-              >
-                Register
-              </Button> */}
-
               <Button
                 type="submit"
                 disabled={loading}
@@ -268,6 +283,50 @@ export default function RegisterPage() {
               </div>
             )}
 
+            {/* Resend Success Toast */}
+            {showResendToast && (
+              <div className="animate-in slide-in-from-top-1 duration-300">
+                <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 px-4 py-3 rounded-lg text-sm flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    <span>
+                      OTP has been resent to {getMaskedEmail(form.email)}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => setShowResendToast(false)}
+                    className="text-green-700 dark:text-green-300 hover:text-green-800 dark:hover:text-green-200"
+                  >
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            )}
+
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label
@@ -321,13 +380,18 @@ export default function RegisterPage() {
             <div className="text-center pt-4 border-t border-gray-100 dark:border-gray-800">
               <button
                 type="button"
-                className="text-[#293379] dark:text-blue-300 hover:text-[#3a4a9c] dark:hover:text-blue-200 font-medium text-sm transition-colors duration-200"
-                onClick={() => {
-                  // Optional: Add resend OTP functionality
-                  console.log("Resend OTP");
-                }}
+                onClick={resendOtp}
+                disabled={resendLoading}
+                className="text-[#293379] dark:text-blue-300 hover:text-[#3a4a9c] dark:hover:text-blue-200 font-medium text-sm transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Didn't receive code? Resend OTP
+                {resendLoading ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="w-4 h-4 border-2 border-[#293379] border-t-transparent rounded-full animate-spin" />
+                    Resending...
+                  </div>
+                ) : (
+                  "Didn't receive code? Resend OTP"
+                )}
               </button>
             </div>
           </div>

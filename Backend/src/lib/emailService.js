@@ -66,7 +66,7 @@ export const sendResetPasswordEmail = async (name, email, token) => {
       from: "app.testplatform123@gmail.com",
       to: email,
       subject: "For Reset password",
-      html: `<b>Hii ${name}, Please click this link <a href=http://localhost:8004/api/auth/reset-password?token=${token}>reset your password></a> </b>`,
+      html: `<b>Hii ${name}, Please click this link <a href=http://localhost:5173/reset-password?token=${token}>reset your password</a> </b>`,
     };
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {

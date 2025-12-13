@@ -7,7 +7,7 @@ const ChatInput = () => {
   const [query, setQuery] = useState("");
   const { sendMessage } = useChat();
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (query.trim()) {
       await sendMessage(query.trim());
@@ -15,23 +15,36 @@ const ChatInput = () => {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(e);
+    }
+  };
+
   return (
-    <div className="flex-shrink-0 p-3 border-t border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md">
-      <form onSubmit={handleSubmit} className="flex gap-2 max-w-4xl mx-auto">
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Message Curomate..."
-          className="flex-1 p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#293379] dark:focus:ring-blue-500 transition-all text-sm"
-        />
-        <Button
-          type="submit"
-          className="bg-[#293379] dark:bg-blue-700 hover:bg-[#3a4a9c] dark:hover:bg-blue-600 text-white px-3 transition-all duration-300"
-          disabled={!query.trim()}
-        >
-          <FaPaperPlane className="h-4 w-4" />
-        </Button>
+    <div className="px-4 pb-6 pt-2">
+      <form onSubmit={handleSubmit} className="relative max-w-4xl mx-auto">
+        <div className="relative flex items-center bg-gradient-to-r from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 border border-gray-300 dark:border-gray-700 rounded-2xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl focus-within:shadow-xl focus-within:border-[#293379]/30 dark:focus-within:border-blue-500/30">
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Message Curomate..."
+            className="flex-1 p-5 pl-6 bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none text-base"
+            autoComplete="off"
+          />
+          <div className="pr-3">
+            <Button
+              type="submit"
+              className="h-12 w-12 rounded-full bg-gradient-to-br from-[#293379] to-[#3a4a9c] dark:from-blue-700 dark:to-blue-600 hover:from-[#3a4a9c] hover:to-[#4a5ab0] dark:hover:from-blue-600 dark:hover:to-blue-500 text-white transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-sm"
+              disabled={!query.trim()}
+            >
+              <FaPaperPlane className="h-5 w-5" />
+            </Button>
+          </div>
+        </div>
       </form>
     </div>
   );

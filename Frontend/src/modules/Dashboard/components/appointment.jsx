@@ -30,7 +30,7 @@ const doctors = [
   {
     title: "Cardiologist",
     desc: "Get your heart checked by expert cardiologists near you",
-    img: "https://static.wixstatic.com/media/958934_522797a3dab246d79a7977b2bd129584~mv2.png/v1/fill/w_640,h_460,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/958934_522797a3dab246d79a7977b2bd129584~mv2.png",
+    img: "https://static.wixstatic.com/media/958934_522797a3dab246d79a7977b2bd129584~mv2.png",
   },
   {
     title: "Dentist",
@@ -64,13 +64,13 @@ const doctors = [
   },
 ];
 
-const DoctorSection = () => {
+const Appointment = () => {
   const scrollRef = useRef(null);
 
   const scroll = (direction) => {
     const { current } = scrollRef;
     if (current) {
-      const cardWidth = 266; // min-w-[250px] + gap-6 = 250 + 16 = 266
+      const cardWidth = 296;
       const visibleCards = Math.floor(current.clientWidth / cardWidth);
       const scrollAmount = cardWidth * visibleCards;
 
@@ -82,81 +82,108 @@ const DoctorSection = () => {
   };
 
   return (
-    <div className="px-6 lg:px-10 py-10 bg-white relative">
+    <div className="px-6 lg:px-10 py-10 bg-gradient-to-br from-blue-100 via-blue-50 to-blue-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300 relative">
       {/* Header */}
       <div className="mb-8 text-center">
-        <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-3">
+        <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-3 transition-colors duration-300">
           Book an appointment for an{" "}
-          <span className="text-blue-600">in-clinic consultation</span>
+          <span className="text-[#293379] dark:text-blue-300">
+            in-clinic consultation
+          </span>
         </h2>
-        <p className="text-gray-600 text-lg">
+        <p className="text-gray-600 dark:text-gray-300 text-lg transition-colors duration-300">
           Find experienced doctors across all specialties
         </p>
       </div>
 
-      {/* Navigation Arrows */}
-      <button
-        onClick={() => scroll("left")}
-        className="absolute left-2 lg:left-4 top-1/2 -translate-y-1/2 bg-white shadow-lg p-3 rounded-full hover:bg-gray-50 z-10 border border-gray-200 transition-all duration-300 hover:scale-110"
-      >
-        <ChevronLeft size={28} className="text-gray-700" />
-      </button>
+      {/* Cards Container - Add relative positioning here */}
+      <div className="relative">
+        {/* Left Arrow */}
+        {/* <button
+          onClick={() => scroll("left")}
+          className="absolute left-2 lg:left-4 top-1/2 -translate-y-1/2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-lg p-3 rounded-full 
+                     hover:bg-white dark:hover:bg-gray-700 z-10 border border-gray-300 dark:border-gray-600 
+                     transition-all duration-300 hover:scale-110"
+        >
+          <ChevronLeft size={28} className="text-gray-700 dark:text-gray-300" />
+        </button> */}
 
-      {/* Cards Container */}
-      <div
-        ref={scrollRef}
-        className="flex overflow-x-auto gap-6 scroll-smooth scrollbar-hide px-2 py-4"
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-      >
-        {doctors.map((doc, index) => (
-          <div
-            key={index}
-            className="min-w-[250px] lg:min-w-[280px] bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-blue-200 group cursor-pointer flex-shrink-0"
-          >
-            <div className="relative overflow-hidden rounded-t-xl">
-              <img
-                src={doc.img}
-                alt={doc.title}
-                className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        {/* Cards */}
+        <div
+          ref={scrollRef}
+          className="flex overflow-x-auto gap-6 scroll-smooth scrollbar-hide px-2 py-4"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
+          {doctors.map((doc, index) => (
+            <div
+              key={index}
+              className="w-[280px] h-[420px] bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-xl shadow-lg 
+                         hover:shadow-xl transition-all duration-300 
+                         border border-gray-200 dark:border-gray-700 
+                         hover:border-[#293379] dark:hover:border-blue-500 
+                         group cursor-pointer flex-shrink-0 flex flex-col justify-between"
+            >
+              <div>
+                <div className="relative overflow-hidden rounded-t-xl">
+                  <img
+                    src={doc.img}
+                    alt={doc.title}
+                    className="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div
+                    className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent 
+                                 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  />
+                </div>
+
+                <div className="p-5 flex-1">
+                  <h3
+                    className="font-bold text-gray-900 dark:text-white text-lg mb-2 
+                                 group-hover:text-[#293379] dark:group-hover:text-blue-300 transition-colors duration-300"
+                  >
+                    {doc.title}
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed transition-colors duration-300">
+                    {doc.desc}
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-5 pt-0">
+                <button
+                  className="w-full bg-[#293379] hover:bg-[#1f2a63] dark:bg-blue-700 dark:hover:bg-blue-600 
+                             text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 
+                             transform hover:scale-105 active:scale-95"
+                >
+                  Book Appointment
+                </button>
+              </div>
             </div>
-            <div className="p-5">
-              <h3 className="font-bold text-gray-900 text-lg mb-2 group-hover:text-blue-600 transition-colors duration-300">
-                {doc.title}
-              </h3>
-              <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                {doc.desc}
-              </p>
-              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 active:scale-95">
-                Book Appointment
-              </button>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
-      {/* Right Arrow */}
-      <button
-        onClick={() => scroll("right")}
-        className="absolute right-2 lg:right-4 top-1/2 -translate-y-1/2 bg-white shadow-lg p-3 rounded-full hover:bg-gray-50 z-10 border border-gray-200 transition-all duration-300 hover:scale-110"
-      >
-        <ChevronRight size={28} className="text-gray-700" />
-      </button>
-
-      {/* Scroll Indicators */}
+      {/* Dots */}
       <div className="flex justify-center mt-6 space-x-2">
         {[0, 1, 2].map((dot) => (
           <div
             key={dot}
-            className="w-2 h-2 bg-gray-300 rounded-full hover:bg-blue-600 cursor-pointer transition-colors duration-300"
+            className="w-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full 
+                       hover:bg-[#293379] dark:hover:bg-blue-500 cursor-pointer transition-colors duration-300"
           />
         ))}
       </div>
 
-      {/* View All Button */}
+      {/* View All */}
       <div className="text-center mt-8">
-        <button className="bg-white text-blue-600 border-2 border-blue-600 hover:bg-blue-600 hover:text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md">
+        <button
+          className="bg-[#293379] text-white border-2 border-[#293379] 
+                           hover:bg-white hover:text-[#293379] 
+                           dark:bg-blue-700 dark:border-blue-700 
+                           dark:hover:bg-gray-900 dark:hover:text-blue-300 
+                           font-semibold py-3 px-8 rounded-lg transition-all duration-300 
+                           transform hover:scale-105 shadow-md"
+        >
           View All Specialties
         </button>
       </div>
@@ -164,4 +191,4 @@ const DoctorSection = () => {
   );
 };
 
-export default DoctorSection;
+export default Appointment;

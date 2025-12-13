@@ -6,12 +6,14 @@ import Services from "./components/services.jsx";
 import Consultation from "./components/consultation.jsx";
 import Appointment from "./components/appointment.jsx";
 import Footer from "./components/footer.jsx";
+import Avatar from "./components/avatar.jsx";
 
 function Dashboard() {
   return (
     <>
       <Navbar />
       <Banner />
+      <Avatar />
       <Services />
       <Consultation />
       <Appointment />

@@ -1,28 +1,25 @@
-import React, { useState } from "react";
+import React from "react";
 import { ChatProvider } from "./context/chatContext";
 import Sidebar from "./components/sidebar";
 import ChatArea from "./components/chatArea";
 import { FaUserCircle, FaBars } from "react-icons/fa";
 import { useAuth } from "@/modules/Auth/context/authContext";
+import { useChat } from "./context/chatContext";
 
 // Main Content Component
 const ChatContent = () => {
   const { user } = useAuth();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
+  const { isSidebarOpen, toggleSidebar } = useChat();
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-blue-100 via-blue-50 to-blue-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors overflow-hidden">
       {/* Sidebar */}
-      <Sidebar isOpen={isSidebarOpen} onClose={toggleSidebar} />
+      <Sidebar />
 
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col min-h-0">
-        {/* Top Navigation Bar */}
-        <nav className="flex-shrink-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 px-6 py-3 flex justify-between items-center shadow-sm transition-colors">
+        {/* Fixed Top Navigation Bar */}
+        <nav className="sticky top-0 z-30 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 px-6 py-3 flex justify-between items-center shadow-sm transition-all duration-300">
           <div className="flex items-center gap-4">
             {/* Hamburger Button to open sidebar */}
             {!isSidebarOpen && (
@@ -48,8 +45,14 @@ const ChatContent = () => {
           </div>
         </nav>
 
-        {/* Chat Area */}
-        <ChatArea />
+        {/* Chat Area Container - Adjusts with sidebar */}
+        <div
+          className={`flex-1 overflow-hidden transition-all duration-300 ${
+            isSidebarOpen ? "ml-64" : "ml-0"
+          }`}
+        >
+          <ChatArea />
+        </div>
       </div>
     </div>
   );

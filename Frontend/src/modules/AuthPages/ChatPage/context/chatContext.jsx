@@ -16,7 +16,7 @@ export const ChatProvider = ({ children }) => {
   const [activeChat, setActiveChat] = useState(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [messages, setMessages] = useState([]);
-  // const { user } = useAuth(); // Replace with actual user data
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   // Load theme from localStorage
   useEffect(() => {
@@ -30,7 +30,7 @@ export const ChatProvider = ({ children }) => {
 
   useEffect(() => {
     getChats();
-  },[]);
+  }, []);
 
   // Toggle dark mode
   const toggleDarkMode = () => {
@@ -45,39 +45,36 @@ export const ChatProvider = ({ children }) => {
     }
   };
 
-  // Chat management
-  const createNewChat = async() => {
-    // const newChat = {
-    //   id: Date.now().toString(),
-    //   title: "New Chat",
-    //   messages: [],
-    //   createdAt: new Date(),
-    // };
+  // Toggle sidebar
+  const toggleSidebar = () => {
+    setIsSidebarOpen((prev) => !prev);
+  };
 
+  // Chat management
+  const createNewChat = async () => {
     const newChat = await apiClient.post("/chat/create-chat");
     console.log(newChat.data.chat);
     setChats((prev) => [newChat.data.chat, ...prev]);
-    setActiveChat(newChat.conversationId);
-    return newChat.id;
+    setActiveChat(newChat.data.chat.conversationId);
+    return newChat.data.chat.id;
   };
 
   const getChats = async () => {
     try {
       const { data } = await apiClient.get("/chat/get-chats");
       console.log(data);
-      if(data.success) {
+      if (data.success) {
         setChats(data.chats);
       }
-    } catch(err) {
+    } catch (err) {
       console.log(err.message);
-      
     }
-  }
+  };
 
   const deleteChat = (chatId) => {
-    setMessages((prev) => prev.filter((chat) => chat.id !== chatId));
+    setChats((prev) => prev.filter((chat) => chat.conversationId !== chatId));
     if (activeChat === chatId) {
-      setActiveChat(chats.length > 1 ? chats[1].id : null);
+      setActiveChat(chats.length > 1 ? chats[1]?.conversationId : null);
     }
   };
 
@@ -86,20 +83,23 @@ export const ChatProvider = ({ children }) => {
 
     const id = activeChat;
 
-    setMessages(prev => [...prev, {
-      id: Date.now(),
-      isUser: true,
-      message: message,
-      createdAt: new Date(),
-    }]);
-    
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: Date.now(),
+        isUser: true,
+        message: message,
+        createdAt: new Date(),
+      },
+    ]);
+
     const data = await apiClient.post(`/message/communicate/${id}`, {
-      query: message
-    })
+      query: message,
+    });
 
     console.log(data);
 
-    setMessages(prev => [...prev, data.data.newMessage2]);
+    setMessages((prev) => [...prev, data.data.newMessage2]);
   };
 
   const value = {
@@ -113,7 +113,10 @@ export const ChatProvider = ({ children }) => {
     isDarkMode,
     toggleDarkMode,
     messages,
-    setMessages
+    setMessages,
+    isSidebarOpen,
+    toggleSidebar,
+    setIsSidebarOpen,
   };
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;
