@@ -23,16 +23,6 @@ Auth & Security: JWT Authentication
 Version Control: Git, GitHub
 ---
 
-## 👥 Team Contribution
-- Frontend Developer: React, HTML, CSS, JavaScript, API integration, responsive UI
-
-**My Role: Frontend Developer**
-- Designed and implemented the user interface using **React.js and Tailwind CSS**
-- Built Guest Landing Page, Authentication pages, Dashboard
-- Integrated frontend components with backend REST APIs
-- Ensured responsive design and smooth user experience across devices
----
-
 
 ## 📌 Project Status
 - In Progress  
