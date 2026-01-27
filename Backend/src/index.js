@@ -5,6 +5,7 @@ import connectDB from "./config/db.js";
 import authRoutes from "./routes/AuthRoutes.js";
 import chatRoutes from "./routes/ChatRoutes.js";
 import conversationRoutes from "./routes/ConversationRoutes.js";
+import userRoutes from "./routes/UserRoutes.js";
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/chat", chatRoutes);
 app.use("/message", conversationRoutes);
+app.use("/user", userRoutes);
 
 const PORT = process.env.PORT || 5000;
 
