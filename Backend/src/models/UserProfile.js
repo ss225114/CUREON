@@ -1,60 +1,63 @@
 import mongoose from "mongoose";
 
-const personalInfoSchema = new mongoose.Schema(
-  {
-    phone: { type: String },
-    DOB: { type: Date },
-    gender: { type: String, enum: ["Male", "Female", "Other"] },
-    bloodGrp: { type: String },
-    height: { type: Number },
-    weight: { type: Number },
-  },
-  { _id: false }
-);
-
 const emergencyContactSchema = new mongoose.Schema(
   {
     name: { type: String },
     phone: { type: String },
-    relation: { type: String },
+    relationship: { type: String },
   },
-  { _id: false }
+  { _id: false },
 );
 
-const medicalHistorySchema = new mongoose.Schema(
+const medicationSchema = new mongoose.Schema(
   {
-    medical_cond: { type: String },
-    allergies: { type: String },
-  },
-
-  { _id: false }
-);
-
-const currMedicationSchema = new mongoose.Schema(
-  {
-    medicationName: { type: String },
-    dose: { type: String },
+    name: { type: String },
+    dosage: { type: String },
     frequency: { type: String },
   },
-
-  { _id: false }
+  { _id: false },
 );
 
 const userProfileSchema = new mongoose.Schema(
   {
     userId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
+      unique: true,
     },
-    personalInfo: personalInfoSchema,
+
+    // STEP 1: Personal Info
+    phone: { type: String, required: true },
+    dateOfBirth: { type: Date, required: true },
+    gender: {
+      type: String,
+      enum: ["Male", "Female", "Other", "Prefer not to say"],
+      required: true,
+    },
+    bloodGroup: {
+      type: String,
+      enum: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
+      required: true,
+    },
+    height: { type: Number },
+    weight: { type: Number },
+
+    // STEP 2: Emergency + Medical
     emergencyContact: emergencyContactSchema,
-    medicalHistory: medicalHistorySchema,
-    currMedication: currMedicationSchema,
+    medicalConditions: [{ type: String }],
+    allergies: [{ type: String }],
+
+    // STEP 3: Medications
+    medications: [medicationSchema],
+
+    // isProfileComplete: {
+    //   type: Boolean,
+    //   default: false,
+    // },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const UserProfile = mongoose.model("UserProfile", userProfileSchema);
-
 export default UserProfile;

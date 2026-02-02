@@ -144,7 +144,7 @@ const Navbar = () => {
                       Your Profile
                     </Link>
                   </li>
-                  <li className="hover:bg-gray-100 dark:hover:bg-gray-700 px-4 py-3 text-gray-800 dark:text-gray-200 transition-colors duration-300">
+                  {/* <li className="hover:bg-gray-100 dark:hover:bg-gray-700 px-4 py-3 text-gray-800 dark:text-gray-200 transition-colors duration-300">
                     Prescriptions
                   </li>
                   <li className="hover:bg-gray-100 dark:hover:bg-gray-700 px-4 py-3 text-gray-800 dark:text-gray-200 transition-colors duration-300">
@@ -152,7 +152,7 @@ const Navbar = () => {
                   </li>
                   <li className="hover:bg-gray-100 dark:hover:bg-gray-700 px-4 py-3 text-gray-800 dark:text-gray-200 transition-colors duration-300">
                     Chat History
-                  </li>
+                  </li> */}
                 </ul>
 
                 <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-xl">

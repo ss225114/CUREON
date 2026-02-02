@@ -12,7 +12,7 @@ const Services = () => {
       bgColor: "bg-blue-50 dark:bg-gray-800/50",
     },
     {
-      title: "Lab Tests",
+      title: "Lab Tests & Reports",
       description: "Safe and trusted lab tests with accurate results",
       image:
         "https://images.unsplash.com/photo-1582719471384-894fbb16e074?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
