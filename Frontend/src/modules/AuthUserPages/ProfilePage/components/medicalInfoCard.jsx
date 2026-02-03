@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { FaPills, FaAllergies, FaHeartbeat } from "react-icons/fa";
+import { FaPills, FaAllergies, FaHeartbeat, FaThermometerFull } from "react-icons/fa";
 
 export default function MedicalInfoCard({ profile }) {
   if (!profile) return null;
@@ -15,7 +15,8 @@ export default function MedicalInfoCard({ profile }) {
       <CardContent className="space-y-6">
         {/* Medical Conditions */}
         <div>
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3 flex items-center gap-2">
+            <FaThermometerFull />
             Medical Conditions
           </h3>
           <div className="flex flex-wrap gap-2">

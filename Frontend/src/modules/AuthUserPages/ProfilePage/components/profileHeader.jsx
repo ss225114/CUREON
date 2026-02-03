@@ -5,11 +5,23 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { FaEdit, FaCamera, FaCheck, FaTimes } from "react-icons/fa";
 
-export default function ProfileHeader() {
+export default function ProfileHeader({ onEditClick }) {
   const { profile, updateAvatar } = useProfile();
   const [isEditingAvatar, setIsEditingAvatar] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState("");
   const [uploading, setUploading] = useState(false);
+
+  if (!profile) return null;
+
+  const name = profile?.name || "User";
+  const email = profile?.email || "";
+  const phone = profile?.userData?.phone || "—";
+
+  const initials = name
+    .split(" ")
+    .filter(Boolean)
+    .map((n) => n[0])
+    .join("");
 
   const handleAvatarUpdate = async () => {
     if (!avatarUrl.trim()) return;
@@ -24,8 +36,6 @@ export default function ProfileHeader() {
     }
   };
 
-  if (!profile) return null;
-
   return (
     <Card className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-md border-0 shadow-xl">
       <CardContent className="p-8">
@@ -33,12 +43,9 @@ export default function ProfileHeader() {
           {/* Avatar Section */}
           <div className="relative group">
             <Avatar className="h-32 w-32 border-4 border-white/80 dark:border-gray-700/80 shadow-lg">
-              <AvatarImage src={profile.avatar} alt={profile.name} />
+              <AvatarImage src={profile?.avatar} alt={name} />
               <AvatarFallback className="text-4xl bg-gradient-to-br from-blue-100 to-blue-300 dark:from-blue-800 dark:to-blue-600">
-                {profile.name
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
+                {initials}
               </AvatarFallback>
             </Avatar>
 
@@ -57,6 +64,7 @@ export default function ProfileHeader() {
                 <h3 className="text-xl font-bold text-[#293379] dark:text-white mb-4">
                   Update Avatar
                 </h3>
+
                 <input
                   type="url"
                   value={avatarUrl}
@@ -64,6 +72,7 @@ export default function ProfileHeader() {
                   placeholder="Enter image URL"
                   className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-transparent text-gray-800 dark:text-white mb-4"
                 />
+
                 <div className="flex gap-3 justify-end">
                   <Button
                     onClick={() => {
@@ -74,6 +83,7 @@ export default function ProfileHeader() {
                   >
                     <FaTimes className="mr-2" /> Cancel
                   </Button>
+
                   <Button
                     onClick={handleAvatarUpdate}
                     disabled={uploading || !avatarUrl.trim()}
@@ -95,23 +105,33 @@ export default function ProfileHeader() {
           {/* User Info */}
           <div className="flex-1 text-center md:text-left">
             <h1 className="text-3xl font-bold text-[#293379] dark:text-white mb-2">
-              {profile.name}
+              {name}
             </h1>
+
             <p className="text-gray-600 dark:text-gray-300 mb-4">
-              {profile.email} • {profile.phone}
+              {email} • {phone}
             </p>
+
             <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-              <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-full text-sm">
-                Member since {new Date(profile.accountCreated).getFullYear()}
-              </span>
-              <span className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 rounded-full text-sm">
-                Last login: {new Date(profile.lastLogin).toLocaleDateString()}
-              </span>
+              {profile?.accountCreated && (
+                <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-full text-sm">
+                  Member since {new Date(profile.accountCreated).getFullYear()}
+                </span>
+              )}
+
+              {profile?.lastLogin && (
+                <span className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 rounded-full text-sm">
+                  Last login: {new Date(profile.lastLogin).toLocaleDateString()}
+                </span>
+              )}
             </div>
           </div>
 
           {/* Edit Profile Button */}
-          <Button className="bg-[#293379] dark:bg-blue-700 hover:bg-[#3a4a9c] dark:hover:bg-blue-600">
+          <Button
+            onClick={onEditClick}
+            className="bg-[#293379] dark:bg-blue-700 hover:bg-[#3a4a9c] dark:hover:bg-blue-600"
+          >
             <FaEdit className="mr-2" /> Edit Profile
           </Button>
         </div>

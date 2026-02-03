@@ -59,11 +59,12 @@ export const getProfile = async(req, res) => {
 
 export const updateProfile = async (req, res) => {
   try {
-    if (!req.user || !req.user.id) {
+    if (!req.user || !req.user.userID) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
     const userId = req.user.userID;
+    const user = await User.findOne({ _id: userId });
     const updates = req.body;
 
     if (!updates || Object.keys(updates).length === 0) {
@@ -88,7 +89,9 @@ export const updateProfile = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Profile updated successfully",
-      data: updatedProfile,
+      name: user.fullName,
+      email: user.email,
+      userData: updatedProfile,
     });
   } catch (error) {
     console.error("Update Profile Error:", error);

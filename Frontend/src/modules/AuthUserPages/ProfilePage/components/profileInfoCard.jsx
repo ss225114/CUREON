@@ -153,7 +153,7 @@ import { useProfile } from "../context/ProfileContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   FaUserCircle,
-  FaPhone,
+  FaMobileAlt,
   FaBirthdayCake,
   FaVenusMars,
   FaTint,
@@ -167,36 +167,39 @@ export default function ProfileInfoCard() {
 
   if (!profile) return null;
 
+  // const personalInfo = profile?.userData?.personalInfo || {};
+  const emergencyContact = profile?.userData?.emergencyContact || {};
+
   const infoFields = [
     {
-      icon: <FaPhone />,
+      icon: <FaMobileAlt />,
       label: "Phone",
-      value: profile.userData ? profile.userData.personalInfo.phone : "Not set",
+      value: profile.userData.phone ?? "Not set",
     },
     {
       icon: <FaBirthdayCake />,
       label: "Date of Birth",
-      value: profile.userData ? profile.userData.personalInfo.DOB : "Not set",
+      value: profile.userData.dateOfBirth.substring(0,10) ?? "Not set",
     },
     {
       icon: <FaVenusMars />,
       label: "Gender",
-      value: profile.userData ? profile.userData.personalInfo.gender : "Not set",
+      value: profile.userData.gender ?? "Not set",
     },
     {
       icon: <FaTint />,
       label: "Blood Group",
-      value: profile.userData ? profile.userData.personalInfo.bloodGrp : "Not set",
+      value: profile.userData.bloodGroup ?? "Not set",
     },
     {
       icon: <FaRulerVertical />,
       label: "Height",
-      value: profile.userData ? `${profile.userData.personalInfo.height} cm` : "Not set",
+      value: profile.userData.height ? `${profile.userData.height} cm` : "Not set",
     },
     {
       icon: <FaWeight />,
       label: "Weight",
-      value: profile.userData ? `${profile.userData.personalInfo.weight} kg` : "Not set",
+      value: profile.userData.weight ? `${profile.userData.weight} kg` : "Not set",
     },
   ];
 
@@ -206,13 +209,15 @@ export default function ProfileInfoCard() {
         <CardTitle className="text-2xl font-bold text-[#293379] dark:text-white flex items-center gap-2">
           <FaUserCircle /> Personal Information
         </CardTitle>
-        {!profile.isProfileComplete && (
+
+        {!profile?.userData && (
           <p className="text-sm text-amber-600 dark:text-amber-400 flex items-center gap-2 mt-2">
-            <FaExclamationTriangle /> Complete your profile to see all
-            information
+            <FaExclamationTriangle />
+            Complete your profile to see all information
           </p>
         )}
       </CardHeader>
+
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {infoFields.map((field, index) => (
@@ -236,32 +241,35 @@ export default function ProfileInfoCard() {
         </div>
 
         {/* Emergency Contact */}
-        {profile.emergencyContact?.name && (
+        {emergencyContact?.name && (
           <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
             <h3 className="text-lg font-semibold text-[#293379] dark:text-white mb-4 flex items-center gap-2">
               <FaExclamationTriangle /> Emergency Contact
             </h3>
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
                 <p className="text-sm text-gray-600 dark:text-gray-400">Name</p>
                 <p className="font-semibold text-gray-900 dark:text-white">
-                  {profile.emergencyContact.name}
+                  {emergencyContact.name}
                 </p>
               </div>
+
               <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   Phone
                 </p>
                 <p className="font-semibold text-gray-900 dark:text-white">
-                  {profile.emergencyContact.phone}
+                  {emergencyContact.phone}
                 </p>
               </div>
+
               <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   Relationship
                 </p>
                 <p className="font-semibold text-gray-900 dark:text-white">
-                  {profile.emergencyContact.relationship}
+                  {emergencyContact.relationship}
                 </p>
               </div>
             </div>
