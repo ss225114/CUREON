@@ -7,6 +7,7 @@ import { otpGen } from "../utils/otp.js";
 import { otpMail, sendResetPasswordEmail } from "../lib/emailService.js";
 import { v7, validate } from "uuid";
 import Chat from "../models/Chat.js";
+import Doctor from "../models/Doctor.js";
 
 export const register = async (req, res) => {
   const { fullName, email, password } = req.body;
@@ -212,6 +213,86 @@ export const resendOtp = async (req, res) => {
       message: "Otp sent to mail Id. Verify mail to complete registration",
     });
   } catch (err) {
+    console.error("Error:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const doctorRegister = async (req, res) => {
+  const {
+    fullName,
+    email,
+    degree,
+    specialization,
+    govtId,
+    doctorLicenseNo,
+    council,
+    registrationNo,
+    password,
+  } = req.body;
+  try {
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .json({ message: "Password must be atleast 6 chatracters" });
+    }
+    const doctor = await Doctor.findOne({ email });
+    if (doctor)
+      return res.status(400).json({ message: "Doctor already exists" });
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    const time = new Date();
+
+    const newDoctor = new Doctor({
+      fullName,
+      email,
+      degree,
+      specialization,
+      govtId,
+      doctorLicenseNo,
+      council,
+      registrationNo,
+      password: hashedPassword,
+      isActive: false,
+    });
+
+    await newDoctor.save();
+    res.status(201).json({
+      success: true,
+      message: "Registration successful",
+    });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const doctorLogin = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const doctor = await Doctor.findOne({ email });
+  if (!doctor) {
+    return res.status(401).json({
+      message: "Invalid credentials",
+    });
+  }
+  const isPasswordCorrect = await bcrypt.compare(password, doctor.password);
+  if (!isPasswordCorrect) {
+    return res.status(401).json({
+      message: "Invalid credentials",
+    });
+  }
+
+  const { access_token, refresh_token } = generateToken(doctor._id, res);
+  return res.status(201).json({
+      name: doctor.fullName,
+      data: {
+        access_token: access_token,
+        refresh_token: refresh_token,
+      },
+    });
+  } catch(err) {
     console.error("Error:", error);
     return res.status(500).json({ message: "Internal Server Error" });
   }

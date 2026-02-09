@@ -1,5 +1,7 @@
 import express from "express";
 import {
+  doctorLogin,
+  doctorRegister,
   forget_password,
   login,
   refreshToken,
@@ -22,5 +24,9 @@ router.post("/reset-password", reset_password);
 router.post("/refresh", refreshToken);
 
 router.post("/resend-otp", resendOtp);
+
+router.post("/doctor/register",doctorRegister);
+
+router.post("/doctor/login",doctorLogin);
 
 export default router;
