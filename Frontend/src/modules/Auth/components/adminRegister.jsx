@@ -12,17 +12,22 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import Lottie from "lottie-react";
-import animabot from "@/assets/static/animabot.json";
+// import animabot from "@/assets/static/animabot.json";
+import adminanima from "@/assets/static/adminanima.json";
 import axios from "axios";
 import { useAuth } from "../context/authContext";
 import apiClient from "@/lib/apiClient";
 
-export default function RegisterPage() {
+export default function AdminRegisterPage() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ fullName: "", email: "", password: "" });
+  const [form, setForm] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+  });
   const { setToken, setUser, setRefreshToken } = useAuth();
 
-  //otp states
+  // OTP states
   const [otp, setOtp] = useState("");
   const [isOtpDialogOpen, setIsOtpDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -38,8 +43,8 @@ export default function RegisterPage() {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/auth/register",
-        form
+        "http://localhost:5000/auth/admin/register",
+        form,
       );
       console.log(response.data);
 
@@ -48,7 +53,7 @@ export default function RegisterPage() {
       }
     } catch (err) {
       console.log(err.response);
-      setError(err.response?.data?.message || "Registration failed");
+      setError(err.response?.data?.message || "Admin registration failed");
     } finally {
       setLoading(false);
     }
@@ -69,17 +74,17 @@ export default function RegisterPage() {
         {
           email: form.email,
           otpInp: otp,
-        }
+        },
       );
 
       console.log(response.data);
 
-      if (response.data.message === "User registration Successful") {
+      if (response.data.message === "Admin registration Successful") {
         setIsOtpDialogOpen(false);
         setToken(response.data.data.access_token);
         setRefreshToken(response.data.data.refresh_token);
         setUser(response.data.name);
-        navigate("/user-dashboard");
+        navigate("/admin-dashboard");
       }
     } catch (err) {
       console.log(err.response);
@@ -97,7 +102,6 @@ export default function RegisterPage() {
     const username = email.substring(0, atIndex);
     const domain = email.substring(atIndex);
 
-    // Show last 4 characters of username, mask the rest
     if (username.length <= 4) {
       return "*".repeat(username.length) + domain;
     }
@@ -130,7 +134,6 @@ export default function RegisterPage() {
         setResendSuccess(true);
         setShowResendToast(true);
 
-        // Auto-hide toast after 3 seconds
         setTimeout(() => {
           setShowResendToast(false);
         }, 3000);
@@ -144,34 +147,57 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-blue-100 via-blue-50 to-blue-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
-      {/* Left: Form Section */}
+    <div className="flex min-h-screen bg-gradient-to-br from-purple-100 via-purple-50 to-purple-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
+      {/* Left Section with Animation - Same as login page */}
+      <div className="w-1/2 flex items-center justify-center">
+        <Lottie animationData={adminanima} loop={true} className="max-w-md" />
+      </div>
+
+      {/* Right Section with Form - Same max-w-md as login page */}
       <div className="w-1/2 flex items-center justify-center p-10">
-        <Card className="auth-card w-full max-w-md bg-white/70 dark:bg-gray-800/70 backdrop-blur-md shadow-2xl border border-blue-100 dark:border-gray-700 transition-colors duration-300">
+        <Card className="auth-card w-full max-w-md bg-white/70 dark:bg-gray-800/70 backdrop-blur-md shadow-2xl border border-purple-100 dark:border-gray-700 transition-colors duration-300">
           <CardHeader>
-            <CardTitle className="text-center text-2xl font-bold flex items-center justify-center gap-2 text-[#293379] dark:text-blue-300">
-              Start Your Journey Today{" "}
+            <CardTitle className="text-center text-2xl font-bold flex items-center justify-center gap-2 text-[#6a11cb] dark:text-purple-300">
+              Admin Registration{" "}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                />
+              </svg>
             </CardTitle>
+            <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-1">
+              Create an administrator account to manage the platform
+            </p>
           </CardHeader>
+
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* error               */}
               {error && (
                 <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded text-sm">
                   {error}
                 </div>
               )}
+
               <div>
                 <Label
                   htmlFor="name"
-                  className="mb-1 text-[#293379] dark:text-blue-200"
+                  className="mb-1 text-[#6a11cb] dark:text-purple-200"
                 >
-                  Name
+                  Full Name
                 </Label>
                 <Input
                   id="name"
                   type="text"
-                  placeholder="Your Name"
+                  placeholder="Admin Name"
                   value={form.fullName}
                   onChange={(e) =>
                     setForm({ ...form, fullName: e.target.value })
@@ -184,14 +210,14 @@ export default function RegisterPage() {
               <div>
                 <Label
                   htmlFor="email"
-                  className="mb-1 text-[#293379] dark:text-blue-200"
+                  className="mb-1 text-[#6a11cb] dark:text-purple-200"
                 >
-                  Email
+                  Admin Email
                 </Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder="admin@example.com"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
                   required
@@ -202,7 +228,7 @@ export default function RegisterPage() {
               <div>
                 <Label
                   htmlFor="password"
-                  className="mb-1 text-[#293379] dark:text-blue-200"
+                  className="mb-1 text-[#6a11cb] dark:text-purple-200"
                 >
                   Password
                 </Label>
@@ -215,61 +241,58 @@ export default function RegisterPage() {
                     setForm({ ...form, password: e.target.value })
                   }
                   required
-                  minLength={6}
+                  minLength={8}
                   className="bg-white/80 dark:bg-gray-700/80 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  Must be at least 6 characters
+                  Must be at least 8 characters with special characters
                 </p>
               </div>
 
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full hover:bg-blue-700 dark:hover:bg-blue-600 text-white transition-colors duration-300 disabled:opacity-50"
-                style={{ backgroundColor: "#293379" }}
+                className="w-full hover:bg-purple-700 dark:hover:bg-purple-600 text-white transition-colors duration-300 disabled:opacity-50"
+                style={{ backgroundColor: "#6a11cb" }}
               >
-                {loading ? "Registering..." : "Register as User"}
+                {loading ? "Registering..." : "Register as Admin"}
               </Button>
 
-              <p className="text-center text-sm mt-2 text-gray-700 dark:text-gray-300">
-                Already have an account?{" "}
-                <Link
-                  to="/login"
-                  className="font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-300"
-                >
-                  Login here
-                </Link>
-              </p>
+              <div className="space-y-2 pt-2">
+                <p className="text-center text-sm text-gray-700 dark:text-gray-300">
+                  Already have an account?{" "}
+                  <Link
+                    to="/login"
+                    className="font-medium text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-300 transition-colors duration-300"
+                  >
+                    Login here
+                  </Link>
+                </p>
 
-              <p className="text-center text-sm mt-2 text-gray-700 dark:text-gray-300">
-                <Link
-                  to="/doctor-register"
-                  className="font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-300"
-                >
-                  Are you a doctor?{" "}
-                </Link>
-              </p>
+                <p className="text-center text-sm text-gray-700 dark:text-gray-300">
+                  <Link
+                    to="/doctor-register"
+                    className="font-medium text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 transition-colors duration-300"
+                  >
+                    Doctor registration{" "}
+                  </Link>
+                </p>
+              </div>
             </form>
           </CardContent>
         </Card>
-      </div>
-
-      {/* Right: Animation Section */}
-      <div className="w-1/2 flex items-center justify-center">
-        <Lottie animationData={animabot} loop={true} className="max-w-md" />
       </div>
 
       {/* OTP Verification Dialog */}
       <Dialog open={isOtpDialogOpen} onOpenChange={setIsOtpDialogOpen}>
         <DialogContent className="sm:max-w-md bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-2xl rounded-2xl">
           <DialogHeader className="space-y-3">
-            <DialogTitle className="text-center text-2xl font-bold text-[#293379] dark:text-blue-300">
-              Verify Your Email
+            <DialogTitle className="text-center text-2xl font-bold text-[#6a11cb] dark:text-purple-300">
+              Admin Email Verification
             </DialogTitle>
             <DialogDescription className="text-center text-base text-gray-600 dark:text-gray-400">
-              We've sent a 6-digit verification code to{" "}
-              <span className="font-semibold text-[#293379] dark:text-blue-300 block mt-1">
+              We've sent a 6-digit verification code to your admin email{" "}
+              <span className="font-semibold text-[#6a11cb] dark:text-purple-300 block mt-1">
                 {getMaskedEmail(form.email)}
               </span>
             </DialogDescription>
@@ -330,7 +353,7 @@ export default function RegisterPage() {
               <div className="space-y-2">
                 <Label
                   htmlFor="otp"
-                  className="text-[#293379] dark:text-blue-200 text-base font-semibold"
+                  className="text-[#6a11cb] dark:text-purple-200 text-base font-semibold"
                 >
                   Enter Verification Code
                 </Label>
@@ -341,7 +364,7 @@ export default function RegisterPage() {
                   value={otp}
                   onChange={handleOtpChange}
                   maxLength={6}
-                  className="text-center text-2xl font-bold tracking-[0.5em] h-14 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-[#293379] focus:ring-2 focus:ring-[#293379]/20 rounded-xl"
+                  className="text-center text-2xl font-bold tracking-[0.5em] h-14 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-[#6a11cb] focus:ring-2 focus:ring-[#6a11cb]/20 rounded-xl"
                 />
               </div>
               <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
@@ -362,8 +385,8 @@ export default function RegisterPage() {
               <Button
                 onClick={handleVerifyOtp}
                 disabled={loading || otp.length !== 6}
-                className="flex-1 h-12 text-white font-semibold transition-all duration-300 hover:bg-[#3a4a9c] disabled:opacity-50 rounded-xl shadow-lg"
-                style={{ backgroundColor: "#293379" }}
+                className="flex-1 h-12 text-white font-semibold transition-all duration-300 hover:bg-[#7b1fd1] disabled:opacity-50 rounded-xl shadow-lg"
+                style={{ backgroundColor: "#6a11cb" }}
               >
                 {loading ? (
                   <div className="flex items-center gap-2">
@@ -381,11 +404,11 @@ export default function RegisterPage() {
                 type="button"
                 onClick={resendOtp}
                 disabled={resendLoading}
-                className="text-[#293379] dark:text-blue-300 hover:text-[#3a4a9c] dark:hover:text-blue-200 font-medium text-sm transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="text-[#6a11cb] dark:text-purple-300 hover:text-[#7b1fd1] dark:hover:text-purple-200 font-medium text-sm transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {resendLoading ? (
                   <div className="flex items-center justify-center gap-2">
-                    <div className="w-4 h-4 border-2 border-[#293379] border-t-transparent rounded-full animate-spin" />
+                    <div className="w-4 h-4 border-2 border-[#6a11cb] border-t-transparent rounded-full animate-spin" />
                     Resending...
                   </div>
                 ) : (

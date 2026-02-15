@@ -30,7 +30,7 @@ const Sidebar = () => {
   const navigate = useNavigate();
 
   const handleDashboardClick = () => {
-    navigate("/");
+    navigate("/user-dashboard");
   };
 
   // Function to get chat display title

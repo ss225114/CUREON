@@ -2,7 +2,8 @@ import "./index.css";
 import AuthLayout from "./layouts/authLayout";
 import GuestLayout from "./layouts/guestLayout";
 import { useAuth } from "./modules/Auth/context/authContext";
-import AuthRouter from "./router/AuthRouter";
+import AuthDoctorRouter from "./router/AuthDoctorRouter";
+import AuthUserRouter from "./router/AuthUserRouter";
 import GuestRouter from "./router/GuestRouter";
 
 export default function App() {
@@ -11,13 +12,15 @@ export default function App() {
     <>
       {token ? (
         <AuthLayout>
-          <AuthRouter />
+          <AuthUserRouter />
+          {/* <AuthDoctorRouter /> */}
         </AuthLayout>
       ) : (
         <GuestLayout>
           <GuestRouter />
         </GuestLayout>
       )}
+      <AuthDoctorRouter />
     </>
   );
 }

@@ -1,156 +1,6 @@
-// import { useState } from "react";
-// import { useProfile } from "../context/profileContext";
-// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-// import { Button } from "@/components/ui/button";
-// import { FaEdit, FaSave, FaTimes } from "react-icons/fa";
-
-// export default function ProfileInfoCard() {
-//   const { profile, updateProfile } = useProfile();
-//   const [isEditing, setIsEditing] = useState(false);
-//   const [formData, setFormData] = useState({ ...profile });
-
-//   const handleChange = (field, value) => {
-//     setFormData((prev) => ({ ...prev, [field]: value }));
-//   };
-
-//   const handleSave = async () => {
-//     await updateProfile(formData);
-//     setIsEditing(false);
-//   };
-
-//   const handleCancel = () => {
-//     setFormData({ ...profile });
-//     setIsEditing(false);
-//   };
-
-//   const fields = [
-//     { label: "Date of Birth", key: "dateOfBirth", type: "date" },
-//     {
-//       label: "Gender",
-//       key: "gender",
-//       type: "select",
-//       options: ["Male", "Female", "Other", "Prefer not to say"],
-//     },
-//     {
-//       label: "Blood Group",
-//       key: "bloodGroup",
-//       type: "select",
-//       options: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
-//     },
-//     { label: "Height", key: "height", type: "text" },
-//     { label: "Weight", key: "weight", type: "text" },
-//   ];
-
-//   return (
-//     <Card className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-md border-0 shadow-xl">
-//       <CardHeader className="flex flex-row items-center justify-between">
-//         <CardTitle className="text-2xl font-bold text-[#293379] dark:text-white">
-//           Personal Information
-//         </CardTitle>
-//         {!isEditing ? (
-//           <Button
-//             onClick={() => setIsEditing(true)}
-//             className="bg-[#293379] dark:bg-blue-700 hover:bg-[#3a4a9c] dark:hover:bg-blue-600"
-//             size="sm"
-//           >
-//             <FaEdit className="mr-2" /> Edit
-//           </Button>
-//         ) : (
-//           <div className="flex gap-2">
-//             <Button
-//               onClick={handleCancel}
-//               className="bg-gray-500 hover:bg-gray-600"
-//               size="sm"
-//             >
-//               <FaTimes className="mr-2" /> Cancel
-//             </Button>
-//             <Button
-//               onClick={handleSave}
-//               className="bg-[#016b61] hover:bg-[#015951]"
-//               size="sm"
-//             >
-//               <FaSave className="mr-2" /> Save
-//             </Button>
-//           </div>
-//         )}
-//       </CardHeader>
-//       <CardContent>
-//         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-//           {fields.map((field) => (
-//             <div key={field.key} className="space-y-2">
-//               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-//                 {field.label}
-//               </label>
-//               {isEditing ? (
-//                 field.type === "select" ? (
-//                   <select
-//                     value={formData[field.key] || ""}
-//                     onChange={(e) => handleChange(field.key, e.target.value)}
-//                     className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white/50 dark:bg-gray-700/50 text-gray-800 dark:text-white"
-//                   >
-//                     <option value="">Select {field.label}</option>
-//                     {field.options.map((option) => (
-//                       <option key={option} value={option}>
-//                         {option}
-//                       </option>
-//                     ))}
-//                   </select>
-//                 ) : (
-//                   <input
-//                     type={field.type}
-//                     value={formData[field.key] || ""}
-//                     onChange={(e) => handleChange(field.key, e.target.value)}
-//                     className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white/50 dark:bg-gray-700/50 text-gray-800 dark:text-white"
-//                   />
-//                 )
-//               ) : (
-//                 <div className="p-3 bg-white/30 dark:bg-gray-700/30 rounded-lg text-gray-800 dark:text-white">
-//                   {profile[field.key] || "Not specified"}
-//                 </div>
-//               )}
-//             </div>
-//           ))}
-//         </div>
-
-//         {/* Emergency Contact */}
-//         <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
-//           <h3 className="text-xl font-semibold text-[#293379] dark:text-white mb-4">
-//             Emergency Contact
-//           </h3>
-//           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-//             <div>
-//               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-//                 Name
-//               </label>
-//               <div className="p-3 bg-white/30 dark:bg-gray-700/30 rounded-lg text-gray-800 dark:text-white">
-//                 {profile.emergencyContact?.name || "Not set"}
-//               </div>
-//             </div>
-//             <div>
-//               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-//                 Phone
-//               </label>
-//               <div className="p-3 bg-white/30 dark:bg-gray-700/30 rounded-lg text-gray-800 dark:text-white">
-//                 {profile.emergencyContact?.phone || "Not set"}
-//               </div>
-//             </div>
-//             <div>
-//               <label className="block text-sm font-medium text-gray-700 dark:text-gray-gray-300">
-//                 Relationship
-//               </label>
-//               <div className="p-3 bg-white/30 dark:bg-gray-700/30 rounded-lg text-gray-800 dark:text-white">
-//                 {profile.emergencyContact?.relationship || "Not set"}
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </CardContent>
-//     </Card>
-//   );
-// }
-
 import { useProfile } from "../context/ProfileContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { format, parseISO } from "date-fns";
 import {
   FaUserCircle,
   FaMobileAlt,
@@ -179,7 +29,9 @@ export default function ProfileInfoCard() {
     {
       icon: <FaBirthdayCake />,
       label: "Date of Birth",
-      value: profile.userData.dateOfBirth.substring(0,10) ?? "Not set",
+      value: profile.userData?.dateOfBirth
+        ? format(parseISO(profile.userData.dateOfBirth), "dd.MM.yyyy")
+        : "Not set",
     },
     {
       icon: <FaVenusMars />,
@@ -194,12 +46,16 @@ export default function ProfileInfoCard() {
     {
       icon: <FaRulerVertical />,
       label: "Height",
-      value: profile.userData.height ? `${profile.userData.height} cm` : "Not set",
+      value: profile.userData.height
+        ? `${profile.userData.height} cm`
+        : "Not set",
     },
     {
       icon: <FaWeight />,
       label: "Weight",
-      value: profile.userData.weight ? `${profile.userData.weight} kg` : "Not set",
+      value: profile.userData.weight
+        ? `${profile.userData.weight} kg`
+        : "Not set",
     },
   ];
 

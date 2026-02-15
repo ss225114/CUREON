@@ -4,136 +4,793 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 import Lottie from "lottie-react";
-import animabot from "@/assets/static/animabot.json";
+import docRegister from "@/assets/static/docRegister.json";
+
+// Degree options from schema
+const degreeOptions = [
+  { value: "MD", label: "MD (Doctor of Medicine)" },
+  { value: "DO", label: "DO (Doctor of Osteopathic Medicine)" },
+  { value: "PHD", label: "PhD (Doctor of Philosophy)" },
+  { value: "DDS", label: "DDS (Doctor of Dental Surgery)" },
+  { value: "DMD", label: "DMD (Doctor of Dental Medicine)" },
+  { value: "DNP", label: "DNP (Doctor of Nursing Practice)" },
+  { value: "PHARMD", label: "PharmD (Doctor of Pharmacy)" },
+  { value: "UNKNOWN", label: "Other/Unknown" },
+];
+
+// Specialization options from schema
+const specializationOptions = [
+  "GENERAL_PHYSICIAN",
+  "INTERNAL_MEDICINE",
+  "PEDIATRICS",
+  "GYNECOLOGY",
+  "OBSTETRICS",
+  "CARDIOLOGY",
+  "DERMATOLOGY",
+  "ORTHOPEDICS",
+  "NEUROLOGY",
+  "NEUROSURGERY",
+  "PSYCHIATRY",
+  "PSYCHOLOGY",
+  "ENT",
+  "OPHTHALMOLOGY",
+  "GASTROENTEROLOGY",
+  "PULMONOLOGY",
+  "ENDOCRINOLOGY",
+  "NEPHROLOGY",
+  "UROLOGY",
+  "ONCOLOGY",
+  "HEMATOLOGY",
+  "RHEUMATOLOGY",
+  "GENERAL_SURGERY",
+  "PLASTIC_SURGERY",
+  "VASCULAR_SURGERY",
+  "ANESTHESIOLOGY",
+  "RADIOLOGY",
+  "PATHOLOGY",
+  "EMERGENCY_MEDICINE",
+  "FAMILY_MEDICINE",
+  "GERIATRICS",
+  "INFECTIOUS_DISEASE",
+  "SPORTS_MEDICINE",
+  "PAIN_MANAGEMENT",
+  "DENTISTRY",
+  "ORTHODONTICS",
+  "AYURVEDA",
+  "HOMEOPATHY",
+  "UNANI",
+  "OTHER",
+];
+
+// Map enum values to readable labels
+const specializationLabels = {
+  GENERAL_PHYSICIAN: "General Physician",
+  INTERNAL_MEDICINE: "Internal Medicine",
+  PEDIATRICS: "Pediatrics",
+  GYNECOLOGY: "Gynecology",
+  OBSTETRICS: "Obstetrics",
+  CARDIOLOGY: "Cardiology",
+  DERMATOLOGY: "Dermatology",
+  ORTHOPEDICS: "Orthopedics",
+  NEUROLOGY: "Neurology",
+  NEUROSURGERY: "Neurosurgery",
+  PSYCHIATRY: "Psychiatry",
+  PSYCHOLOGY: "Psychology",
+  ENT: "ENT",
+  OPHTHALMOLOGY: "Ophthalmology",
+  GASTROENTEROLOGY: "Gastroenterology",
+  PULMONOLOGY: "Pulmonology",
+  ENDOCRINOLOGY: "Endocrinology",
+  NEPHROLOGY: "Nephrology",
+  UROLOGY: "Urology",
+  ONCOLOGY: "Oncology",
+  HEMATOLOGY: "Hematology",
+  RHEUMATOLOGY: "Rheumatology",
+  GENERAL_SURGERY: "General Surgery",
+  PLASTIC_SURGERY: "Plastic Surgery",
+  VASCULAR_SURGERY: "Vascular Surgery",
+  ANESTHESIOLOGY: "Anesthesiology",
+  RADIOLOGY: "Radiology",
+  PATHOLOGY: "Pathology",
+  EMERGENCY_MEDICINE: "Emergency Medicine",
+  FAMILY_MEDICINE: "Family Medicine",
+  GERIATRICS: "Geriatrics",
+  INFECTIOUS_DISEASE: "Infectious Disease",
+  SPORTS_MEDICINE: "Sports Medicine",
+  PAIN_MANAGEMENT: "Pain Management",
+  DENTISTRY: "Dentistry",
+  ORTHODONTICS: "Orthodontics",
+  AYURVEDA: "Ayurveda",
+  HOMEOPATHY: "Homeopathy",
+  UNANI: "Unani",
+  OTHER: "Other",
+};
+
+const indianStates = [
+  "Andhra Pradesh",
+  "Arunachal Pradesh",
+  "Assam",
+  "Bihar",
+  "Chhattisgarh",
+  "Goa",
+  "Gujarat",
+  "Haryana",
+  "Himachal Pradesh",
+  "Jharkhand",
+  "Karnataka",
+  "Kerala",
+  "Madhya Pradesh",
+  "Maharashtra",
+  "Odisha",
+  "Punjab",
+  "Rajasthan",
+  "Tamil Nadu",
+  "Telangana",
+  "Uttar Pradesh",
+  "Uttarakhand",
+  "West Bengal",
+  "Delhi",
+];
+
 
 export default function DoctorPage() {
   const navigate = useNavigate();
   const [form, setForm] = useState({
-    name: "",
+    fullName: "",
     email: "",
     password: "",
-    specialization: "",
+    degree: "",
+    specialization: [],
+    govtId: "",
+    doctorLicenseNo: "",
+    confirmPassword: "",
+    doctorRegistrationNo: "",
+    stateMedicalCouncil: "",
   });
+
+  const [openDegree, setOpenDegree] = useState(false);
+  const [openCouncil, setOpenCouncil] = useState(false);
+  const [openSpecialization, setOpenSpecialization] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!form.fullName.trim()) newErrors.fullName = "Full name is required";
+    if (!form.email.trim()) newErrors.email = "Email is required";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
+      newErrors.email = "Invalid email format";
+
+    if (!form.degree) newErrors.degree = "Degree is required";
+    if (form.specialization.length === 0)
+      newErrors.specialization = "At least one specialization is required";
+    if (!form.govtId) newErrors.govtId = "Government ID is required";
+    if (!form.doctorLicenseNo)
+      newErrors.doctorLicenseNo = "Doctor License Number is required";
+
+     if (!form.doctorRegistrationNo)
+       newErrors.doctorRegistrationNo = "Doctor Registration Number is required";
+     if (!form.stateMedicalCouncil)
+       newErrors.stateMedicalCouncil = "State medical council required";
+
+    if (!form.password) newErrors.password = "Password is required";
+    else if (form.password.length < 6)
+      newErrors.password = "Password must be at least 6 characters";
+
+    if (form.password !== form.confirmPassword)
+      newErrors.confirmPassword = "Passwords do not match";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    navigate("/dashboard");
+
+    if (validateForm()) {
+      console.log("Form submitted:", form);
+      alert("Registration successful! Please wait for admin approval.");
+    }
+  };
+
+  const handleSpecializationToggle = (value) => {
+    setForm((prev) => {
+      const current = [...prev.specialization];
+      if (current.includes(value)) {
+        return {
+          ...prev,
+          specialization: current.filter((item) => item !== value),
+        };
+      } else {
+        return { ...prev, specialization: [...current, value] };
+      }
+    });
   };
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-blue-100 via-blue-50 to-blue-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
-      {/* Left: Form Section */}
-      <div className="w-1/2 flex items-center justify-center p-10">
-        <Card className="auth-card w-full max-w-md bg-white/70 dark:bg-gray-800/70 backdrop-blur-md shadow-2xl border border-blue-100 dark:border-gray-700 transition-colors duration-300">
-          <CardHeader>
-            <CardTitle className="text-center text-2xl font-bold flex items-center justify-center gap-2 text-[#293379] dark:text-blue-300">
-              Doctor Registration{" "}
-              <i className="fa-solid fa-user-doctor text-[#293379] dark:text-blue-300"></i>
+    <div className="flex min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      {/* Form Section - Wider */}
+      <div className="w-full lg:w-2/3 flex items-center justify-center p-4 lg:p-8">
+        <Card className="w-full max-w-4xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-blue-200/50 dark:border-gray-700/50 shadow-xl">
+          <CardHeader className="pb-6">
+            <CardTitle className="text-3xl font-bold text-center text-[#293379] dark:text-blue-300">
+              <i className="fa-solid fa-user-doctor mr-3"></i>
+              Doctor Registration
             </CardTitle>
+            <p className="text-center text-gray-600 dark:text-gray-400 mt-2">
+              Register as a medical professional. All fields are required.
+            </p>
           </CardHeader>
+
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <Label
-                  htmlFor="name"
-                  className="mb-1 text-[#293379] dark:text-blue-200"
-                >
-                  Name
-                </Label>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="Your Name"
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  required
-                  className="bg-white/80 dark:bg-gray-700/80 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
-                />
+            <form onSubmit={handleSubmit} className="space-y-8">
+              {/* Section 1: Personal Information */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-[#293379] dark:text-blue-300 border-b pb-2">
+                  Personal Information
+                </h3>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="space-y-3">
+                    <Label
+                      htmlFor="fullName"
+                      className="font-medium text-gray-700 dark:text-gray-300"
+                    >
+                      Full Name *
+                    </Label>
+                    <Input
+                      id="fullName"
+                      type="text"
+                      placeholder="Dr. John Doe"
+                      value={form.fullName}
+                      onChange={(e) =>
+                        setForm({ ...form, fullName: e.target.value })
+                      }
+                      className="bg-white/70 dark:bg-gray-700/70 border-gray-300 dark:border-gray-600 h-12"
+                    />
+                    {errors.fullName && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.fullName}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-3">
+                    <Label
+                      htmlFor="email"
+                      className="font-medium text-gray-700 dark:text-gray-300"
+                    >
+                      Email Address *
+                    </Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="doctor@example.com"
+                      value={form.email}
+                      onChange={(e) =>
+                        setForm({ ...form, email: e.target.value })
+                      }
+                      className="bg-white/70 dark:bg-gray-700/70 border-gray-300 dark:border-gray-600 h-12"
+                    />
+                    {errors.email && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.email}
+                      </p>
+                    )}
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <Label
-                  htmlFor="specialization"
-                  className="mb-1 text-[#293379] dark:text-blue-200"
-                >
-                  Specialization
-                </Label>
-                <Input
-                  id="specialization"
-                  type="text"
-                  placeholder="e.g. dermatology"
-                  value={form.specialization}
-                  onChange={(e) =>
-                    setForm({ ...form, specialization: e.target.value })
-                  }
-                  required
-                  className="bg-white/80 dark:bg-gray-700/80 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
-                />
+              {/* Section 2: Professional Information */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-[#293379] dark:text-blue-300 border-b pb-2">
+                  Professional Information
+                </h3>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="space-y-3">
+                    <Label className="font-medium text-gray-700 dark:text-gray-300">
+                      Medical Degree *
+                    </Label>
+                    <Popover open={openDegree} onOpenChange={setOpenDegree}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={openDegree}
+                          className={cn(
+                            "w-full justify-between h-12 bg-white/70 dark:bg-gray-700/70 backdrop-blur-sm",
+                            "border-gray-300 dark:border-gray-600 hover:bg-white/80 dark:hover:bg-gray-700/80",
+                            errors.degree && "border-red-500",
+                          )}
+                        >
+                          <span className="truncate">
+                            {form.degree
+                              ? degreeOptions.find(
+                                  (d) => d.value === form.degree,
+                                )?.label
+                              : "Select your degree"}
+                          </span>
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        className="w-[--radix-popover-trigger-width] p-0 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border border-gray-200 dark:border-gray-700"
+                        align="start"
+                      >
+                        <Command className="bg-transparent">
+                          <CommandInput placeholder="Search degree..." />
+                          <CommandList className="max-h-72">
+                            <CommandEmpty>No degree found.</CommandEmpty>
+                            <CommandGroup>
+                              {degreeOptions.map((degree) => (
+                                <CommandItem
+                                  key={degree.value}
+                                  value={degree.value}
+                                  onSelect={() => {
+                                    setForm({ ...form, degree: degree.value });
+                                    setOpenDegree(false);
+                                  }}
+                                  className="hover:bg-gray-100 dark:hover:bg-gray-700"
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      form.degree === degree.value
+                                        ? "opacity-100"
+                                        : "opacity-0",
+                                    )}
+                                  />
+                                  {degree.label}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                    {errors.degree && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.degree}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-3">
+                    <Label
+                      htmlFor="doctorLicenseNo"
+                      className="font-medium text-gray-700 dark:text-gray-300"
+                    >
+                      Doctor License Number *
+                    </Label>
+                    <Input
+                      id="doctorLicenseNo"
+                      type="text"
+                      placeholder="e.g., MED123456"
+                      value={form.doctorLicenseNo}
+                      onChange={(e) =>
+                        setForm({ ...form, doctorLicenseNo: e.target.value })
+                      }
+                      className="bg-white/70 dark:bg-gray-700/70 border-gray-300 dark:border-gray-600 h-12"
+                    />
+                    {errors.doctorLicenseNo && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.doctorLicenseNo}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="space-y-3">
+                    <Label className="font-medium text-gray-700 dark:text-gray-300">
+                      State Medical Council *
+                    </Label>
+                    <Popover open={openCouncil} onOpenChange={setOpenCouncil}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={openCouncil}
+                          className={cn(
+                            "w-full justify-between h-12 bg-white/70 dark:bg-gray-700/70 backdrop-blur-sm",
+                            "border-gray-300 dark:border-gray-600 hover:bg-white/80 dark:hover:bg-gray-700/80",
+                            errors.stateMedicalCouncil && "border-red-500",
+                          )}
+                        >
+                          <span className="truncate">
+                            {form.stateMedicalCouncil
+                              ? indianStates.find(
+                                  (s) => s === form.stateMedicalCouncil,
+                                )
+                              : "Select your state medical council"}
+                          </span>
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        className="w-[--radix-popover-trigger-width] p-0 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border border-gray-200 dark:border-gray-700"
+                        align="start"
+                      >
+                        <Command className="bg-transparent">
+                          <CommandInput placeholder="Search state medical council..." />
+                          <CommandList className="max-h-72">
+                            <CommandEmpty>No state council found.</CommandEmpty>
+                            <CommandGroup>
+                              {indianStates.map((state) => (
+                                <CommandItem
+                                  key={state}
+                                  value={state}
+                                  onSelect={() => {
+                                    setForm({ ...form, stateMedicalCouncil: state });
+                                    setOpenCouncil(false);
+                                  }}
+                                  className="hover:bg-gray-100 dark:hover:bg-gray-700"
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      form.stateMedicalCouncil === state
+                                        ? "opacity-100"
+                                        : "opacity-0",
+                                    )}
+                                  />
+                                  {state}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                    {errors.stateMedicalCouncil && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.stateMedicalCouncil}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-3">
+                    <Label
+                      htmlFor="doctorRegistrationNo"
+                      className="font-medium text-gray-700 dark:text-gray-300"
+                    >
+                      Doctor Registration Number *
+                    </Label>
+                    <Input
+                      id="doctorRegistrationNo"
+                      type="number"
+                      placeholder="e.g., 1234"
+                      value={form.doctorRegistrationNo}
+                      onChange={(e) =>
+                        setForm({ ...form, doctorRegistrationNo: e.target.value })
+                      }
+                      className="bg-white/70 dark:bg-gray-700/70 border-gray-300 dark:border-gray-600 h-12"
+                    />
+                    {errors.doctorRegistrationNo && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.doctorRegistrationNo}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <Label
+                    htmlFor="govtId"
+                    className="font-medium text-gray-700 dark:text-gray-300"
+                  >
+                    Government ID / Aadhaar Number *
+                  </Label>
+                  <div className="max-w-md">
+                    <Input
+                      id="govtId"
+                      type="text"
+                      placeholder="12-digit number"
+                      value={form.govtId}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, "");
+                        if (value.length <= 12) {
+                          setForm({ ...form, govtId: value });
+                        }
+                      }}
+                      maxLength={12}
+                      className="bg-white/70 dark:bg-gray-700/70 border-gray-300 dark:border-gray-600 h-12"
+                    />
+                    {errors.govtId && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.govtId}
+                      </p>
+                    )}
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                      Enter your 12-digit Government ID or Aadhaar number
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <Label className="font-medium text-gray-700 dark:text-gray-300">
+                    Specialization(s) *
+                    <span className="text-sm font-normal text-gray-500 dark:text-gray-400 ml-2">
+                      (Select one or more)
+                    </span>
+                  </Label>
+                  <Popover
+                    open={openSpecialization}
+                    onOpenChange={setOpenSpecialization}
+                  >
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={openSpecialization}
+                        className={cn(
+                          "w-full justify-between min-h-12 bg-white/70 dark:bg-gray-700/70 backdrop-blur-sm",
+                          "border-gray-300 dark:border-gray-600 hover:bg-white/80 dark:hover:bg-gray-700/80",
+                          errors.specialization && "border-red-500",
+                        )}
+                      >
+                        <div className="flex flex-wrap gap-1 overflow-hidden">
+                          {form.specialization.length === 0 ? (
+                            <span className="text-gray-500">
+                              Select specializations...
+                            </span>
+                          ) : (
+                            form.specialization.map((spec) => (
+                              <span
+                                key={spec}
+                                className="inline-flex items-center bg-blue-100/70 dark:bg-blue-900/70 text-blue-800 dark:text-blue-200 px-2 py-1 rounded text-sm"
+                              >
+                                {specializationLabels[spec] || spec}
+                              </span>
+                            ))
+                          )}
+                        </div>
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className="w-[--radix-popover-trigger-width] p-0 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border border-gray-200 dark:border-gray-700"
+                      align="start"
+                    >
+                      <Command className="bg-transparent">
+                        <CommandInput placeholder="Search specialization..." />
+                        <CommandList className="max-h-72">
+                          <CommandEmpty>No specialization found.</CommandEmpty>
+                          <CommandGroup>
+                            {specializationOptions.map((spec) => {
+                              const isSelected =
+                                form.specialization.includes(spec);
+                              return (
+                                <CommandItem
+                                  key={spec}
+                                  value={spec}
+                                  onSelect={() =>
+                                    handleSpecializationToggle(spec)
+                                  }
+                                  className="hover:bg-gray-100 dark:hover:bg-gray-700"
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      isSelected ? "opacity-100" : "opacity-0",
+                                    )}
+                                  />
+                                  {specializationLabels[spec] || spec}
+                                </CommandItem>
+                              );
+                            })}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  {errors.specialization && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.specialization}
+                    </p>
+                  )}
+                  {form.specialization.length > 0 && (
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Selected: {form.specialization.length} specialization(s)
+                    </p>
+                  )}
+                </div>
               </div>
 
-              <div>
-                <Label
-                  htmlFor="email"
-                  className="mb-1 text-[#293379] dark:text-blue-200"
-                >
-                  Email
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="you@example.com"
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  required
-                  className="bg-white/80 dark:bg-gray-700/80 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
-                />
+              {/* Section 3: Security */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-[#293379] dark:text-blue-300 border-b pb-2">
+                  Security
+                </h3>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="space-y-3">
+                    <Label
+                      htmlFor="password"
+                      className="font-medium text-gray-700 dark:text-gray-300"
+                    >
+                      Password *
+                    </Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      placeholder="••••••••"
+                      value={form.password}
+                      onChange={(e) =>
+                        setForm({ ...form, password: e.target.value })
+                      }
+                      minLength={6}
+                      className="bg-white/70 dark:bg-gray-700/70 border-gray-300 dark:border-gray-600 h-12"
+                    />
+                    {errors.password && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.password}
+                      </p>
+                    )}
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Must be at least 6 characters long
+                    </p>
+                  </div>
+
+                  <div className="space-y-3">
+                    <Label
+                      htmlFor="confirmPassword"
+                      className="font-medium text-gray-700 dark:text-gray-300"
+                    >
+                      Confirm Password *
+                    </Label>
+                    <Input
+                      id="confirmPassword"
+                      type="password"
+                      placeholder="••••••••"
+                      value={form.confirmPassword}
+                      onChange={(e) =>
+                        setForm({ ...form, confirmPassword: e.target.value })
+                      }
+                      className="bg-white/70 dark:bg-gray-700/70 border-gray-300 dark:border-gray-600 h-12"
+                    />
+                    {errors.confirmPassword && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.confirmPassword}
+                      </p>
+                    )}
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <Label
-                  htmlFor="password"
-                  className="mb-1 text-[#293379] dark:text-blue-200"
+              {/* Submit and Links */}
+              <div className="space-y-6 pt-4">
+                <Button
+                  type="submit"
+                  className="w-full h-14 text-white text-lg font-semibold hover:bg-[#3a4a9c] transition-all duration-300"
+                  style={{ backgroundColor: "#293379" }}
                 >
-                  Password
-                </Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={form.password}
-                  onChange={(e) =>
-                    setForm({ ...form, password: e.target.value })
-                  }
-                  required
-                  className="bg-white/80 dark:bg-gray-700/80 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
-                />
+                  Register as Doctor
+                </Button>
+
+                <div className="text-center space-y-3">
+                  <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+                    By registering, you agree to our Terms of Service and
+                    Privacy Policy. Your registration will be reviewed by our
+                    admin team before activation. This process typically takes
+                    24-48 hours.
+                  </p>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">
+                    Already have an account?{" "}
+                    <Link
+                      to="/login"
+                      className="font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                    >
+                      Login here
+                    </Link>
+                  </p>
+                </div>
               </div>
-
-              <Button
-                className="w-full hover:bg-blue-700 dark:hover:bg-blue-600 text-white transition-colors duration-300"
-                style={{ backgroundColor: "#293379" }}
-              >
-                Register as a Doctor
-              </Button>
-
-              <p className="text-center text-sm mt-2 text-gray-700 dark:text-gray-300">
-                Already have an account?{" "}
-                <Link
-                  to="/login"
-                  className="font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-300"
-                >
-                  Login here
-                </Link>
-              </p>
             </form>
           </CardContent>
         </Card>
       </div>
 
-      {/* Right: Animation Section */}
-      <div className="w-1/2 flex items-center justify-center">
-        <Lottie animationData={animabot} loop={true} className="max-w-md" />
+      {/* Animation Section */}
+      <div className="hidden lg:flex lg:w-1/3 flex-col items-center justify-center p-8 bg-gradient-to-b from-[#293379] to-[#3a4a9c]">
+        <div className="max-w-md space-y-8">
+          <div className="text-center">
+            <Lottie
+              animationData={docRegister}
+              loop={true}
+              className="max-w-full h-64"
+            />
+          </div>
+
+          <div className="text-white space-y-6">
+            <div className="text-center">
+              <h2 className="text-3xl font-bold mb-3">
+                Join Our Medical Network
+              </h2>
+              <p className="text-lg opacity-90">
+                Connect with patients, manage appointments, and grow your
+                practice
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-white/10 p-4 rounded-xl backdrop-blur-sm border border-white/20">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                    <i className="fa-solid fa-calendar-check text-lg"></i>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Appointment</h3>
+                    <p className="text-sm opacity-80">Management</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white/10 p-4 rounded-xl backdrop-blur-sm border border-white/20">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                    <i className="fa-solid fa-chart-line text-lg"></i>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Practice</h3>
+                    <p className="text-sm opacity-80">Growth</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white/10 p-4 rounded-xl backdrop-blur-sm border border-white/20">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                    <i className="fa-solid fa-users text-lg"></i>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Patient</h3>
+                    <p className="text-sm opacity-80">Connection</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white/10 p-4 rounded-xl backdrop-blur-sm border border-white/20">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                    <i className="fa-solid fa-shield-heart text-lg"></i>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Secure</h3>
+                    <p className="text-sm opacity-80">Platform</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="text-center pt-4">
+              <p className="text-sm opacity-80">
+                Join thousands of doctors already using our platform
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

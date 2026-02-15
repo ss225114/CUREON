@@ -16,11 +16,9 @@ export const useProfile = () => {
 const parseUserData = () => {
   try {
     if (user) {
-      // If user is a string (from localStorage), parse it
       if (typeof user === "string") {
         return JSON.parse(user);
       }
-      // If it's already an object
       return user;
     }
     return null;
@@ -36,48 +34,6 @@ export const ProfileProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [isProfileComplete, setIsProfileComplete] = useState(false);
 
-  // Mock user data - replace with API call
-  // const mockUserData = {
-  //   id: "1",
-  //   name: "John Doe",
-  //   email: "john.doe@example.com",
-  //   phone: "+1 (555) 123-4567",
-  //   avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=John",
-  //   dateOfBirth: "1990-05-15",
-  //   gender: "Male",
-  //   bloodGroup: "O+",
-  //   height: "175 cm",
-  //   weight: "70 kg",
-  //   emergencyContact: {
-  //     name: "Jane Smith",
-  //     phone: "+1 (555) 987-6543",
-  //     relationship: "Spouse",
-  //   },
-  //   medicalConditions: ["Hypertension", "Asthma"],
-  //   allergies: ["Penicillin", "Peanuts"],
-  //   medications: [
-  //     { name: "Lisinopril", dosage: "10mg", frequency: "Once daily" },
-  //     { name: "Ventolin", dosage: "100mcg", frequency: "As needed" },
-  //   ],
-  //   appointments: [
-  //     {
-  //       id: 1,
-  //       doctor: "Dr. Smith",
-  //       date: "2024-12-20",
-  //       time: "10:00 AM",
-  //       type: "Follow-up",
-  //     },
-  //     {
-  //       id: 2,
-  //       doctor: "Dr. Johnson",
-  //       date: "2024-12-25",
-  //       time: "2:30 PM",
-  //       type: "Check-up",
-  //     },
-  //   ],
-  //   lastLogin: "2024-12-01 14:30",
-  //   accountCreated: "2023-01-15",
-  // };
 
   const fetchProfile = async () => {
     try {
@@ -86,10 +42,6 @@ export const ProfileProvider = ({ children }) => {
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       const data = await apiClient.get("/user/profile");
-
-      // In real implementation:
-      // const response = await axios.get('/api/profile');
-      // setProfile(response.data);
 
       console.log(data);
 
@@ -106,29 +58,6 @@ export const ProfileProvider = ({ children }) => {
     }
   };
 
-  // const updateProfile = async (updates) => {
-  //   try {
-  //     setLoading(true);
-  //     // Simulate API call
-  //     await new Promise((resolve) => setTimeout(resolve, 500));
-
-  //     // In real implementation:
-  //     // const response = await axios.put('/api/profile', updates);
-  //     // setProfile(response.data);
-
-  //     const data = await apiClient.put("/user/profile/update", updates);
-
-  //     console.log(data);
-
-  //     setProfile((prev) => ({ ...prev, ...updates }));
-  //     return { success: true };
-  //   } catch (err) {
-  //     setError("Failed to update profile");
-  //     return { success: false, error: err.message };
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const updateProfile = async (updates) => {
     try {
@@ -166,6 +95,44 @@ export const ProfileProvider = ({ children }) => {
     }
   };
 
+// const updateAvatar = async (formData) => {
+//   try {
+//     const response = await fetch('/api/users/avatar', {
+//       method: 'POST',
+//       headers: {
+//         // Don't set Content-Type header - let browser set it with boundary
+//         'Authorization': `Bearer ${localStorage.getItem('token')}`, // Add your auth token
+//       },
+//       body: formData,
+//     });
+
+//     if (!response.ok) {
+//       const errorData = await response.json();
+//       throw new Error(errorData.message || 'Upload failed');
+//     }
+
+//     const data = await response.json();
+    
+//     // Update local state with new avatar URL
+//     setProfile(prev => ({
+//       ...prev,
+//       avatar: data.avatarUrl
+//     }));
+
+//     return { 
+//       success: true, 
+//       avatarUrl: data.avatarUrl,
+//       message: data.message 
+//     };
+//   } catch (error) {
+//     console.error('Avatar upload error:', error);
+//     return { 
+//       success: false, 
+//       message: error.message 
+//     };
+//   }
+// };
+
   const completeProfile = async (profileData) => {
     try {
       setLoading(true);
@@ -194,12 +161,6 @@ export const ProfileProvider = ({ children }) => {
     }
   };
 
-  // Update local state
-  // const updatedProfile = {
-  //   ...userData,
-  //   ...completeProfileData,
-  //   isProfileComplete: true,
-  // };
 
   useEffect(() => {
     fetchProfile();

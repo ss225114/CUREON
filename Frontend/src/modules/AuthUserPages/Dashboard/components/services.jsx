@@ -1,6 +1,12 @@
 import React from "react";
+import {useNavigate} from "react-router-dom";
+
+
 
 const Services = () => {
+
+  const navigate = useNavigate();
+  
   const services = [
     {
       title: "Find Doctors",
@@ -70,7 +76,9 @@ const Services = () => {
                 </div>
 
                 {/* Button */}
-                <button className="w-full bg-[#293379] hover:bg-[#1f2a63] dark:bg-blue-700 dark:hover:bg-blue-600 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-xl shadow-md hover:shadow-lg transform hover:scale-105 active:scale-95 transition-all duration-300 text-sm sm:text-base">
+                <button 
+                  onClick={() => navigate("/find-doctors")}
+                className="w-full bg-[#293379] hover:bg-[#1f2a63] dark:bg-blue-700 dark:hover:bg-blue-600 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-xl shadow-md hover:shadow-lg transform hover:scale-105 active:scale-95 transition-all duration-300 text-sm sm:text-base">
                   <span className="flex items-center justify-center gap-2 sm:gap-3">
                     {service.buttonText}
                     <span className="group-hover:translate-x-1 sm:group-hover:translate-x-2 transition-transform duration-300">
