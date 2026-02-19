@@ -27,6 +27,11 @@ const userProfileSchema = new mongoose.Schema(
       unique: true,
     },
 
+    // avatar: {
+    //   type: String,
+    //   default: "",
+    // },
+
     // STEP 1: Personal Info
     phone: { type: String, required: true },
     dateOfBirth: { type: Date, required: true },

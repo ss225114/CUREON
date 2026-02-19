@@ -5,6 +5,13 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -18,8 +25,12 @@ import axios from "axios";
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ email: "", password: "" });
-  const { setToken, setUser, setRefreshToken } = useAuth();
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+    role: "user", // Default role
+  });
+  const { setToken, setUser, setRefreshToken, setRole, setDoctor } = useAuth();
   const [errMsg, setErrMsg] = useState(0);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [forgotEmail, setForgotEmail] = useState("");
@@ -28,17 +39,44 @@ export default function LoginPage() {
   const [forgotError, setForgotError] = useState("");
   const [showSuccessToast, setShowSuccessToast] = useState(false);
 
+  // Role options for dropdown
+  const roleOptions = [
+    { value: "user", label: "User/Patient" },
+    { value: "doctor", label: "Doctor" },
+    { value: "admin", label: "Administrator" },
+  ];
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    let route;
+    if(form.role === "user") {
+      route = "/auth/login";
+    } else if(form.role === "doctor") {
+      route = "/auth/doctor/login";
+    } else {
+      route = "/admin/login";
+    }
     axios
-      .post("http://localhost:5000/auth/login", form)
+      .post("http://localhost:5000"+route, form)
       .then((res) => {
         setToken(res.data.data.access_token);
         setRefreshToken(res.data.data.refresh_token);
-        setUser(res.data.name);
+        form.role === "user" || form.role === "admin" ? setUser(res.data.name) : setDoctor(res.data.doctor);
+        setRole(form.role); // Store role in auth context
         console.log("Set all data");
         console.log(res);
-        navigate("/");
+
+        // Redirect based on role
+        switch (form.role) {
+          case "doctor":
+            navigate("/doctor-dashboard");
+            break;
+          case "admin":
+            navigate("/admin-dashboard");
+            break;
+          default:
+            navigate("/user-dashboard");
+        }
       })
       .catch((err) => {
         setErrMsg(1);
@@ -58,7 +96,7 @@ export default function LoginPage() {
     try {
       const response = await axios.post(
         "http://localhost:5000/auth/forget-password",
-        { email: forgotEmail }
+        { email: forgotEmail },
       );
 
       if (response.data.success || response.data.message) {
@@ -79,7 +117,7 @@ export default function LoginPage() {
     } catch (err) {
       console.error("Forgot password error:", err);
       setForgotError(
-        err.response?.data?.message || "Failed to send reset link"
+        err.response?.data?.message || "Failed to send reset link",
       );
     } finally {
       setForgotLoading(false);
@@ -120,6 +158,35 @@ export default function LoginPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Role Selection Dropdown */}
+              <div>
+                <Label
+                  htmlFor="role"
+                  className="mb-1 text-[#293379] dark:text-blue-200"
+                >
+                  I am a...
+                </Label>
+                <Select
+                  value={form.role}
+                  onValueChange={(value) => setForm({ ...form, role: value })}
+                >
+                  <SelectTrigger className="bg-white/80 dark:bg-gray-700/80 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white transition-colors duration-300">
+                    <SelectValue placeholder="Select your role" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600">
+                    {roleOptions.map((option) => (
+                      <SelectItem
+                        key={option.value}
+                        value={option.value}
+                        className="hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
+                      >
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
               <div>
                 <Label
                   htmlFor="email"
@@ -182,16 +249,6 @@ export default function LoginPage() {
                   className="font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-300"
                 >
                   Sign Up
-                </Link>
-              </p>
-
-              <p className="text-center text-sm mt-2 text-gray-700 dark:text-gray-300">
-                Are you a doctor?{" "}
-                <Link
-                  to="/doctor-login"
-                  className="font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-300"
-                >
-                  Login here
                 </Link>
               </p>
             </form>

@@ -1,5 +1,8 @@
-import Doctor from "../models/Doctor";
-import User from "../models/User";
+import { doctorVerificationAlert, doctorVerificationMail } from "../lib/emailService.js";
+import { generateToken } from "../lib/jwtService.js";
+import Doctor from "../models/Doctor.js";
+import User from "../models/User.js";
+import bcrypt from "bcryptjs";
 
 // export const adminRegister = async(req, res) => {
 //     const { fullName, email, password } = req.body;
@@ -37,7 +40,7 @@ export const adminLogin = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
-    if (!user && !user.isAdmin)
+    if (!user || !user.isAdmin)
       return res.status(400).json({ message: "Invalid Credentials" });
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect)
@@ -72,6 +75,28 @@ export const getAllDoctors = async (req, res) => {
   }
 };
 
+export const getPendingRequests = async (req, res) => {
+  try {
+    const id = req.user.userID;
+    const user = await User.findOne({ id });
+    const doctors = await Doctor.find();
+    const pending = doctors.filter(
+      (doctor) => doctor.isActive !== true
+    );
+    if(pending.length >= 10) {
+      await doctorVerificationAlert(user.email);
+    }
+    return res.status(200).json({
+      success: true,
+      pending,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      error,
+    });
+  }
+};
+
 // export const getUserById = async (req, res) => {};
 
 // export const getDoctorById = async (req, res) => {};
@@ -90,9 +115,10 @@ export const verifyDoctor = async (req, res) => {
 
       { new: true },
     );
+    await doctorVerificationMail(doctor.email);
     return res.status(200).json({
       success: true,
-      message: "doctor verififed",
+      message: "doctor verififed and mail sent",
     });
   } catch (error) {
     return res.status(500).json({

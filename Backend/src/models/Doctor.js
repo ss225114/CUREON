@@ -72,11 +72,11 @@ const doctorSchema = mongoose.Schema(
       required: true,
       unique: true,
     },
-    council: {
+    stateMedicalCouncil: {
       type: String,
       required: true,
     },
-    registrationNo: {
+    doctorRegistrationNo: {
       type: String,
       required: true,
     },

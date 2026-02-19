@@ -226,8 +226,8 @@ export const doctorRegister = async (req, res) => {
     specialization,
     govtId,
     doctorLicenseNo,
-    council,
-    registrationNo,
+    stateMedicalCouncil,
+    doctorRegistrationNo,
     password,
   } = req.body;
   try {
@@ -251,8 +251,8 @@ export const doctorRegister = async (req, res) => {
       specialization,
       govtId,
       doctorLicenseNo,
-      council,
-      registrationNo,
+      stateMedicalCouncil,
+      doctorRegistrationNo,
       password: hashedPassword,
       isActive: false,
     });
@@ -284,9 +284,15 @@ export const doctorLogin = async (req, res) => {
     });
   }
 
+  if (!doctor.isActive) {
+    return res.status(403).json({
+      message: "Id verification pending",
+    });
+  }
+
   const { access_token, refresh_token } = generateToken(doctor._id, res);
   return res.status(201).json({
-      name: doctor.fullName,
+      doctor,
       data: {
         access_token: access_token,
         refresh_token: refresh_token,

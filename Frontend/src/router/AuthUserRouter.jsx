@@ -1,16 +1,18 @@
 import { Routes, Route } from "react-router-dom";
-import Dashboard from "@/modules/Dashboard/dashboard";
+import Dashboard from "@/modules/AuthUserPages/Dashboard/dashboard";
 import ChatPage from "@/modules/AuthUserPages/ChatPage/chatPage";
 import ProfilePage from "@/modules/AuthUserPages/ProfilePage/profilePage";
+import DoctorsPage from "@/modules/AuthUserPages/DoctorsPage/doctorsPage";
 
-const AuthRouter = () => {
+const AuthUserRouter = () => {
   return (
     <Routes>
-      <Route index element={<Dashboard />} />
+      <Route path="/user-dashboard" element={<Dashboard />} />
       <Route path="/chat" element={<ChatPage />} />
       <Route path="/userprofile" element={<ProfilePage />} />
+      <Route path="/find-doctors" element={<DoctorsPage />} />
     </Routes>
   );
 };
 
-export default AuthRouter;
+export default AuthUserRouter;

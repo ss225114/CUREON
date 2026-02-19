@@ -79,3 +79,90 @@ export const sendResetPasswordEmail = async (name, email, token) => {
     return res.status(400).json({ message: error });
   }
 };
+
+export const doctorVerificationMail = async (email) => {
+  try {
+    const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
+      requireTLS: true,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
+
+    const mailOptions = {
+      from: "cureon.med@gmail.com",
+      to: email,
+      subject: "For identity verifcation",
+      html:
+        "<html>" +
+        '<body style="font-family: Arial, sans-serif;">' +
+        '<div style="background-color: #f5f5f5; padding: 20px;">' +
+        '<h2 style="color: #333;">Welcome to our app!</h2>' +
+        '<p style="font-size: 16px;">Identity Verification:</p>' +
+        '<div style="background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">' +
+        '<p style="font-size: 18px; font-weight: bold; color: #007bff;">' +
+        "Your identity has successfully been verified" +
+        "</p>" +
+        "</div>" +
+        "</div>" +
+        "</body>" +
+        "</html>",
+    };
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log("error", error);
+      } else {
+        console.log("Mail has been sent", info.response);
+      }
+    });
+  } catch (error) {
+    return response.json(error);
+  }
+};
+
+export const doctorVerificationAlert = async (email) => {
+  try {
+    const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
+      requireTLS: true,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
+
+    const mailOptions = {
+      from: "cureon.med@gmail.com",
+      to: email,
+      subject: "For identity verifcation",
+      html:
+        "<html>" +
+        '<body style="font-family: Arial, sans-serif;">' +
+        '<div style="background-color: #f5f5f5; padding: 20px;">' +
+        '<div style="background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">' +
+        '<h3 style="color: #333;">Verification alert:</h3>' +
+        '<p style="font-size: 18px; font-weight: bold; color: #007bff;">' +
+        "Doctor verifications pending" +
+        "</p>" +
+        "</div>" +
+        "</div>" +
+        "</body>" +
+        "</html>",
+    };
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log("error", error);
+      } else {
+        console.log("Mail has been sent", info.response);
+      }
+    });
+  } catch (error) {
+    return response.json(error);
+  }
+};
