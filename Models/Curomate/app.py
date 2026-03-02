@@ -7,16 +7,26 @@ from groq import Groq
 from src.prompt import *
 import os
 import re
-import tensorflow as tf
 import numpy as np
-from tensorflow.keras.preprocessing import image
 
 # App setup
 app = Flask(__name__)
 CORS(app)
 load_dotenv()
 
-model = tf.keras.models.load_model("image_classification_models/Image_classify_v3.keras")
+import tensorflow as tf
+from tensorflow.keras.preprocessing import image
+from tensorflow.keras.applications.efficientnet import preprocess_input
+
+# model = tf.keras.models.load_model("image_classification_models/Image_classify_v3.keras")
+# model = tf.keras.models.load_model(
+#     "image_classification_models/Image_classify_v3.keras",
+#     compile=False
+# )
+model = tf.keras.models.load_model(
+    "image_classification_models/Image_classify_v5.keras",
+    # compile=False,
+)
 
 class_names = ['Acne',
  'Actinic Keratosis',
@@ -139,7 +149,7 @@ def preprocess_image(image_path):
 
     img_array = np.expand_dims(img_array, axis=0)
 
-    img_array = tf.keras.applications.efficientnet.preprocess_input(img_array)
+    img_array = preprocess_input(img_array)
 
     return img_array
 
@@ -173,4 +183,5 @@ def predict():
     })
 
 if __name__ == "__main__":
+    # print(tf.__version__)
     app.run(host="0.0.0.0", port=8005, debug=True)
