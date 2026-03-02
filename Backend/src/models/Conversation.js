@@ -8,7 +8,14 @@ const conversationSchema = mongoose.Schema(
     },
     message: {
       type: String,
-      required: true,
+    },
+    imagePath: {
+      type: String,
+      default: "",
+    },
+    isImage: {
+      type: Boolean,
+      default: false,
     },
     isUser: {
       type: Boolean,
@@ -16,7 +23,7 @@ const conversationSchema = mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const Conversations = mongoose.model("Conversations", conversationSchema);

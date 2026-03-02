@@ -7,11 +7,41 @@ from groq import Groq
 from src.prompt import *
 import os
 import re
+import tensorflow as tf
+import numpy as np
+from tensorflow.keras.preprocessing import image
 
 # App setup
 app = Flask(__name__)
 CORS(app)
 load_dotenv()
+
+model = tf.keras.models.load_model("image_classification_models/Image_classify_v3.keras")
+
+class_names = ['Acne',
+ 'Actinic Keratosis',
+ 'Chromhidrosis',
+ 'Eruptive Xanthomas',
+ 'Erythrasma',
+ 'Impetigo',
+ 'Keratosis Pilaris',
+ 'Leprosy',
+ 'Lupus',
+ 'Lyme Disease',
+ 'Measles',
+ 'Melanoma',
+ 'Melasma',
+ 'Otophyma',
+ 'RingWorm',
+ 'Scabies2',
+ 'Shingles',
+ 'Solar Lentigo',
+ 'dermatofibroma',
+ 'eczema',
+ 'hives',
+ 'psoriasis',
+ 'rosacea',
+ 'scabies']
 
 # API keys
 PINECONE_API_KEY = os.environ.get("PINECONE_API_KEY")
@@ -101,6 +131,18 @@ def retrieval_chain(query: str) -> str:
 
     return cleaned
 
+def preprocess_image(image_path):
+
+    img = image.load_img(image_path, target_size=(180, 180))
+
+    img_array = image.img_to_array(img)
+
+    img_array = np.expand_dims(img_array, axis=0)
+
+    img_array = tf.keras.applications.efficientnet.preprocess_input(img_array)
+
+    return img_array
+
 @app.route("/get", methods=["GET", "POST"])
 def chat():
     if request.method == "POST":
@@ -113,6 +155,22 @@ def chat():
 
     response = retrieval_chain(msg)
     return jsonify({"response": response})
+
+@app.route("/predict", methods=["POST"])
+def predict():
+    data = request.get_json()
+    image_path = data["image_path"]
+
+    img = preprocess_image(image_path)
+
+    predictions = model.predict(img)
+    predicted_class = class_names[np.argmax(predictions)]
+    confidence = float(np.max(predictions))
+
+    return jsonify({
+        "prediction": predicted_class,
+        "confidence": confidence
+    })
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8005, debug=True)

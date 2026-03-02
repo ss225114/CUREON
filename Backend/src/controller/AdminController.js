@@ -1,4 +1,4 @@
-import { doctorVerificationAlert, doctorVerificationMail } from "../lib/emailService.js";
+import { doctorVerificationMail } from "../lib/emailService.js";
 import { generateToken } from "../lib/jwtService.js";
 import Doctor from "../models/Doctor.js";
 import User from "../models/User.js";
@@ -83,9 +83,9 @@ export const getPendingRequests = async (req, res) => {
     const pending = doctors.filter(
       (doctor) => doctor.isActive !== true
     );
-    if(pending.length >= 10) {
-      await doctorVerificationAlert(user.email);
-    }
+    // if(pending.length >= 10) {
+    //   await doctorVerificationAlert(user.email);
+    // }
     return res.status(200).json({
       success: true,
       pending,
