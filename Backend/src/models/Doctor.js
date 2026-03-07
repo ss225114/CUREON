@@ -92,6 +92,16 @@ const doctorSchema = mongoose.Schema(
     // otpGeneratedTime: {
     //   type: Date,
     // },
+
+    // Rating fields
+    rating: {
+      type: Number,
+      default: 0,
+    },
+    ratingCount: {
+      type: Number,
+      default: 0,
+    },
     isActive: {
       type: Boolean,
       default: false,
