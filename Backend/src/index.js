@@ -7,6 +7,7 @@ import chatRoutes from "./routes/ChatRoutes.js";
 import conversationRoutes from "./routes/ConversationRoutes.js";
 import userRoutes from "./routes/UserRoutes.js";
 import adminRoutes from "./routes/AdminRoutes.js";
+import path from "path";
 
 dotenv.config();
 
@@ -21,6 +22,8 @@ app.use(
   )
 );
 app.use(express.json());
+
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 app.use("/auth", authRoutes);
 app.use("/chat", chatRoutes);

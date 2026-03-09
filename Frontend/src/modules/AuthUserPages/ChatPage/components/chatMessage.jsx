@@ -77,7 +77,16 @@ const Message = ({ message }) => {
             />
 
             <p className="leading-relaxed whitespace-pre-wrap text-sm relative z-10">
-              {message.message}
+              {message.isImage ? (
+                <img
+                  src={`http://localhost:5000/uploads/image/${message.imagePath.
+                    split("\\").pop()}`}
+                  alt="Uploaded"
+                  className="max-w-full h-auto rounded-lg"
+                />
+              ) : (
+                message.message
+              )}
             </p>
 
             {/* Time for user messages (inside bubble) */}

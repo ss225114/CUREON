@@ -13,6 +13,8 @@ export const communicateMessage = async (req, res) => {
   const newMessage1 = new Conversations({
     conversationId: id,
     message: query,
+    imagePath: "",
+    isImage: false,
     isUser: true,
   });
 
@@ -30,6 +32,8 @@ export const communicateMessage = async (req, res) => {
     const newMessage2 = new Conversations({
       conversationId: id,
       message: data.response,
+      imagePath: "",
+      isImage: false,
       isUser: false,
     });
 
@@ -64,7 +68,7 @@ export const communicateImage = async (req, res) => {
 
     const newMessage1 = new Conversations({
       conversationId: id,
-      // message: query,
+      message: "",
       imagePath: filePath,
       isImage: true,
       isUser: true,
@@ -80,6 +84,8 @@ export const communicateImage = async (req, res) => {
     const newMessage2 = new Conversations({
       conversationId: id,
       message: `the disease is ${response.data.prediction}`,
+      imagePath: "",
+      isImage: false,
       isUser: false,
     });
 
@@ -104,6 +110,8 @@ export const communicateImage = async (req, res) => {
     res.status(200).json({
       message: "Uploaded & analyzed successfully",
       data: response.data,
+      newMessage1,
+      newMessage2
     });
   } catch (error) {
     console.error(error);
