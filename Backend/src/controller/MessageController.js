@@ -1,7 +1,6 @@
 import Chat from "../models/Chat.js";
 import Conversations from "../models/Conversation.js";
 import axios from "axios";
-import Image from "../models/Image.js";
 
 // BASE_URL for model access = http://localhost:8005
 
@@ -64,7 +63,7 @@ export const communicateImage = async (req, res) => {
 
     const newMessage1 = new Conversations({
       conversationId: id,
-      // message: query,
+      message: "",
       imagePath: imagePath,
       isImage: true,
       isUser: true,
