@@ -1,8 +1,10 @@
 import { useAuth } from "@/modules/Auth/context/authContext";
 import React from "react";
+import { useChat } from "../context/chatContext";
 
 const Message = ({ message }) => {
   const { user } = useAuth();
+  const { imageUrl } = useChat();
 
   // Function to get the first letter of username
   const getFirstLetter = (username) => {
@@ -77,7 +79,21 @@ const Message = ({ message }) => {
             />
 
             <p className="leading-relaxed whitespace-pre-wrap text-sm relative z-10">
-              {message.message}
+              {message.isImage ? (
+                imageUrl ? (<img
+                  src={imageUrl}
+                  alt="Uploaded"
+                  className="w-30 h-30 rounded-lg"
+                />) :
+                <img
+                  src={`http://localhost:5000/uploads/image/${message.imagePath.
+                    split("\\").pop()}`}
+                  alt="Uploaded"
+                  className="w-30 h-30 rounded-lg"
+                />
+              ) : (
+                message.message
+              )}
             </p>
 
             {/* Time for user messages (inside bubble) */}
