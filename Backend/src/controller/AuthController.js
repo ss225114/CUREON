@@ -17,8 +17,8 @@ export const register = async (req, res) => {
         .status(400)
         .json({ message: "Password must be atleast 6 chatracters" });
     }
-    // const user = await User.findOne({ email });
-    // if (user) return res.status(400).json({ message: "User already exists" });
+    const user = await User.findOne({ email });
+    if (user) return res.status(400).json({ message: "User already exists" });
 
     const otp = otpGen();
     const salt = await bcrypt.genSalt(10);
@@ -34,7 +34,7 @@ export const register = async (req, res) => {
       isActive: false,
     });
 
-    // await newUser.save();
+    await newUser.save();
     await otpMail(email, otp);
     res.status(201).json({
       email: email,
