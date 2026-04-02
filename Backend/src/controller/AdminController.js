@@ -1,6 +1,7 @@
 import { doctorVerificationMail } from "../lib/emailService.js";
 import { generateToken } from "../lib/jwtService.js";
 import Doctor from "../models/Doctor.js";
+import DoctorCluster from "../models/DoctorCluster.js";
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 
@@ -115,6 +116,11 @@ export const verifyDoctor = async (req, res) => {
 
       { new: true },
     );
+    const docCluster = new DoctorCluster({
+      docId: doc_id,
+      clusterId: 3
+    });
+    await docCluster.save();
     await doctorVerificationMail(doctor.email);
     return res.status(200).json({
       success: true,
