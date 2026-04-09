@@ -1,6 +1,11 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const Consultation = () => {
+  const navigate = useNavigate();
+  const openPage =()=>{ 
+    navigate("/all-specializations");
+  }
   const specialties = [
     {
       title: "Period doubts or Pregnancy",
@@ -94,7 +99,7 @@ const Consultation = () => {
 
         {/* CTA Button */}
         <div className="text-center mb-16">
-          <button
+          <button onClick={openPage}
             className="bg-[#293379] hover:bg-[#1f2b6b] dark:bg-blue-700 dark:hover:bg-blue-600 
                            text-white font-semibold py-4 px-12 rounded-lg transition-all duration-300 
                            transform hover:scale-105 shadow-lg hover:shadow-xl text-lg"
