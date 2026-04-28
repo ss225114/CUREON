@@ -5,6 +5,8 @@ from src.helper import download_embeddings
 from langchain_pinecone import PineconeVectorStore
 from groq import Groq
 from src.prompt import *
+from store_index import doctor_index
+from vectorizer import create_vector
 import os
 import re
 import numpy as np
@@ -153,6 +155,23 @@ def preprocess_image(image_path):
 
     return img_array
 
+def find_similar_filtered(doctor):
+    query_vector = create_vector(doctor)
+
+    results = doctor_index.query(
+        vector=query_vector,
+        top_k=5,
+        include_metadata=True,
+        filter={
+            "specialization": {"$in": doctor["specialization"]},
+            "clusterId": {"$eq": doctor["clusterId"]},
+            "isActive": {"$eq": True}
+        }
+    )
+
+    return results["matches"]
+
+# APIs
 @app.route("/get", methods=["GET", "POST"])
 def chat():
     if request.method == "POST":
@@ -181,6 +200,50 @@ def predict():
         "prediction": predicted_class,
         "confidence": confidence
     })
+
+@app.route("/rank", methods=["POST"])
+def rank_doctors():
+    data = request.json
+    doctors = data["doctors"]
+
+    if not doctors:
+        return jsonify([])
+
+    # 🔹 Use first doctor as query (or ideal profile later)
+    query_vector = create_vector(doctors[0])
+
+    results = doctor_index.query(
+        vector=query_vector,
+        top_k=5,
+        include_metadata=True,
+        filter={
+            "specialization": {"$in": data["specialization"]},
+            # "cluster": {"$eq": doctors[0]["cluster"]},
+            "isActive": {"$eq": True}
+        }
+    )
+
+    return jsonify([
+        {
+            "id": match["id"],
+            "score": match["score"]
+        }
+        for match in results["matches"]
+    ])
+
+@app.route("/similar", methods=["POST"])
+def similar():
+    doctor = request.json
+
+    results = find_similar_filtered(doctor)
+
+    return jsonify([
+        {
+            "id": match["id"],
+            "score": match["score"]
+        }
+        for match in results
+    ])
 
 if __name__ == "__main__":
     # print(tf.__version__)

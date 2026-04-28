@@ -1,6 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
-import { FaSearch, FaMapMarkerAlt, FaTimes, FaUserMd, FaBuilding } from "react-icons/fa";
+import {
+  FaSearch,
+  FaMapMarkerAlt,
+  FaTimes,
+  FaUserMd,
+  FaBuilding,
+} from "react-icons/fa";
 import { motion } from "framer-motion";
 import { useDoctors } from "../context/DoctorsContext";
 
@@ -36,14 +42,15 @@ const DropdownPortal = ({ children, buttonRef }) => {
 };
 
 export default function SearchBar({ onSearch }) {
-  const { searchDoctors, getSearchSuggestions } = useDoctors();
+  const { searchDoctors, getSearchSuggestions, updateFilters, setSearchQuery } =
+    useDoctors();
   const [query, setQuery] = useState("");
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
   const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
-  const [location, setLocation] = useState("Bangalore");
-  const [tempLocation, setTempLocation] = useState("Bangalore");
+  const [location, setLocation] = useState("Kolkata");
+  const [tempLocation, setTempLocation] = useState("Kolkata");
   const [suggestions, setSuggestions] = useState([]);
-  
+
   const locationButtonRef = useRef(null);
   const dropdownRef = useRef(null);
   const searchInputRef = useRef(null);
@@ -58,6 +65,8 @@ export default function SearchBar({ onSearch }) {
     "Kolkata",
     "Pune",
     "Ahmedabad",
+    "Patna",
+    "Others",
   ];
 
   // Handle click outside to close dropdowns
@@ -72,7 +81,7 @@ export default function SearchBar({ onSearch }) {
       ) {
         setShowLocationDropdown(false);
       }
-      
+
       // Close search suggestions
       if (
         searchInputRef.current &&
@@ -117,20 +126,62 @@ export default function SearchBar({ onSearch }) {
     }
   }, [query, getSearchSuggestions]);
 
+  const detectSearchType = (query) => {
+    const q = query.toLowerCase();
+
+    // If starts with "dr" → name search
+    if (q.startsWith("dr")) {
+      return { name: query,
+        useSimilarity: true,
+       };
+    }
+
+    // // If contains clinic/hospital keywords
+    // if (
+    //   q.includes("clinic") ||
+    //   q.includes("hospital") ||
+    //   q.includes("center")
+    // ) {
+    //   return { hospital: query };
+    // }
+
+    // Otherwise assume specialization
+    return { specialization: query.toUpperCase() };
+  };
+
+  // const handleSearch = (e) => {
+  //   e.preventDefault();
+  //   if (query.trim()) {
+  //     setSearchQuery(query.toUpperCase());
+  //     searchDoctors(query.toUpperCase());
+  //     setShowSearchSuggestions(false);
+  //     if (onSearch) {
+  //       onSearch(query.toUpperCase());
+  //     }
+  //   }
+  // };
+
+  // Handle Enter key in search input
+
   const handleSearch = (e) => {
     e.preventDefault();
-    if (query.trim()) {
-      searchDoctors(query);
-      setShowSearchSuggestions(false);
-      if (onSearch) {
-        onSearch(query);
-      }
+
+    if (!query.trim()) return;
+
+    const searchPayload = detectSearchType(query);
+
+    updateFilters(searchPayload); // 🔥 THIS IS KEY
+    // searchDoctors(query);
+
+    setShowSearchSuggestions(false);
+
+    if (onSearch) {
+      onSearch(query);
     }
   };
 
-  // Handle Enter key in search input
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleSearch(e);
     }
   };
@@ -139,6 +190,7 @@ export default function SearchBar({ onSearch }) {
     setLocation(loc);
     setTempLocation(loc);
     setShowLocationDropdown(false);
+    updateFilters({ location: loc });
   };
 
   const handleQuickSearch = (specialty) => {
@@ -192,7 +244,7 @@ export default function SearchBar({ onSearch }) {
                   onChange={handleInputChange}
                   onKeyDown={handleKeyDown}
                   onFocus={() => query.trim() && setShowSearchSuggestions(true)}
-                  placeholder="Search doctors, specialties, clinics..."
+                  placeholder="Search doctors or specialties"
                   className="w-full pl-12 pr-10 py-4 bg-gray-50 dark:bg-gray-700 
                            text-gray-800 dark:text-white 
                            placeholder-gray-500 dark:placeholder-gray-400 

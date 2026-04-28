@@ -4,7 +4,7 @@ import DoctorCard from "./DoctorCard";
 import { FaSearch, FaExclamationTriangle, FaSyncAlt } from "react-icons/fa";
 
 export default function SearchResults() {
-  const { doctors, loading, error, searchQuery, refreshDoctors } = useDoctors();
+  const { doctors, loading, error, searchQuery, refreshDoctors, filters } = useDoctors();
 
   if (loading) {
     return (
@@ -52,7 +52,7 @@ export default function SearchResults() {
               : "Recommended Doctors"}
           </h2>
           <p className="text-gray-600 dark:text-gray-400 mt-2">
-            {doctors.length} doctors found in Bangalore
+            {doctors.length} doctors found {filters.location === "Others" ? "" : "in " + filters.location}
           </p>
         </div>
 

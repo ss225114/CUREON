@@ -10,18 +10,18 @@ import {
 import { useProfile } from "../context/profileContext";
 
 export default function ProfileHeader() {
-  const { doctorProfile, setIsEditing } = useProfile();
+  const { doctorProfile, doctorData, setIsEditing } = useProfile();
 
-  if (!doctorProfile) return null;
+  // if (!doctorProfile) return null;
 
-  const name = doctorProfile?.personalInfo?.fullName || "Doctor";
+  const name = doctorData?.fullName || "Doctor";
   const profileImage = doctorProfile?.personalInfo?.profileImage;
 
   // Extract initials from full name
   const initials = name
     .split(" ")
     .filter(Boolean)
-    .map((n) => n[0])
+    .map((n) => n[3])
     .join("")
     .toUpperCase()
     .slice(0, 2);
@@ -63,25 +63,25 @@ export default function ProfileHeader() {
               <div className="flex items-center gap-3 mt-2">
                 <span className="px-3 py-1 bg-gradient-to-r from-[#293379] to-[#3a4a9c] text-white rounded-full text-sm font-medium flex items-center gap-1">
                   <FaBriefcaseMedical className="h-3 w-3" />
-                  {doctorProfile?.professionalInfo?.specialization?.[0] ||
+                  {doctorData?.specialization?.[0] ||
                     "Doctor"}
                 </span>
                 <span className="px-3 py-1 bg-gradient-to-r from-[#016b61] to-[#018377] text-white rounded-full text-sm font-medium">
-                  {doctorProfile?.professionalInfo?.degree || "MD"}
+                  {doctorData?.degree || "MD"}
                 </span>
               </div>
               <div className="flex items-center gap-4 mt-3">
                 <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
                   <FaMapMarkerAlt className="h-4 w-4" />
                   <span>
-                    {doctorProfile?.personalInfo?.address?.split(",")[0] ||
+                    {doctorProfile?.address?.split(",")[0] ||
                       "Location not set"}
                   </span>
                 </div>
                 <div className="flex items-center gap-1 text-amber-600 dark:text-amber-400">
                   <FaStar className="h-4 w-4" />
                   <span className="font-semibold">
-                    {doctorProfile?.statistics?.averageRating || "4.8"}
+                    {doctorData?.rating}
                   </span>
                   <span className="text-gray-600 dark:text-gray-400">
                     ({doctorProfile?.statistics?.totalPatients || "0"} patients)
@@ -121,7 +121,7 @@ export default function ProfileHeader() {
               },
               {
                 label: "Consultation Fee",
-                value: doctorProfile?.professionalInfo?.consultationFee || "$0",
+                value: "₹" + doctorData?.consultationFee || "₹0",
               },
             ].map((stat, index) => (
               <div key={index} className="text-center">

@@ -3,38 +3,33 @@ import { FaUser, FaEnvelope, FaPhone, FaBirthdayCake, FaMap, FaVenusMars } from 
 import { useProfile } from "../context/profileContext";
 
 export default function ProfileInfoCard() {
-  const { doctorProfile } = useProfile();
+  const { doctorProfile, doctorData } = useProfile();
 
   const personalInfo = [
     {
       icon: <FaUser className="h-4 w-4" />,
       label: "Full Name",
-      value: doctorProfile?.personalInfo?.fullName,
+      value: doctorData?.fullName,
     },
     {
       icon: <FaEnvelope className="h-4 w-4" />,
       label: "Email",
-      value: doctorProfile?.personalInfo?.email,
+      value: doctorData?.email,
     },
     {
       icon: <FaPhone className="h-4 w-4" />,
       label: "Phone",
-      value: doctorProfile?.personalInfo?.phone,
+      value: doctorProfile? doctorProfile.phone : "_",
     },
     {
       icon: <FaBirthdayCake className="h-4 w-4" />,
       label: "Date of Birth",
-      value: new Date(doctorProfile?.personalInfo?.dateOfBirth).toLocaleDateString(),
-    },
-    {
-      icon: <FaVenusMars className="h-4 w-4" />,
-      label: "Gender",
-      value: doctorProfile?.personalInfo?.gender,
+      value: doctorProfile ? doctorProfile.personalInfo.dateOfBirth : "_",
     },
     {
       icon: <FaMap className="h-4 w-4" />,
       label: "Address",
-      value: doctorProfile?.personalInfo?.address,
+      value: doctorProfile ? doctorProfile?.personalInfo?.address : "_" ,
     },
   ];
 

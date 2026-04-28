@@ -173,7 +173,7 @@ export default function DoctorsHeader() {
           <div className="inline-flex items-center gap-2 px-6 py-3 bg-white/50 dark:bg-gray-800/50 backdrop-blur-md rounded-full mb-8">
             <FaMapMarkerAlt className="h-5 w-5 text-[#016b61] dark:text-green-400" />
             <span className="font-semibold text-gray-800 dark:text-gray-200">
-              Bangalore
+              Kolkata
             </span>
           </div>
 

@@ -47,6 +47,35 @@
 //     // You can use Web Speech API or a library for voice recording
 //   };
 
+// const handleImageSubmit = async () => {
+//   if (!selectedFile) return;
+
+//   setIsUploading(true);
+//   try {
+//     // Create form data for image upload
+//     const formData = new FormData();
+//     formData.append("image", selectedFile);
+
+//     // You'll need to create this endpoint to handle image uploads
+//     // or modify your existing /predict endpoint to accept file uploads
+//     const response = await apiClient.post("/upload-image", formData, {
+//       headers: {
+//         "Content-Type": "multipart/form-data",
+//       },
+//     });
+
+//     // Send the image path to the prediction endpoint
+//     await sendImageForPrediction(response.data.image_path);
+
+//     // Clear the selected file after successful upload
+//     clearSelectedFile();
+//   } catch (error) {
+//     console.error("Error uploading image:", error);
+//   } finally {
+//     setIsUploading(false);
+//   }
+// };
+
 //   return (
 //     <div className="px-4 pb-6 pt-2">
 //       <form onSubmit={handleSubmit} className="relative max-w-4xl mx-auto">
@@ -145,35 +174,6 @@ const ChatInput = () => {
     }
   };
 
-  // const handleImageSubmit = async () => {
-  //   if (!selectedFile) return;
-
-  //   setIsUploading(true);
-  //   try {
-  //     // Create form data for image upload
-  //     const formData = new FormData();
-  //     formData.append("image", selectedFile);
-
-  //     // You'll need to create this endpoint to handle image uploads
-  //     // or modify your existing /predict endpoint to accept file uploads
-  //     const response = await apiClient.post("/upload-image", formData, {
-  //       headers: {
-  //         "Content-Type": "multipart/form-data",
-  //       },
-  //     });
-
-  //     // Send the image path to the prediction endpoint
-  //     await sendImageForPrediction(response.data.image_path);
-
-  //     // Clear the selected file after successful upload
-  //     clearSelectedFile();
-  //   } catch (error) {
-  //     console.error("Error uploading image:", error);
-  //   } finally {
-  //     setIsUploading(false);
-  //   }
-  // };
-
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -213,8 +213,40 @@ const ChatInput = () => {
   };
 
   const handleVoiceRecord = () => {
-    // Implement voice recording logic here
-    console.log("Voice recording started");
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      alert("Speech Recognition not supported in this browser");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+
+    recognition.lang = "en-US";
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.start();
+
+    recognition.onstart = () => {
+      console.log("Listening...");
+    };
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      console.log("Voice Input:", transcript);
+
+      setQuery(transcript); // puts speech text inside input box
+    };
+
+    recognition.onerror = (event) => {
+      console.error("Speech recognition error:", event.error);
+    };
+
+    recognition.onend = () => {
+      console.log("Stopped listening");
+    };
   };
 
   return (

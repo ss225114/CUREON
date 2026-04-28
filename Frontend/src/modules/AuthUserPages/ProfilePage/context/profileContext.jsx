@@ -13,20 +13,20 @@ export const useProfile = () => {
   return context;
 };
 
-const parseUserData = () => {
-  try {
-    if (user) {
-      if (typeof user === "string") {
-        return JSON.parse(user);
-      }
-      return user;
-    }
-    return null;
-  } catch (err) {
-    console.error("Error parsing user data:", err);
-    return null;
-  }
-};
+// const parseUserData = () => {
+//   try {
+//     if (user) {
+//       if (typeof user === "string") {
+//         return JSON.parse(user);
+//       }
+//       return user;
+//     }
+//     return null;
+//   } catch (err) {
+//     console.error("Error parsing user data:", err);
+//     return null;
+//   }
+// };
 
 export const ProfileProvider = ({ children }) => {
   const [profile, setProfile] = useState(null);

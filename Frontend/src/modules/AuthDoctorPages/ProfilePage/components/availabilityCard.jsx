@@ -164,13 +164,13 @@ export default function AvailabilityCard() {
     // This is a mock function - you would get this from your actual data
     // For now, return different hours for different days as an example
     const hoursMap = {
-      Monday: "9:00 AM - 5:00 PM",
-      Tuesday: "9:00 AM - 5:00 PM",
-      Wednesday: "10:00 AM - 6:00 PM",
-      Thursday: "9:00 AM - 5:00 PM",
-      Friday: "9:00 AM - 4:00 PM",
-      Saturday: "9:00 AM - 1:00 PM",
-      Sunday: "Closed",
+      // Monday: "9:00 AM - 5:00 PM",
+      // Tuesday: "9:00 AM - 5:00 PM",
+      // Wednesday: "10:00 AM - 6:00 PM",
+      // Thursday: "9:00 AM - 5:00 PM",
+      // Friday: "9:00 AM - 4:00 PM",
+      // Saturday: "9:00 AM - 1:00 PM",
+      // Sunday: "Closed",
     };
     return hoursMap[day] || "Not available";
   };
