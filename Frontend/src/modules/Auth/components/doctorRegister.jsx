@@ -161,6 +161,7 @@ export default function DoctorPage() {
   const [form, setForm] = useState({
     fullName: "",
     email: "",
+    phone: "",
     password: "",
     degree: "",
     specialization: [],
@@ -184,6 +185,11 @@ export default function DoctorPage() {
     if (!form.email.trim()) newErrors.email = "Email is required";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
       newErrors.email = "Invalid email format";
+
+    if (!form.phone) newErrors.phone = "Phone number is required";
+    else if (!/^[6-9]\d{9}$/.test(form.phone))
+      newErrors.phone =
+        "Invalid phone number (must be 10 digits starting with 6-9)";
 
     if (!form.degree) newErrors.degree = "Degree is required";
     if (form.specialization.length === 0)
@@ -307,6 +313,30 @@ export default function DoctorPage() {
                     {errors.email && (
                       <p className="text-red-500 text-sm mt-1">
                         {errors.email}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-3">
+                    <Label
+                      htmlFor="phone"
+                      className="font-medium text-gray-700 dark:text-gray-300"
+                    >
+                      Phone Number *
+                    </Label>
+                    <Input
+                      id="phone"
+                      type="text"
+                      placeholder="XXXX XXX XXX"
+                      value={form.phone}
+                      onChange={(e) =>
+                        setForm({ ...form, phone: e.target.value })
+                      }
+                      className="bg-white/70 dark:bg-gray-700/70 border-gray-300 dark:border-gray-600 h-12"
+                    />
+                    {errors.phone && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.phone}
                       </p>
                     )}
                   </div>

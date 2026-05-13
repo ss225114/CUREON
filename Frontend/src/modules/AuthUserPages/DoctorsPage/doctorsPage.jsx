@@ -4,6 +4,8 @@ import { DoctorsProvider } from "./context/DoctorsContext";
 import DoctorsHeader from "./components/DoctorsHeader";
 import SearchBar from "./components/SearchBar";
 import SearchResults from "./components/SearchResults";
+import FiltersPanel from "./components/filtersPanel";
+import SortOptions from "./components/sortOptions";
 
 // Main Content Component
 function DoctorsContent() {
@@ -23,9 +25,37 @@ function DoctorsContent() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-50 to-blue-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Hero Section */}
-      <div className="relative overflow-hidden pb-8">
+      <div className="relative overflow-hidden pb-10">
         <DoctorsHeader />
-        <SearchBar onSearch={handleSearch} />
+
+        {/* Search + Filters Container */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+          {/* Search Bar */}
+          <SearchBar onSearch={handleSearch} />
+
+          {/* 🔹 Filters + Sort inside hero */}
+          <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Filters Panel */}
+            <div className="lg:col-span-2">
+              <div
+                className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md 
+                        rounded-2xl p-4 shadow-md border border-gray-200 dark:border-gray-700"
+              >
+                <FiltersPanel />
+              </div>
+            </div>
+
+            {/* Sort Options */}
+            <div>
+              <div
+                className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md 
+                        rounded-2xl p-4 shadow-md border border-gray-200 dark:border-gray-700"
+              >
+                <SortOptions />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Results Section */}
@@ -257,4 +287,11 @@ export default function DoctorsPage() {
       <DoctorsContent />
     </DoctorsProvider>
   );
+}
+
+{
+  /* <div className="relative overflow-hidden pb-8">
+        <DoctorsHeader />
+        <SearchBar onSearch={handleSearch} />
+      </div> */
 }

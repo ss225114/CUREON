@@ -6,7 +6,9 @@ import authRoutes from "./routes/AuthRoutes.js";
 import chatRoutes from "./routes/ChatRoutes.js";
 import conversationRoutes from "./routes/ConversationRoutes.js";
 import userRoutes from "./routes/UserRoutes.js";
+import doctorRoutes from "./routes/DoctorRoutes.js";
 import adminRoutes from "./routes/AdminRoutes.js";
+import featureRoutes from "./routes/FeatureRoutes.js";
 import path from "path";
 
 dotenv.config();
@@ -29,7 +31,9 @@ app.use("/auth", authRoutes);
 app.use("/chat", chatRoutes);
 app.use("/message", conversationRoutes);
 app.use("/user", userRoutes);
+app.use("/doctor", doctorRoutes);
 app.use("/admin", adminRoutes);
+app.use("/feature", featureRoutes);
 
 const PORT = process.env.PORT || 5000;
 

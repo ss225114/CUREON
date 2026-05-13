@@ -3,7 +3,7 @@ import { FaGraduationCap, FaHospital, FaCertificate, FaLanguage, FaStethoscope }
 import { useProfile } from "../context/profileContext";
 
 export default function ProfessionalInfoCard() {
-  const { doctorProfile } = useProfile();
+  const { doctorProfile, doctorData } = useProfile();
 
   return (
     <Card className="border border-gray-200 dark:border-gray-800 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
@@ -18,7 +18,7 @@ export default function ProfessionalInfoCard() {
         <div>
           <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Specialization</h3>
           <div className="flex flex-wrap gap-2">
-            {doctorProfile?.professionalInfo?.specialization?.map((spec, index) => (
+            {doctorData?.specialization?.map((spec, index) => (
               <span
                 key={index}
                 className="px-3 py-2 bg-gradient-to-r from-[#293379]/10 to-[#016b61]/10 text-[#293379] dark:text-blue-400 rounded-lg font-medium border border-[#293379]/20 dark:border-blue-600/20"

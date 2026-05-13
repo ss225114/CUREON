@@ -7,6 +7,10 @@ const doctorSchema = mongoose.Schema(
       required: true,
       unique: true,
     },
+    phone: {
+      type: String,
+      default: ""
+    },
     fullName: {
       type: String,
       required: true,
@@ -85,15 +89,6 @@ const doctorSchema = mongoose.Schema(
       required: true,
       minlength: 6,
     },
-    // token: {
-    //   type: String,
-    //   default: "",
-    // },
-    // otpGeneratedTime: {
-    //   type: Date,
-    // },
-
-    // Rating fields
     rating: {
       type: Number,
       default: 0,
@@ -106,6 +101,26 @@ const doctorSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    clusterId: {
+      type: Number,
+      default: 0,
+    },
+    consultationFee: {
+      type: Number,
+      default: 100,
+    },
+    hospital: {
+      type: String,
+      default: ""
+    },
+    gender: {
+      type: String,
+      default: ""
+    },
+    location: {
+      type: String,
+      default: ""
+    }
   },
   { timestamps: true },
 );

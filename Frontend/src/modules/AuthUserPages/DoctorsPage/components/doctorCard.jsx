@@ -1,19 +1,44 @@
-import { FaStar, FaUser, FaMapMarkerAlt, FaBuilding, FaCalendar, FaPhone, FaWhatsapp, FaClock } from "react-icons/fa";
+import {
+  FaStar,
+  FaUser,
+  FaMapMarkerAlt,
+  FaBuilding,
+  FaCalendar,
+  FaPhone,
+  FaWhatsapp,
+  FaClock,
+} from "react-icons/fa";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 export default function DoctorCard({ doctor }) {
+  console.log(doctor);
+
+  const initials = doctor?.fullName
+    .split(" ")
+    .filter(Boolean)
+    .map((n) => n[3])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-xl transition-all duration-300">
       <div className="p-6">
         <div className="flex flex-col md:flex-row gap-6">
           {/* Doctor Image */}
           <div className="flex-shrink-0">
-            <div className="h-40 w-40 rounded-xl overflow-hidden border-4 border-white dark:border-gray-700 shadow-lg">
-              <img
+            <div className="h-40 w-40 rounded-xl overflow-hidden border-4 border-white">
+              {/* <img
                 src={doctor.image}
                 alt={doctor.name}
                 className="h-full w-full object-cover"
-              />
+              /> */}
+              <Avatar className="h-full w-full">
+                <AvatarFallback className="text-3xl font-bold bg-gradient-to-br from-[#293379] to-[#016b61] text-white">
+                  {initials}
+                </AvatarFallback>
+              </Avatar>
             </div>
           </div>
 
@@ -26,16 +51,43 @@ export default function DoctorCard({ doctor }) {
                   {doctor.name}
                 </h3>
                 <p className="text-lg text-gray-600 dark:text-gray-300 mb-2">
-                  {doctor.specialization}
+                  {(Array.isArray(doctor.specialization)
+                    ? doctor.specialization
+                    : [doctor.specialization]
+                  )
+                    .slice(0, 3) // show only 3
+                    .map((spec, index) => (
+                      <span
+                        key={index}
+                        className="px-3 py-1 text-sm font-medium rounded-full
+                 bg-gradient-to-r from-blue-50 to-indigo-50
+                 dark:from-blue-900/20 dark:to-indigo-900/20
+                 text-[#293379] dark:text-blue-400
+                 border border-blue-200 dark:border-blue-800"
+                      >
+                        {spec.replace(/_/g, " ")}
+                      </span>
+                    ))}
+
+                  {/* +N more */}
+                  {Array.isArray(doctor.specialization) &&
+                    doctor.specialization.length > 3 && (
+                      <span
+                        className="px-3 py-1 text-sm font-medium rounded-full
+                     bg-gray-100 dark:bg-gray-700
+                     text-gray-600 dark:text-gray-300"
+                      >
+                        +{doctor.specialization.length - 3} more
+                      </span>
+                    )}
                 </p>
                 <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
                   <span className="flex items-center gap-1">
-                    <FaUser className="h-4 w-4" />
-                    {doctor.gender}
+                    {doctor.fullName}
                   </span>
                   <span className="flex items-center gap-1">
-                    <FaClock className="h-4 w-4" />
-                    {doctor.experience}
+                    <FaUser className="h-4 w-4" />
+                    {doctor.gender}
                   </span>
                 </div>
               </div>
@@ -46,12 +98,9 @@ export default function DoctorCard({ doctor }) {
                   <div className="flex items-center gap-1">
                     <FaStar className="h-5 w-5 text-amber-500" />
                     <span className="text-2xl font-bold text-gray-900 dark:text-white">
-                      {doctor.rating}%
+                      {doctor.rating}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {doctor.patientStories.toLocaleString()} Patient Stories
-                  </p>
                 </div>
               </div>
             </div>
@@ -62,10 +111,10 @@ export default function DoctorCard({ doctor }) {
                 <FaMapMarkerAlt className="h-5 w-5 text-[#016b61] dark:text-green-400 mt-1" />
                 <div>
                   <p className="font-semibold text-gray-800 dark:text-gray-200">
-                    {doctor.location}
+                    {doctor.stateMedicalCouncil}
                   </p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {doctor.clinic}
+                    {doctor.hospital}
                   </p>
                 </div>
               </div>
@@ -74,10 +123,7 @@ export default function DoctorCard({ doctor }) {
                 <FaBuilding className="h-5 w-5 text-[#293379] dark:text-blue-400 mt-1" />
                 <div>
                   <p className="font-semibold text-gray-800 dark:text-gray-200">
-                    {doctor.availability}
-                  </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Consultation fee at clinic
+                    Availability
                   </p>
                 </div>
               </div>
@@ -87,7 +133,7 @@ export default function DoctorCard({ doctor }) {
             <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
               <div>
                 <p className="text-3xl font-bold text-[#293379] dark:text-white">
-                  ₹{doctor.fee}
+                  ₹{doctor.consultationFee}
                 </p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   Consultation fee at clinic
@@ -95,13 +141,11 @@ export default function DoctorCard({ doctor }) {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-3">
-                <Button
-                  className="bg-gradient-to-r from-[#293379] to-[#016b61] hover:from-[#3a4a9c] hover:to-[#027d70] text-white"
-                >
+                <Button className="bg-gradient-to-r from-[#293379] to-[#016b61] hover:from-[#3a4a9c] hover:to-[#027d70] text-white">
                   <FaCalendar className="mr-2" />
                   Book Clinic Visit
                 </Button>
-                
+
                 <Button
                   variant="outline"
                   className="border-[#293379] text-[#293379] dark:border-blue-400 dark:text-blue-400 hover:bg-[#293379]/10 dark:hover:bg-blue-900/20"
@@ -109,7 +153,7 @@ export default function DoctorCard({ doctor }) {
                   <FaPhone className="mr-2" />
                   Contact Clinic
                 </Button>
-                
+
                 <Button
                   variant="outline"
                   className="border-green-500 text-green-600 dark:border-green-400 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20"
@@ -125,7 +169,8 @@ export default function DoctorCard({ doctor }) {
               <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
                 <span className="text-green-600 dark:text-green-400 font-semibold">
                   No Booking Fee
-                </span> • Free cancellation until 24 hours before appointment
+                </span>{" "}
+                • Free cancellation until 24 hours before appointment
               </p>
             </div>
           </div>

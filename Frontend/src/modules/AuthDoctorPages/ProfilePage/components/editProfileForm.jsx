@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,49 +14,54 @@ import { FaTimes, FaSave, FaPlus, FaTrash } from "react-icons/fa";
 import { useProfile } from "../context/profileContext";
 
 export default function EditProfileForm() {
-  const { doctorProfile, updateProfile, isEditing, setIsEditing } =
+  const { doctorProfile, doctorData, updateProfile, isEditing, setIsEditing } =
     useProfile();
 
   // Initialize form data with doctorProfile
   const [formData, setFormData] = useState(() => ({
     personalInfo: {
-      dateOfBirth: doctorProfile?.personalInfo?.dateOfBirth || "",
-      address: doctorProfile?.personalInfo?.address || "",
+      dateOfBirth: doctorProfile?.dateOfBirth || "",
+      address: doctorProfile?.address || "",
     },
     professionalInfo: {
-      hospital: doctorProfile?.professionalInfo?.hospital || "",
-      consultationFee: doctorProfile?.professionalInfo?.consultationFee || "",
       languages: [...(doctorProfile?.professionalInfo?.languages || [])],
       bio: doctorProfile?.professionalInfo?.bio || "",
     },
     education: [...(doctorProfile?.education || [])],
     experience: [...(doctorProfile?.experience || [])],
     certifications: [...(doctorProfile?.certifications || [])],
-    availability: {
-      workingHours:
-        doctorProfile?.availability?.workingHours || "9:00 AM - 5:00 PM",
-      emergencyContact: doctorProfile?.availability?.emergencyContact || "",
-      workingDays: [
-        { day: "Monday", hours: "9:00 AM - 5:00 PM", enabled: true },
-        { day: "Tuesday", hours: "9:00 AM - 5:00 PM", enabled: true },
-        { day: "Wednesday", hours: "9:00 AM - 5:00 PM", enabled: true },
-        { day: "Thursday", hours: "9:00 AM - 5:00 PM", enabled: true },
-        { day: "Friday", hours: "9:00 AM - 5:00 PM", enabled: true },
-        { day: "Saturday", hours: "9:00 AM - 1:00 PM", enabled: false },
-        { day: "Sunday", hours: "", enabled: false },
-      ],
-    },
   }));
+
+  const [docFormData, setDocFormData] = useState(() => ({
+    hospital: doctorData?.hospital || "",
+    consultationFee: doctorData?.consultationFee || "",
+  }));
+
+  useEffect(() => {
+  if (doctorData) {
+    setDocFormData({
+      hospital: doctorData.hospital || "",
+      consultationFee: doctorData.consultationFee || "",
+    });
+  }
+}, [doctorData]);
 
   // Handle input changes
   const handleChange = (section, field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [section]: {
-        ...prev[section],
+    if (section.length !== 0) {
+      setFormData((prev) => ({
+        ...prev,
+        [section]: {
+          ...prev[section],
+          [field]: value,
+        },
+      }));
+    } else {
+      setDocFormData((prev) => ({
+        ...prev,
         [field]: value,
-      },
-    }));
+      }));
+    }
   };
 
   // Handle nested object changes
@@ -102,27 +107,27 @@ export default function EditProfileForm() {
   };
 
   // Handle working day changes
-  const handleWorkingDayChange = (index, field, value) => {
-    setFormData((prev) => {
-      const newDays = [...prev.availability.workingDays];
-      if (field === "enabled") {
-        newDays[index] = {
-          ...newDays[index],
-          enabled: value,
-          hours: value ? newDays[index].hours : "",
-        };
-      } else {
-        newDays[index] = { ...newDays[index], [field]: value };
-      }
-      return {
-        ...prev,
-        availability: {
-          ...prev.availability,
-          workingDays: newDays,
-        },
-      };
-    });
-  };
+  // const handleWorkingDayChange = (index, field, value) => {
+  //   setFormData((prev) => {
+  //     const newDays = [...prev.availability.workingDays];
+  //     if (field === "enabled") {
+  //       newDays[index] = {
+  //         ...newDays[index],
+  //         enabled: value,
+  //         hours: value ? newDays[index].hours : "",
+  //       };
+  //     } else {
+  //       newDays[index] = { ...newDays[index], [field]: value };
+  //     }
+  //     return {
+  //       ...prev,
+  //       availability: {
+  //         ...prev.availability,
+  //         workingDays: newDays,
+  //       },
+  //     };
+  //   });
+  // };
 
   // Handle languages (comma separated)
   const handleLanguagesChange = (value) => {
@@ -136,36 +141,33 @@ export default function EditProfileForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Filter enabled working days
-    const enabledWorkingDays = formData.availability.workingDays
-      .filter((day) => day.enabled)
-      .map((day) => day.day);
-
     const updatedProfile = {
       personalInfo: {
-        ...doctorProfile.personalInfo,
+        ...doctorProfile?.personalInfo,
         ...formData.personalInfo,
       },
       professionalInfo: {
-        ...doctorProfile.professionalInfo,
+        ...doctorProfile?.professionalInfo,
         ...formData.professionalInfo,
       },
       education: formData.education,
       experience: formData.experience,
       certifications: formData.certifications,
-      availability: {
-        ...doctorProfile.availability,
-        workingHours: formData.availability.workingHours,
-        emergencyContact: formData.availability.emergencyContact,
-        workingDays: enabledWorkingDays,
-      },
     };
 
-    updateProfile(updatedProfile);
+    console.log(updatedProfile);
+    
+
+    const updatedDoctorData = {
+      hospital: docFormData.hospital,
+      consultationFee: docFormData.consultationFee,
+    };
+
+    updateProfile(updatedProfile, updatedDoctorData);
     setIsEditing(false);
   };
 
-  if (!doctorProfile) return null;
+  // if (!doctorProfile) return null;
 
   return (
     <Dialog open={isEditing} onOpenChange={setIsEditing}>
@@ -200,7 +202,7 @@ export default function EditProfileForm() {
                   Full Name
                 </Label>
                 <div className="text-gray-900 dark:text-white font-medium mt-1">
-                  {doctorProfile?.personalInfo?.fullName}
+                  {doctorData?.fullName}
                 </div>
               </div>
               <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
@@ -208,7 +210,7 @@ export default function EditProfileForm() {
                   Email
                 </Label>
                 <div className="text-gray-900 dark:text-white font-medium mt-1">
-                  {doctorProfile?.personalInfo?.email}
+                  {doctorData?.email}
                 </div>
               </div>
               <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
@@ -216,7 +218,7 @@ export default function EditProfileForm() {
                   Phone Number
                 </Label>
                 <div className="text-gray-900 dark:text-white font-medium mt-1">
-                  {doctorProfile?.personalInfo?.phone}
+                  {doctorData ? doctorData?.phone : ""}
                 </div>
               </div>
             </div>
@@ -261,7 +263,7 @@ export default function EditProfileForm() {
                   Degree
                 </Label>
                 <div className="text-gray-900 dark:text-white font-medium mt-1">
-                  {doctorProfile?.professionalInfo?.degree}
+                  {doctorData?.degree}
                 </div>
               </div>
               <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
@@ -269,7 +271,7 @@ export default function EditProfileForm() {
                   License Number
                 </Label>
                 <div className="text-gray-900 dark:text-white font-medium mt-1">
-                  {doctorProfile?.professionalInfo?.doctorLicenseNo}
+                  {doctorData?.doctorLicenseNo}
                 </div>
               </div>
               <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
@@ -277,7 +279,7 @@ export default function EditProfileForm() {
                   Specializations
                 </Label>
                 <div className="text-gray-900 dark:text-white font-medium mt-1">
-                  {doctorProfile?.professionalInfo?.specialization?.join(", ")}
+                  {doctorData?.specialization?.join(", ")}
                 </div>
               </div>
             </div>
@@ -287,10 +289,8 @@ export default function EditProfileForm() {
                 <Label htmlFor="hospital">Hospital/Clinic</Label>
                 <Input
                   id="hospital"
-                  value={formData.professionalInfo.hospital}
-                  onChange={(e) =>
-                    handleChange("professionalInfo", "hospital", e.target.value)
-                  }
+                  value={docFormData?.hospital}
+                  onChange={(e) => handleChange("", "hospital", e.target.value)}
                   className="mt-1"
                 />
               </div>
@@ -298,13 +298,9 @@ export default function EditProfileForm() {
                 <Label htmlFor="consultationFee">Consultation Fee</Label>
                 <Input
                   id="consultationFee"
-                  value={formData.professionalInfo.consultationFee}
+                  value={docFormData?.consultationFee}
                   onChange={(e) =>
-                    handleChange(
-                      "professionalInfo",
-                      "consultationFee",
-                      e.target.value,
-                    )
+                    handleChange("", "consultationFee", e.target.value)
                   }
                   className="mt-1"
                 />
@@ -695,126 +691,6 @@ export default function EditProfileForm() {
             ))}
           </div>
 
-          {/* Availability */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-[#293379] dark:text-white border-b pb-2">
-              Availability Settings
-            </h3>
-
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="emergencyContact">
-                    Emergency Contact Number
-                  </Label>
-                  <Input
-                    id="emergencyContact"
-                    value={formData.availability.emergencyContact}
-                    onChange={(e) =>
-                      handleNestedChange(
-                        "availability",
-                        "",
-                        "emergencyContact",
-                        e.target.value,
-                      )
-                    }
-                    placeholder="+1 (555) 123-4567"
-                    className="mt-1"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="defaultWorkingHours">
-                    Default Working Hours
-                  </Label>
-                  <Input
-                    id="defaultWorkingHours"
-                    value={formData.availability.workingHours}
-                    onChange={(e) =>
-                      handleNestedChange(
-                        "availability",
-                        "",
-                        "workingHours",
-                        e.target.value,
-                      )
-                    }
-                    placeholder="9:00 AM - 5:00 PM"
-                    className="mt-1"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <Label>Working Days Schedule</Label>
-                {formData.availability.workingDays.map((day, index) => (
-                  <div
-                    key={day.day}
-                    className="flex items-center gap-4 p-3 border border-gray-200 dark:border-gray-800 rounded-lg"
-                  >
-                    <div className="flex items-center gap-2 w-32">
-                      <input
-                        type="checkbox"
-                        id={`day-${index}`}
-                        checked={day.enabled}
-                        onChange={(e) =>
-                          handleWorkingDayChange(
-                            index,
-                            "enabled",
-                            e.target.checked,
-                          )
-                        }
-                        disabled={day.day === "Sunday"}
-                        className="h-4 w-4 text-[#293379] dark:text-blue-600 rounded focus:ring-[#293379] dark:focus:ring-blue-600"
-                      />
-                      <Label
-                        htmlFor={`day-${index}`}
-                        className={`font-medium ${day.enabled ? "text-gray-900 dark:text-white" : "text-gray-500 dark:text-gray-500"}`}
-                      >
-                        {day.day}
-                      </Label>
-                    </div>
-
-                    {day.enabled ? (
-                      <>
-                        <Input
-                          value={day.hours}
-                          onChange={(e) =>
-                            handleWorkingDayChange(
-                              index,
-                              "hours",
-                              e.target.value,
-                            )
-                          }
-                          placeholder={
-                            day.day === "Saturday"
-                              ? "e.g., 9:00 AM - 1:00 PM"
-                              : "e.g., 9:00 AM - 5:00 PM"
-                          }
-                          className="flex-1"
-                        />
-                        {day.day === "Saturday" && (
-                          <span className="text-xs text-amber-600 dark:text-amber-400 whitespace-nowrap">
-                            Weekend hours
-                          </span>
-                        )}
-                      </>
-                    ) : (
-                      <span className="text-gray-500 dark:text-gray-400 italic">
-                        {day.day === "Sunday" ? "Clinic closed" : "Not working"}
-                      </span>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                <p className="text-sm text-blue-800 dark:text-blue-300">
-                  <strong>Note:</strong> You can set different working hours for
-                  each day. Sunday is always off.
-                </p>
-              </div>
-            </div>
-          </div>
-
           <DialogFooter className="pt-6 border-t border-gray-200 dark:border-gray-800">
             <Button
               type="button"
@@ -837,3 +713,140 @@ export default function EditProfileForm() {
     </Dialog>
   );
 }
+
+// availability: {
+//       workingHours:
+//         doctorProfile?.availability?.workingHours || "9:00 AM - 5:00 PM",
+//       emergencyContact: doctorProfile?.availability?.emergencyContact || "",
+//       workingDays: [
+//         { day: "Monday", hours: "9:00 AM - 5:00 PM", enabled: true },
+//         { day: "Tuesday", hours: "9:00 AM - 5:00 PM", enabled: true },
+//         { day: "Wednesday", hours: "9:00 AM - 5:00 PM", enabled: true },
+//         { day: "Thursday", hours: "9:00 AM - 5:00 PM", enabled: true },
+//         { day: "Friday", hours: "9:00 AM - 5:00 PM", enabled: true },
+//         { day: "Saturday", hours: "9:00 AM - 1:00 PM", enabled: false },
+//         { day: "Sunday", hours: "", enabled: false },
+//       ],
+//     },
+
+{
+  /* Availability */
+}
+// <div className="space-y-4">
+//   <h3 className="text-lg font-semibold text-[#293379] dark:text-white border-b pb-2">
+//     Availability Settings
+//   </h3>
+
+//   <div className="space-y-4">
+//     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//       <div>
+//         <Label htmlFor="emergencyContact">
+//           Emergency Contact Number
+//         </Label>
+//         <Input
+//           id="emergencyContact"
+//           value={formData.availability.emergencyContact}
+//           onChange={(e) =>
+//             handleNestedChange(
+//               "availability",
+//               "",
+//               "emergencyContact",
+//               e.target.value,
+//             )
+//           }
+//           placeholder="+1 (555) 123-4567"
+//           className="mt-1"
+//         />
+//       </div>
+//       <div>
+//         <Label htmlFor="defaultWorkingHours">
+//           Default Working Hours
+//         </Label>
+//         <Input
+//           id="defaultWorkingHours"
+//           value={formData.availability.workingHours}
+//           onChange={(e) =>
+//             handleNestedChange(
+//               "availability",
+//               "",
+//               "workingHours",
+//               e.target.value,
+//             )
+//           }
+//           placeholder="9:00 AM - 5:00 PM"
+//           className="mt-1"
+//         />
+//       </div>
+//     </div>
+
+//     <div className="space-y-3">
+//       <Label>Working Days Schedule</Label>
+//       {formData.availability.workingDays.map((day, index) => (
+//         <div
+//           key={day.day}
+//           className="flex items-center gap-4 p-3 border border-gray-200 dark:border-gray-800 rounded-lg"
+//         >
+//           <div className="flex items-center gap-2 w-32">
+//             <input
+//               type="checkbox"
+//               id={`day-${index}`}
+//               checked={day.enabled}
+//               onChange={(e) =>
+//                 handleWorkingDayChange(
+//                   index,
+//                   "enabled",
+//                   e.target.checked,
+//                 )
+//               }
+//               disabled={day.day === "Sunday"}
+//               className="h-4 w-4 text-[#293379] dark:text-blue-600 rounded focus:ring-[#293379] dark:focus:ring-blue-600"
+//             />
+//             <Label
+//               htmlFor={`day-${index}`}
+//               className={`font-medium ${day.enabled ? "text-gray-900 dark:text-white" : "text-gray-500 dark:text-gray-500"}`}
+//             >
+//               {day.day}
+//             </Label>
+//           </div>
+
+//           {day.enabled ? (
+//             <>
+//               <Input
+//                 value={day.hours}
+//                 onChange={(e) =>
+//                   handleWorkingDayChange(
+//                     index,
+//                     "hours",
+//                     e.target.value,
+//                   )
+//                 }
+//                 placeholder={
+//                   day.day === "Saturday"
+//                     ? "e.g., 9:00 AM - 1:00 PM"
+//                     : "e.g., 9:00 AM - 5:00 PM"
+//                 }
+//                 className="flex-1"
+//               />
+//               {day.day === "Saturday" && (
+//                 <span className="text-xs text-amber-600 dark:text-amber-400 whitespace-nowrap">
+//                   Weekend hours
+//                 </span>
+//               )}
+//             </>
+//           ) : (
+//             <span className="text-gray-500 dark:text-gray-400 italic">
+//               {day.day === "Sunday" ? "Clinic closed" : "Not working"}
+//             </span>
+//           )}
+//         </div>
+//       ))}
+//     </div>
+
+//     <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+//       <p className="text-sm text-blue-800 dark:text-blue-300">
+//         <strong>Note:</strong> You can set different working hours for
+//         each day. Sunday is always off.
+//       </p>
+//     </div>
+//   </div>
+// </div>
