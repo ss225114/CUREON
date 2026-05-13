@@ -29,6 +29,13 @@ export const DoctorsProvider = ({ children }) => {
     useSimilarity: false,
   });
 
+  const [availabilitySlots, setAvailabilitySlots] = useState([]);
+  const [availabilityLoading, setAvailabilityLoading] = useState(false);
+
+  const [bookingLoading, setBookingLoading] = useState(false);
+  const [selectedSlot, setSelectedSlot] = useState(null);
+  const [selectedDate, setSelectedDate] = useState("");
+
   // Mock data
   // const mockDoctors = [
   //   {
@@ -142,11 +149,15 @@ export const DoctorsProvider = ({ children }) => {
       //   break;
 
       case "fee_low":
-        sorted.sort((a, b) => Number(a.consultationFee) - Number(b.consultationFee));
+        sorted.sort(
+          (a, b) => Number(a.consultationFee) - Number(b.consultationFee),
+        );
         break;
 
       case "fee_high":
-        sorted.sort((a, b) => Number(b.consultationFee) - Number(a.consultationFee));
+        sorted.sort(
+          (a, b) => Number(b.consultationFee) - Number(a.consultationFee),
+        );
         break;
 
       // case "relevance":
@@ -172,8 +183,8 @@ export const DoctorsProvider = ({ children }) => {
   // }
 
   // Get search suggestions (for dropdown)
-  
-  const getSearchSuggestions = async(query) => {
+
+  const getSearchSuggestions = async (query) => {
     if (!query.trim()) return [];
 
     const lowerQuery = query.toLowerCase();
@@ -228,7 +239,8 @@ export const DoctorsProvider = ({ children }) => {
       const payload = {
         specialization: activeFilters.specialization || "",
         name: activeFilters.name || "",
-        location: activeFilters.location === "Others" ? "" : activeFilters.location,
+        location:
+          activeFilters.location === "Others" ? "" : activeFilters.location,
         minFee: activeFilters.minFee,
         maxFee: activeFilters.maxFee,
         minRating: activeFilters.minRating,
@@ -258,7 +270,96 @@ export const DoctorsProvider = ({ children }) => {
   };
 
   const searchDoctors = (query) => {
+    setFilters({
+      gender: "",
+      minFee: 100,
+      maxFee: "",
+      minRating: "",
+      location: "",
+      name: "",
+      specialization: "",
+      useSimilarity: false,
+    });
     fetchDoctors(query);
+  };
+
+  const fetchDoctorAvailability = async (doctorId, date) => {
+    try {
+      setAvailabilityLoading(true);
+
+      const res = await apiClient.get(
+        `/api/appointment/${doctorId}/availability`,
+        {
+          params: { date },
+        },
+      );
+
+      setAvailabilitySlots(res.data || []);
+
+      return res.data;
+    } catch (err) {
+      console.error(err);
+
+      setAvailabilitySlots([]);
+
+      return [];
+    } finally {
+      setAvailabilityLoading(false);
+    }
+  };
+
+  const bookAppointment = async ({
+    doctorId,
+    slotId,
+    appointmentType = "clinic",
+    date,
+    symptoms = [],
+  }) => {
+    try {
+      setBookingLoading(true);
+
+      const res = await apiClient.post("/api/appointment/book", {
+        doctorId,
+        slotId,
+        appointmentType,
+        date,
+        symptoms,
+      });
+
+      return {
+        success: true,
+        data: res.data,
+      };
+    } catch (err) {
+      console.error(err);
+
+      return {
+        success: false,
+        error: err?.response?.data?.error || "Booking failed",
+      };
+    } finally {
+      setBookingLoading(false);
+    }
+  };
+
+  const getNext7Days = () => {
+    const today = new Date();
+
+    return [...Array(7)].map((_, index) => {
+      const date = new Date();
+
+      date.setDate(today.getDate() + index);
+
+      return {
+        label: date.toLocaleDateString("en-US", {
+          weekday: "short",
+        }),
+
+        dateNumber: date.getDate(),
+
+        fullDate: date.toISOString().split("T")[0],
+      };
+    });
   };
 
   useEffect(() => {
@@ -278,6 +379,23 @@ export const DoctorsProvider = ({ children }) => {
     sortBy,
     updateSort,
     setSearchQuery,
+    // Availability
+    availabilitySlots,
+    availabilityLoading,
+    fetchDoctorAvailability,
+
+    // Booking
+    bookingLoading,
+    bookAppointment,
+
+    // Selection
+    selectedSlot,
+    setSelectedSlot,
+    selectedDate,
+    setSelectedDate,
+
+    // Helpers
+    getNext7Days,
   };
 
   return (

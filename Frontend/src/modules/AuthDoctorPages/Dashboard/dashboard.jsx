@@ -56,7 +56,7 @@ function DoctorDashboard() {
         </div>
 
         {/* Stats Cards */}
-        <StatsCards />
+        {/* <StatsCards /> */}
 
         {/* Blog Carousel */}
         <BlogCarousel />

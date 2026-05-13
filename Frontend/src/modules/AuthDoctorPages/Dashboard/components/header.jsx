@@ -191,7 +191,7 @@ export default function Header() {
                     </button>
 
                     {/* Documents item */}
-                    <button
+                    {/* <button
                       onClick={() => handleMenuItemClick("documents")}
                       className="w-full flex items-center gap-3 p-3 text-left rounded-lg hover:bg-gray-100 cursor-pointer dark:hover:bg-gray-800 transition-colors duration-200"
                     >
@@ -206,7 +206,7 @@ export default function Header() {
                           Access patient medical records
                         </div>
                       </div>
-                    </button>
+                    </button> */}
 
                     {/* Divider */}
                     <div className="my-1 border-t border-gray-200 dark:border-gray-800"></div>

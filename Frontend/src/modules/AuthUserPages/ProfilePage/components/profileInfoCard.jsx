@@ -24,7 +24,7 @@ export default function ProfileInfoCard() {
     {
       icon: <FaMobileAlt />,
       label: "Phone",
-      value: profile.userData.phone ?? "Not set",
+      value: profile.userData?.phone ?? "Not set",
     },
     {
       icon: <FaBirthdayCake />,
@@ -36,24 +36,24 @@ export default function ProfileInfoCard() {
     {
       icon: <FaVenusMars />,
       label: "Gender",
-      value: profile.userData.gender ?? "Not set",
+      value: profile.userData?.gender ?? "Not set",
     },
     {
       icon: <FaTint />,
       label: "Blood Group",
-      value: profile.userData.bloodGroup ?? "Not set",
+      value: profile.userData?.bloodGroup ?? "Not set",
     },
     {
       icon: <FaRulerVertical />,
       label: "Height",
-      value: profile.userData.height
+      value: profile.userData?.height
         ? `${profile.userData.height} cm`
         : "Not set",
     },
     {
       icon: <FaWeight />,
       label: "Weight",
-      value: profile.userData.weight
+      value: profile.userData?.weight
         ? `${profile.userData.weight} kg`
         : "Not set",
     },

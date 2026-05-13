@@ -9,7 +9,7 @@ const doctorSchema = mongoose.Schema(
     },
     phone: {
       type: String,
-      default: ""
+      default: "",
     },
     fullName: {
       type: String,
@@ -89,6 +89,30 @@ const doctorSchema = mongoose.Schema(
       required: true,
       minlength: 6,
     },
+    documents: {
+      govtIdDocument: {
+        type: String,
+        default: "",
+        required: true,
+      },
+
+      degreeCertificate: {
+        type: String,
+        default: "",
+        required: true,
+      },
+
+      registrationCertificate: {
+        type: String,
+        default: "",
+        required: true,
+      },
+
+      clinicProof: {
+        type: String,
+        default: "",
+      },
+    },
     rating: {
       type: Number,
       default: 0,
@@ -111,16 +135,16 @@ const doctorSchema = mongoose.Schema(
     },
     hospital: {
       type: String,
-      default: ""
+      default: "",
     },
     gender: {
       type: String,
-      default: ""
+      default: "",
     },
     location: {
       type: String,
-      default: ""
-    }
+      default: "",
+    },
   },
   { timestamps: true },
 );

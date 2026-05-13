@@ -19,8 +19,8 @@ export default function DoctorsHeader() {
 
   // Mock user data
   const user = {
-    name: "Sanjana Biswas",
-    email: "sanjana17317@gmail.com",
+    name: "",
+    email: "",
     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sanjana",
   };
 

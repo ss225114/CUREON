@@ -10,6 +10,15 @@ export const communicateMessage = async (req, res) => {
   const id = req.params.id;
   const chat = await Chat.findOne({ conversationId: id });
 
+  const previousMessages = await Conversations.find({
+    conversationId: id,
+  }).sort({ createdAt: 1 });
+
+  const chatHistory = previousMessages.map((msg) => ({
+    role: msg.isUser ? "user" : "assistant",
+    content: msg.message,
+  }));
+
   const newMessage1 = new Conversations({
     conversationId: id,
     message: query,
@@ -23,7 +32,7 @@ export const communicateMessage = async (req, res) => {
   try {
     const { data } = await axios.post(
       "http://localhost:8005/get",
-      { msg: query, context: chat.lastMessage, },
+      { msg: query, chat_history: chatHistory, },
       {
         headers: { "Content-Type": "application/json" },
       },
@@ -111,7 +120,7 @@ export const communicateImage = async (req, res) => {
       message: "Uploaded & analyzed successfully",
       data: response.data,
       newMessage1,
-      newMessage2
+      newMessage2,
     });
   } catch (error) {
     console.error(error);
@@ -133,4 +142,3 @@ export const getConversationById = async (req, res) => {
     });
   }
 };
-

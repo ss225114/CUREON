@@ -16,7 +16,7 @@ function Dashboard() {
       <Avatar />
       <Services />
       <Consultation />
-      <Appointment />
+      {/* <Appointment /> */}
       <Footer />
     </>
   );
