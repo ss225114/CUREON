@@ -1,4 +1,7 @@
+import apiClient from "@/lib/apiClient";
 import { createContext, useContext, useState, useEffect } from "react";
+
+const days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 
 const DashboardContext = createContext();
 
@@ -11,12 +14,20 @@ export const useDashboard = () => {
 };
 
 export const DashboardProvider = ({ children }) => {
-  // const [doctorData, setDoctorData] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [slots, setSlots] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [documents, setDocuments] = useState([]);
   const [blogs, setBlogs] = useState([]);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [appointmentLoading, setAppointmentLoading] = useState(false);
+  const [appointmentActionLoading, setAppointmentActionLoading] =
+    useState(false);
+
+  const [pendingAppointments, setPendingAppointments] = useState([]);
+  const [acceptedAppointments, setAcceptedAppointments] = useState([]);
 
   // Load dark mode preference
   useEffect(() => {
@@ -48,107 +59,108 @@ export const DashboardProvider = ({ children }) => {
       setIsLoading(true);
 
       // Mock doctor data
-      const mockDoctorData = {
-        id: "doc_001",
-        fullName: "Dr. Sarah Johnson",
-        email: "sarah.johnson@medical.com",
-        specialization: ["Cardiology", "Internal Medicine"],
-        degree: "MD",
-        doctorLicenseNo: "MED123456",
-        experience: "12 years",
-        hospital: "City General Hospital",
-        phone: "+1 (555) 123-4567",
-        consultationFee: "$150",
-        rating: 4.8,
-        totalPatients: 1245,
-        profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=doctor1",
-      };
+      // const mockDoctorData = {
+      //   id: "doc_001",
+      //   fullName: "Dr. Sarah Johnson",
+      //   email: "sarah.johnson@medical.com",
+      //   specialization: ["Cardiology", "Internal Medicine"],
+      //   degree: "MD",
+      //   doctorLicenseNo: "MED123456",
+      //   experience: "12 years",
+      //   hospital: "City General Hospital",
+      //   phone: "+1 (555) 123-4567",
+      //   consultationFee: "$150",
+      //   rating: 4.8,
+      //   totalPatients: 1245,
+      //   profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=doctor1",
+      // };
 
       // Mock appointments
-      const mockAppointments = [
-        {
-          id: "apt_001",
-          patientName: "John Smith",
-          patientAge: 45,
-          appointmentTime: "2024-01-15T10:00:00",
-          duration: 30,
-          type: "Follow-up",
-          status: "confirmed",
-          symptoms: ["Chest pain", "Shortness of breath"],
-          notes: "Previous heart condition, needs ECG",
-        },
-        {
-          id: "apt_002",
-          patientName: "Emma Wilson",
-          patientAge: 32,
-          appointmentTime: "2024-01-15T11:00:00",
-          duration: 45,
-          type: "New Patient",
-          status: "pending",
-          symptoms: ["Headache", "Dizziness"],
-          notes: "Migraine history",
-        },
-        {
-          id: "apt_003",
-          patientName: "Robert Chen",
-          patientAge: 58,
-          appointmentTime: "2024-01-15T14:30:00",
-          duration: 60,
-          type: "Consultation",
-          status: "confirmed",
-          symptoms: ["High BP", "Fatigue"],
-          notes: "Medication review needed",
-        },
-        {
-          id: "apt_004",
-          patientName: "Lisa Rodriguez",
-          patientAge: 29,
-          appointmentTime: "2024-01-16T09:15:00",
-          duration: 30,
-          type: "Check-up",
-          status: "cancelled",
-          symptoms: ["Annual check-up"],
-          notes: "Regular health screening",
-        },
-      ];
+      // const mockAppointments = [
+      //   {
+      //     id: "apt_001",
+      //     patientName: "John Smith",
+      //     patientAge: 45,
+      //     appointmentTime: "2024-01-15T10:00:00",
+      //     duration: 30,
+      //     type: "Follow-up",
+      //     status: "confirmed",
+      //     symptoms: ["Chest pain", "Shortness of breath"],
+      //     notes: "Previous heart condition, needs ECG",
+      //   },
+      //   {
+      //     id: "apt_002",
+      //     patientName: "Emma Wilson",
+      //     patientAge: 32,
+      //     appointmentTime: "2024-01-15T11:00:00",
+      //     duration: 45,
+      //     type: "New Patient",
+      //     status: "pending",
+      //     symptoms: ["Headache", "Dizziness"],
+      //     notes: "Migraine history",
+      //   },
+      //   {
+      //     id: "apt_003",
+      //     patientName: "Robert Chen",
+      //     patientAge: 58,
+      //     appointmentTime: "2024-01-15T14:30:00",
+      //     duration: 60,
+      //     type: "Consultation",
+      //     status: "confirmed",
+      //     symptoms: ["High BP", "Fatigue"],
+      //     notes: "Medication review needed",
+      //   },
+      //   {
+      //     id: "apt_004",
+      //     patientName: "Lisa Rodriguez",
+      //     patientAge: 29,
+      //     appointmentTime: "2024-01-16T09:15:00",
+      //     duration: 30,
+      //     type: "Check-up",
+      //     status: "cancelled",
+      //     symptoms: ["Annual check-up"],
+      //     notes: "Regular health screening",
+      //   },
+      // ];
 
       // Mock documents
-      const mockDocuments = [
-        {
-          id: "doc_001",
-          patientName: "John Smith",
-          documentType: "Prescription",
-          date: "2024-01-10",
-          fileSize: "2.4 MB",
-          category: "Cardiology",
-        },
-        {
-          id: "doc_002",
-          patientName: "Emma Wilson",
-          documentType: "Lab Report",
-          date: "2024-01-08",
-          fileSize: "1.8 MB",
-          category: "Neurology",
-        },
-        {
-          id: "doc_003",
-          patientName: "Robert Chen",
-          documentType: "ECG Report",
-          date: "2024-01-05",
-          fileSize: "3.2 MB",
-          category: "Cardiology",
-        },
-        {
-          id: "doc_004",
-          patientName: "Lisa Rodriguez",
-          documentType: "X-Ray",
-          date: "2024-01-03",
-          fileSize: "4.1 MB",
-          category: "Radiology",
-        },
-      ];
+      // const mockDocuments = [
+      //   {
+      //     id: "doc_001",
+      //     patientName: "John Smith",
+      //     documentType: "Prescription",
+      //     date: "2024-01-10",
+      //     fileSize: "2.4 MB",
+      //     category: "Cardiology",
+      //   },
+      //   {
+      //     id: "doc_002",
+      //     patientName: "Emma Wilson",
+      //     documentType: "Lab Report",
+      //     date: "2024-01-08",
+      //     fileSize: "1.8 MB",
+      //     category: "Neurology",
+      //   },
+      //   {
+      //     id: "doc_003",
+      //     patientName: "Robert Chen",
+      //     documentType: "ECG Report",
+      //     date: "2024-01-05",
+      //     fileSize: "3.2 MB",
+      //     category: "Cardiology",
+      //   },
+      //   {
+      //     id: "doc_004",
+      //     patientName: "Lisa Rodriguez",
+      //     documentType: "X-Ray",
+      //     date: "2024-01-03",
+      //     fileSize: "4.1 MB",
+      //     category: "Radiology",
+      //   },
+      // ];
 
       // Mock blogs
+      
       const mockBlogs = [
         {
           id: "blog_001",
@@ -192,17 +204,143 @@ export const DashboardProvider = ({ children }) => {
         },
       ];
 
-      // Simulate API delay
-      setTimeout(() => {
-        setAppointments(mockAppointments);
-        setDocuments(mockDocuments);
-        setBlogs(mockBlogs);
-        setIsLoading(false);
-      }, 1000);
+      setBlogs(mockBlogs);
+      setIsLoading(false);
     };
 
     loadMockData();
+
+    fetchDoctorAppointments();
   }, []);
+
+  // Schedule form state
+  const [slotForm, setSlotForm] = useState({
+    day_of_week: days[new Date().getDay()],
+    start_time: "",
+    end_time: "",
+    slot_duration: 60,
+    break_start: "",
+    break_end: "",
+  });
+
+  // Handle form change
+  const handleSlotChange = (e) => {
+    setSlotForm((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+
+    console.log(slotForm);
+    
+  };
+
+  // Submit slot
+  const submitSlot = async () => {
+    try {
+      const payload = {
+        // doctor_id: slotForm.doctor_id, // should come from auth later
+        day_of_week: slotForm.day_of_week,
+        start_time: slotForm.start_time,
+        end_time: slotForm.end_time,
+        slot_duration: Number(slotForm.slot_duration),
+        break_times:
+          slotForm.break_start && slotForm.break_end
+            ? [
+                {
+                  start: slotForm.break_start,
+                  end: slotForm.break_end,
+                },
+              ]
+            : [],
+      };
+      console.log(payload);
+
+      const res = await apiClient.post("/api/schedule/", payload);
+
+      console.log(res.data);
+
+      // Reset form after submit
+      setSlotForm({
+        day_of_week: "",
+        start_time: "",
+        end_time: "",
+        slot_duration: 60,
+        break_start: "",
+        break_end: "",
+      });
+
+      // getSlotsByDate(new Date(res.data.slotsGeneratedFor));
+
+      return true;
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
+  };
+
+  const getSlotsByDate = async (date) => {
+    try {
+      const formattedDate = date.toISOString().split("T")[0];
+
+      const res = await apiClient.get(`/api/schedule/slots`, {
+        params: { date: formattedDate },
+      });
+
+      setSlots(res.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchDoctorAppointments = async () => {
+    try {
+      setAppointmentLoading(true);
+
+      const [pendingRes, acceptedRes] = await Promise.all([
+        apiClient.get("/api/appointment/doctor/pending"),
+        apiClient.get("/api/appointment/doctor/accepted"),
+      ]);
+
+      const pending = pendingRes.data || [];
+      const accepted = acceptedRes.data || [];
+
+      setPendingAppointments(pending);
+      setAcceptedAppointments(accepted);
+
+      // Combined appointments for UI
+      setAppointments([...pending, ...accepted]);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setAppointmentLoading(false);
+    }
+  };
+
+  const updateAppointmentStatus = async (appointmentId, status, date) => {
+    try {
+      if (!appointmentId) return;
+
+      let endpoint = "";
+
+      if (status === "accepted") {
+        endpoint = `/api/appointment/${appointmentId}/accept`;
+      } else if (status === "rejected") {
+        endpoint = `/api/appointment/${appointmentId}/reject`;
+      } else {
+        return;
+      }
+
+      await apiClient.patch(endpoint);
+
+      fetchDoctorAppointments();
+      getSlotsByDate(new Date(date));
+
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const value = {
     appointments,
@@ -211,6 +349,20 @@ export const DashboardProvider = ({ children }) => {
     isDarkMode,
     toggleDarkMode,
     isLoading,
+    slotForm,
+    setSlotForm,
+    handleSlotChange,
+    submitSlot,
+    slots,
+    getSlotsByDate,
+    appointmentLoading,
+    appointmentActionLoading,
+    fetchDoctorAppointments,
+    updateAppointmentStatus,
+    pendingAppointments,
+    acceptedAppointments,
+    selectedDate,
+    setSelectedDate,
   };
 
   return (

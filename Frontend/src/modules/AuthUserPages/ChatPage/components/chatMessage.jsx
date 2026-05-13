@@ -86,7 +86,7 @@ const Message = ({ message }) => {
                   className="w-30 h-30 rounded-lg"
                 />) :
                 <img
-                  src={`http://localhost:5000/uploads/image/${message.imagePath.
+                  src={`http://localhost:5000/uploads/images/${message.imagePath.
                     split("\\").pop()}`}
                   alt="Uploaded"
                   className="w-30 h-30 rounded-lg"

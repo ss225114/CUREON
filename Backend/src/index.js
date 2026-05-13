@@ -9,6 +9,10 @@ import userRoutes from "./routes/UserRoutes.js";
 import doctorRoutes from "./routes/DoctorRoutes.js";
 import adminRoutes from "./routes/AdminRoutes.js";
 import featureRoutes from "./routes/FeatureRoutes.js";
+import scheduleRoutes from "./routes/ScheduleRoutes.js";
+import documentRoutes from "./routes/DocumentRoutes.js";
+import folderRoutes from "./routes/FolderRoutes.js";
+import appointmentRoutes from "./routes/AppointmentRoutes.js";
 import path from "path";
 
 dotenv.config();
@@ -34,6 +38,10 @@ app.use("/user", userRoutes);
 app.use("/doctor", doctorRoutes);
 app.use("/admin", adminRoutes);
 app.use("/feature", featureRoutes);
+app.use("/api/schedule", scheduleRoutes);
+app.use("/api/documents", documentRoutes);
+app.use("/api/folders", folderRoutes);
+app.use("/api/appointment", appointmentRoutes);
 
 const PORT = process.env.PORT || 5000;
 

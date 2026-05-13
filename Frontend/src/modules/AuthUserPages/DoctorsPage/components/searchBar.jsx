@@ -133,6 +133,7 @@ export default function SearchBar({ onSearch }) {
     if (q.startsWith("dr")) {
       return { name: query,
         useSimilarity: true,
+        specialization: "",
        };
     }
 

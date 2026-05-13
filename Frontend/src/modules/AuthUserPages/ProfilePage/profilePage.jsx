@@ -25,7 +25,6 @@ function ProfileTabs({ activeTab, setActiveTab }) {
     { id: "overview", label: "Overview", icon: <FaUser /> },
     { id: "medical", label: "Medical Info", icon: <FaHeartbeat /> },
     { id: "appointments", label: "Appointments", icon: <FaCalendarAlt /> },
-    { id: "settings", label: "Settings", icon: <FaCog /> },
   ];
 
   return (
@@ -251,55 +250,8 @@ function ProfileContent() {
                   </CardContent>
                 </Card>
               ) : (
-                <UpcomingAppointments
-                  appointments={profile?.appointments || []}
-                />
+                <UpcomingAppointments />
               )}
-            </motion.div>
-          )}
-
-          {activeTab === "settings" && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <Card className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-md border-0 shadow-xl">
-                <CardHeader>
-                  <CardTitle className="text-xl font-bold text-[#293379] dark:text-white">
-                    Account Settings
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <SettingItem
-                    title="Notification Preferences"
-                    description="Manage how you receive notifications"
-                  />
-                  <SettingItem
-                    title="Privacy Settings"
-                    description="Control your data privacy and sharing"
-                  />
-                  <SettingItem
-                    title="Connected Devices"
-                    description="Manage devices linked to your account"
-                  />
-                  <div className="pt-4 border-t border-gray-200 dark:border-gray-700 flex flex-wrap gap-3">
-                    <Button
-                      onClick={() => navigate("/user-dashboard")}
-                      variant="outline"
-                      className="flex items-center gap-2 border-[#293379] text-[#293379] hover:bg-[#293379] hover:text-white dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-400 dark:hover:text-white"
-                    >
-                      <FaArrowLeft className="h-4 w-4" />
-                      Back to Dashboard
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        localStorage.removeItem("user");
-                        window.location.href = "/login";
-                      }}
-                      className="bg-red-500 hover:bg-red-600 text-white flex items-center gap-2"
-                    >
-                      <FaSignOutAlt className="h-4 w-4" /> Sign Out
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
             </motion.div>
           )}
         </div>

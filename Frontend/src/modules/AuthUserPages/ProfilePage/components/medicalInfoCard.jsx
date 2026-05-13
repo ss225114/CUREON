@@ -20,8 +20,8 @@ export default function MedicalInfoCard({ profile }) {
             Medical Conditions
           </h3>
           <div className="flex flex-wrap gap-2">
-            {profile.medicalConditions?.length > 0 ? (
-              profile.medicalConditions.map((condition, index) => (
+            {profile.userData?.medicalConditions?.length > 0 ? (
+              profile.userData.medicalConditions.map((condition, index) => (
                 <Badge
                   key={index}
                   className="bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 px-4 py-2"

@@ -102,7 +102,7 @@ export default function SearchResults() {
         )}
 
         {/* Load More Button */}
-        {doctors.length > 0 && (
+        {/* {doctors.length > 0 && (
           <div className="mt-12 text-center">
             <button
               className="px-10 py-4 bg-gradient-to-r from-[#293379]/10 to-[#016b61]/10 
@@ -116,7 +116,7 @@ export default function SearchResults() {
               Show more doctors near me
             </button>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

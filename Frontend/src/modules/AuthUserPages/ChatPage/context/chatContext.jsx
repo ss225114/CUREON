@@ -160,6 +160,8 @@ export const ChatProvider = ({ children }) => {
 
   useEffect(() => {
     getChats();
+    console.log(messages);
+    
   }, []);
 
   // Toggle dark mode

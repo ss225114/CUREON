@@ -16,15 +16,17 @@ const Services = () => {
       stats: "Connect within 60 seconds",
       buttonText: "Book Now",
       bgColor: "bg-blue-50 dark:bg-gray-800/50",
+      navigateTo: "/find-doctors",
     },
     {
-      title: "Lab Tests & Reports",
-      description: "Safe and trusted lab tests with accurate results",
+      title: "Lab Tests & Reports store",
+      description: "Store your reports and manage them according to your needs",
       image:
         "https://images.unsplash.com/photo-1582719471384-894fbb16e074?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-      stats: "Home collection available",
-      buttonText: "Get Tested",
+      stats: "Currently under development",
+      buttonText: "See Reports",
       bgColor: "bg-green-50 dark:bg-gray-800/50",
+      navigateTo: "/tests-and-reports",
     },
   ];
 
@@ -77,7 +79,7 @@ const Services = () => {
 
                 {/* Button */}
                 <button 
-                  onClick={() => navigate("/find-doctors")}
+                  onClick={() => navigate(`${service.navigateTo}`)}
                 className="w-full bg-[#293379] hover:bg-[#1f2a63] dark:bg-blue-700 dark:hover:bg-blue-600 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-xl shadow-md hover:shadow-lg transform hover:scale-105 active:scale-95 transition-all duration-300 text-sm sm:text-base">
                   <span className="flex items-center justify-center gap-2 sm:gap-3">
                     {service.buttonText}

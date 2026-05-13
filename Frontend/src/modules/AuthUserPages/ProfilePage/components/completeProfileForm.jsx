@@ -32,35 +32,37 @@ export default function CompleteProfileForm({ onClose, isOpen }) {
     medications: [{ name: "", dosage: "", frequency: "" }],
   });
 
-  /* -------------------- INIT FROM BACKEND -------------------- */
   useEffect(() => {
-    if (!profile) return;
+    if (!profile) return;    
 
     setFormData({
-      phone: profile.phone || "",
-      dateOfBirth: profile.dateOfBirth ? profile.dateOfBirth.slice(0, 10) : "",
-      gender: profile.gender || "",
-      bloodGroup: profile.bloodGroup || "",
-      height: profile.height || "",
-      weight: profile.weight || "",
-      emergencyContact: profile.emergencyContact || {
+      phone: profile.userData?.phone || "",
+      dateOfBirth: profile.userData?.dateOfBirth ? profile.userData?.dateOfBirth.slice(0, 10) : "",
+      gender: profile.userData?.gender || "",
+      bloodGroup: profile.userData?.bloodGroup || "",
+      height: profile.userData?.height || "",
+      weight: profile.userData?.weight || "",
+      emergencyContact: profile.userData?.emergencyContact || {
         name: "",
         phone: "",
         relationship: "",
       },
       medicalConditions:
-        profile.medicalConditions?.length > 0
-          ? profile.medicalConditions
+        profile.useData?.medicalConditions?.length > 0
+          ? profile.useData.medicalConditions
           : [""],
-      allergies: profile.allergies?.length > 0 ? profile.allergies : [""],
+      allergies: profile.useData?.allergies?.length > 0 ? profile.useData.allergies : [""],
       medications:
-        profile.medications?.length > 0
-          ? profile.medications
+        profile.userData?.medications?.length > 0
+          ? profile.useData.medications
           : [{ name: "", dosage: "", frequency: "" }],
     });
+
+    console.log("profile: ", profile);
+
+    console.log("form: ", formData);
   }, [profile]);
 
-  /* -------------------- HANDLERS -------------------- */
   const handleChange = (field, value) => {
     if (field.includes(".")) {
       const [parent, child] = field.split(".");
@@ -107,7 +109,6 @@ export default function CompleteProfileForm({ onClose, isOpen }) {
     }));
   };
 
-  /* -------------------- STEP VALIDATION -------------------- */
   const validateStep = (currentStep) => {
     if (currentStep === 1) {
       if (!formData.phone.trim()) return alert("Phone is required");
@@ -130,7 +131,6 @@ export default function CompleteProfileForm({ onClose, isOpen }) {
     if (step > 1) setStep(step - 1);
   };
 
-  /* -------------------- FINAL SUBMIT (FIXED) -------------------- */
   const handleFinalSubmit = async () => {
     setLoading(true);
 
@@ -168,7 +168,6 @@ export default function CompleteProfileForm({ onClose, isOpen }) {
 
   if (!isOpen) return null;
 
-  /* -------------------- UI (UNCHANGED) -------------------- */
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
       <motion.div

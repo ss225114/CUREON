@@ -35,6 +35,8 @@ export const ProfileProvider = ({ children }) => {
   const [isProfileComplete, setIsProfileComplete] = useState(false);
 
 
+  const [appointments, setAppointments] = useState([]);
+
   const fetchProfile = async () => {
     try {
       setLoading(true);
@@ -57,7 +59,6 @@ export const ProfileProvider = ({ children }) => {
       setLoading(false);
     }
   };
-
 
   const updateProfile = async (updates) => {
     try {
@@ -95,43 +96,43 @@ export const ProfileProvider = ({ children }) => {
     }
   };
 
-// const updateAvatar = async (formData) => {
-//   try {
-//     const response = await fetch('/api/users/avatar', {
-//       method: 'POST',
-//       headers: {
-//         // Don't set Content-Type header - let browser set it with boundary
-//         'Authorization': `Bearer ${localStorage.getItem('token')}`, // Add your auth token
-//       },
-//       body: formData,
-//     });
+  // const updateAvatar = async (formData) => {
+  //   try {
+  //     const response = await fetch('/api/users/avatar', {
+  //       method: 'POST',
+  //       headers: {
+  //         // Don't set Content-Type header - let browser set it with boundary
+  //         'Authorization': `Bearer ${localStorage.getItem('token')}`, // Add your auth token
+  //       },
+  //       body: formData,
+  //     });
 
-//     if (!response.ok) {
-//       const errorData = await response.json();
-//       throw new Error(errorData.message || 'Upload failed');
-//     }
+  //     if (!response.ok) {
+  //       const errorData = await response.json();
+  //       throw new Error(errorData.message || 'Upload failed');
+  //     }
 
-//     const data = await response.json();
-    
-//     // Update local state with new avatar URL
-//     setProfile(prev => ({
-//       ...prev,
-//       avatar: data.avatarUrl
-//     }));
+  //     const data = await response.json();
 
-//     return { 
-//       success: true, 
-//       avatarUrl: data.avatarUrl,
-//       message: data.message 
-//     };
-//   } catch (error) {
-//     console.error('Avatar upload error:', error);
-//     return { 
-//       success: false, 
-//       message: error.message 
-//     };
-//   }
-// };
+  //     // Update local state with new avatar URL
+  //     setProfile(prev => ({
+  //       ...prev,
+  //       avatar: data.avatarUrl
+  //     }));
+
+  //     return {
+  //       success: true,
+  //       avatarUrl: data.avatarUrl,
+  //       message: data.message
+  //     };
+  //   } catch (error) {
+  //     console.error('Avatar upload error:', error);
+  //     return {
+  //       success: false,
+  //       message: error.message
+  //     };
+  //   }
+  // };
 
   const completeProfile = async (profileData) => {
     try {
@@ -161,9 +162,24 @@ export const ProfileProvider = ({ children }) => {
     }
   };
 
+  const fetchAppointments = async () => {
+    try {
+
+      const res = await apiClient.get("/api/appointment/my-appointments");
+
+      console.log(res.data);
+      
+
+      // Combined appointments for UI
+      setAppointments(res.data);
+    } catch (err) {
+      console.error(err);
+    } 
+  };
 
   useEffect(() => {
     fetchProfile();
+    fetchAppointments();
   }, []);
 
   const value = {
@@ -175,6 +191,7 @@ export const ProfileProvider = ({ children }) => {
     updateAvatar,
     refreshProfile: fetchProfile,
     isProfileComplete,
+    appointments,
   };
 
   return (

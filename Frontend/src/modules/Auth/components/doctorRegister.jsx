@@ -162,6 +162,7 @@ export default function DoctorPage() {
     fullName: "",
     email: "",
     phone: "",
+    gender: "",
     password: "",
     degree: "",
     specialization: [],
@@ -169,6 +170,13 @@ export default function DoctorPage() {
     doctorLicenseNo: "",
     doctorRegistrationNo: "",
     stateMedicalCouncil: "",
+
+    documents: {
+      govtIdDocument: null,
+      degreeCertificate: null,
+      registrationCertificate: null,
+      clinicProof: null,
+    },
   });
 
   const [openDegree, setOpenDegree] = useState(false);
@@ -191,6 +199,8 @@ export default function DoctorPage() {
       newErrors.phone =
         "Invalid phone number (must be 10 digits starting with 6-9)";
 
+    if (!form.gender) newErrors.gender = "Gender is required";
+
     if (!form.degree) newErrors.degree = "Degree is required";
     if (form.specialization.length === 0)
       newErrors.specialization = "At least one specialization is required";
@@ -210,6 +220,16 @@ export default function DoctorPage() {
     if (form.password !== confirmPassword)
       newErrors.confirmPassword = "Passwords do not match";
 
+    if (!form.documents.govtIdDocument)
+      newErrors.govtIdDocument = "Government ID proof is required";
+
+    if (!form.documents.degreeCertificate)
+      newErrors.degreeCertificate = "Degree certificate is required";
+
+    if (!form.documents.registrationCertificate)
+      newErrors.registrationCertificate =
+        "Registration certificate is required";
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -219,16 +239,57 @@ export default function DoctorPage() {
 
     if (validateForm()) {
       try {
+        const formData = new FormData();
+
+        formData.append("fullName", form.fullName);
+        formData.append("email", form.email);
+        formData.append("phone", form.phone);
+        formData.append("gender", form.gender);
+        formData.append("password", form.password);
+        formData.append("degree", form.degree);
+        formData.append("govtId", form.govtId);
+
+        formData.append("doctorLicenseNo", form.doctorLicenseNo);
+
+        formData.append("doctorRegistrationNo", form.doctorRegistrationNo);
+
+        formData.append("stateMedicalCouncil", form.stateMedicalCouncil);
+
+        form.specialization.forEach((spec) => {
+          formData.append("specialization", spec);
+        });
+
+        formData.append("govtIdDocument", form.documents.govtIdDocument);
+
+        formData.append("degreeCertificate", form.documents.degreeCertificate);
+
+        formData.append(
+          "registrationCertificate",
+          form.documents.registrationCertificate,
+        );
+
+        if (form.documents.clinicProof) {
+          formData.append("clinicProof", form.documents.clinicProof);
+        }
+
         const response = await axios.post(
           "http://localhost:5000/auth/doctor/register",
-          form,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          },
         );
+
         console.log(response.data);
+
+        alert("Registration successful! Please wait for admin approval.");
+
+        navigate("/login");
       } catch (err) {
-        console.log(err.response);
+        console.log(err.response?.data || err);
       }
-      console.log("Form submitted:", form);
-      alert("Registration successful! Please wait for admin approval.");
     }
   };
 
@@ -257,7 +318,7 @@ export default function DoctorPage() {
               Doctor Registration
             </CardTitle>
             <p className="text-center text-gray-600 dark:text-gray-400 mt-2">
-              Register as a medical professional. All fields are required.
+              Register as a medical professional.
             </p>
           </CardHeader>
 
@@ -337,6 +398,45 @@ export default function DoctorPage() {
                     {errors.phone && (
                       <p className="text-red-500 text-sm mt-1">
                         {errors.phone}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-3">
+                    <Label
+                      htmlFor="gender"
+                      className="font-medium text-gray-700 dark:text-gray-300"
+                    >
+                      Gender *
+                    </Label>
+
+                    <Select
+                      value={form.gender}
+                      onValueChange={(value) =>
+                        setForm({ ...form, gender: value })
+                      }
+                    >
+                      <SelectTrigger
+                        className={cn(
+                          "w-full h-28 bg-white/70 dark:bg-gray-700/70 backdrop-blur-sm",
+                          "border-gray-300 dark:border-gray-600",
+                          "hover:bg-white/80 dark:hover:bg-gray-700/80",
+                          errors.gender && "border-red-500",
+                        )}
+                      >
+                        <SelectValue placeholder="Select gender" />
+                      </SelectTrigger>
+
+                      <SelectContent className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border border-gray-200 dark:border-gray-700">
+                        <SelectItem value="Male">Male</SelectItem>
+                        <SelectItem value="Female">Female</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+
+                    {errors.gender && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.gender}
                       </p>
                     )}
                   </div>
@@ -665,7 +765,127 @@ export default function DoctorPage() {
                 </div>
               </div>
 
-              {/* Section 3: Security */}
+              {/* Section 3: DOCUMENT UPLOADS */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-[#293379] dark:text-blue-300 border-b pb-2">
+                  Verification Documents
+                </h3>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Government ID */}
+                  <div className="space-y-3">
+                    <Label className="font-medium text-gray-700 dark:text-gray-300">
+                      Government ID Proof *
+                    </Label>
+
+                    <Input
+                      type="file"
+                      accept=".pdf,image/*"
+                      onChange={(e) =>
+                        setForm({
+                          ...form,
+                          documents: {
+                            ...form.documents,
+                            govtIdDocument: e.target.files[0],
+                          },
+                        })
+                      }
+                      className="bg-white/70 dark:bg-gray-700/70 border-gray-300 dark:border-gray-600 h-12"
+                    />
+
+                    {errors.govtIdDocument && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.govtIdDocument}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Degree Certificate */}
+                  <div className="space-y-3">
+                    <Label className="font-medium text-gray-700 dark:text-gray-300">
+                      Degree Certificate *
+                    </Label>
+
+                    <Input
+                      type="file"
+                      accept=".pdf,image/*"
+                      onChange={(e) =>
+                        setForm({
+                          ...form,
+                          documents: {
+                            ...form.documents,
+                            degreeCertificate: e.target.files[0],
+                          },
+                        })
+                      }
+                      className="bg-white/70 dark:bg-gray-700/70 border-gray-300 dark:border-gray-600 h-12"
+                    />
+
+                    {errors.degreeCertificate && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.degreeCertificate}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Registration Certificate */}
+                  <div className="space-y-3">
+                    <Label className="font-medium text-gray-700 dark:text-gray-300">
+                      Registration Certificate *
+                    </Label>
+
+                    <Input
+                      type="file"
+                      accept=".pdf,image/*"
+                      onChange={(e) =>
+                        setForm({
+                          ...form,
+                          documents: {
+                            ...form.documents,
+                            registrationCertificate: e.target.files[0],
+                          },
+                        })
+                      }
+                      className="bg-white/70 dark:bg-gray-700/70 border-gray-300 dark:border-gray-600 h-12"
+                    />
+
+                    {errors.registrationCertificate && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.registrationCertificate}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Clinic Proof */}
+                  <div className="space-y-3">
+                    <Label className="font-medium text-gray-700 dark:text-gray-300">
+                      Clinic / Hospital Proof (Optional)
+                    </Label>
+
+                    <Input
+                      type="file"
+                      accept=".pdf,image/*"
+                      onChange={(e) =>
+                        setForm({
+                          ...form,
+                          documents: {
+                            ...form.documents,
+                            clinicProof: e.target.files[0],
+                          },
+                        })
+                      }
+                      className="bg-white/70 dark:bg-gray-700/70 border-gray-300 dark:border-gray-600 h-12"
+                    />
+
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Upload clinic ownership proof or hospital affiliation
+                      document
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Section 4: Security */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-[#293379] dark:text-blue-300 border-b pb-2">
                   Security

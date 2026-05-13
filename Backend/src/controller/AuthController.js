@@ -8,6 +8,7 @@ import { otpMail, sendResetPasswordEmail } from "../lib/emailService.js";
 import { v7, validate } from "uuid";
 import Chat from "../models/Chat.js";
 import Doctor from "../models/Doctor.js";
+import axios from "axios";
 
 export const register = async (req, res) => {
   const { fullName, email, password } = req.body;
@@ -62,7 +63,7 @@ export const verifyEmail = async (req, res) => {
           token: "",
           otpGeneratedTime: null,
         },
-      }
+      },
     );
     const { access_token, refresh_token } = generateToken(user._id, res);
     const chatId = v7();
@@ -82,6 +83,13 @@ export const verifyEmail = async (req, res) => {
         const chat = await Chat.create(obj);
       }
     }
+    // for lab tests and reports
+    // await Folder.create({
+    //   patient: user._id,
+    //   name: "main",
+    //   parentFolder: null,
+    // });
+
     res.status(200).json({
       message: "User registration Successful",
       name: user.fullName,
@@ -128,7 +136,7 @@ export const forget_password = async (req, res) => {
       const randomstr = randomstring.generate();
       const data = await User.updateOne(
         { email: email },
-        { $set: { token: randomstr } }
+        { $set: { token: randomstr } },
       );
       sendResetPasswordEmail(userData.fullName, userData.email, randomstr);
       return res
@@ -155,16 +163,14 @@ export const reset_password = async (req, res) => {
           _id: userData._id,
         },
         { $set: { password: hashedPassword, token: "" } },
-        { new: true }
+        { new: true },
       );
       const { access_token, refresh_token } = generateToken(userData._id, res);
-      return res
-        .status(200)
-        .json({
-          success: true,
-          access_token: access_token,
-          refresh_token: refresh_token,
-        });
+      return res.status(200).json({
+        success: true,
+        access_token: access_token,
+        refresh_token: refresh_token,
+      });
     } else {
       return res.status(400).json({ msg: "This link has been expired" });
     }
@@ -205,7 +211,7 @@ export const resendOtp = async (req, res) => {
         token: otp,
         otpGeneratedTime: time,
       },
-      { new: true }
+      { new: true },
     );
     await otpMail(email, otp);
     return res.status(201).json({
@@ -218,31 +224,90 @@ export const resendOtp = async (req, res) => {
   }
 };
 
+// export const doctorRegister = async (req, res) => {
+//   const {
+//     fullName,
+//     email,
+//     degree,
+//     specialization,
+//     govtId,
+//     doctorLicenseNo,
+//     stateMedicalCouncil,
+//     doctorRegistrationNo,
+//     password,
+//   } = req.body;
+//   try {
+//     if (password.length < 6) {
+//       return res
+//         .status(400)
+//         .json({ message: "Password must be atleast 6 chatracters" });
+//     }
+//     const doctor = await Doctor.findOne({ email });
+//     if (doctor)
+//       return res.status(400).json({ message: "Doctor already exists" });
+
+//     const salt = await bcrypt.genSalt(10);
+//     const hashedPassword = await bcrypt.hash(password, salt);
+//     const time = new Date();
+
+//     const newDoctor = new Doctor({
+//       fullName,
+//       email,
+//       degree,
+//       specialization,
+//       govtId,
+//       doctorLicenseNo,
+//       stateMedicalCouncil,
+//       doctorRegistrationNo,
+//       password: hashedPassword,
+//       isActive: false,
+//     });
+
+//     await newDoctor.save();
+//     res.status(201).json({
+//       success: true,
+//       message: "Registration successful",
+//     });
+//   } catch (error) {
+//     console.error("Error:", error);
+//     res.status(500).json({ message: "Internal Server Error" });
+//   }
+// };
+
 export const doctorRegister = async (req, res) => {
   const {
-    fullName,
-    email,
-    degree,
-    specialization,
-    govtId,
-    doctorLicenseNo,
-    stateMedicalCouncil,
-    doctorRegistrationNo,
-    password,
-  } = req.body;
+  fullName,
+  email,
+  phone,
+  gender,
+  degree,
+  specialization,
+  govtId,
+  doctorLicenseNo,
+  stateMedicalCouncil,
+  doctorRegistrationNo,
+  password,
+} = req.body;
+
   try {
     if (password.length < 6) {
       return res
         .status(400)
         .json({ message: "Password must be atleast 6 chatracters" });
     }
+
     const doctor = await Doctor.findOne({ email });
+
     if (doctor)
       return res.status(400).json({ message: "Doctor already exists" });
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    const time = new Date();
+
+    const govtIdDocument = req.files?.govtIdDocument?.[0]?.path || "";
+    const degreeCertificate = req.files?.degreeCertificate?.[0]?.path || "";
+    const registrationCertificate = req.files?.registrationCertificate?.[0]?.path || "";
+    const clinicProof = req.files?.clinicProof?.[0]?.path || "";
 
     const newDoctor = new Doctor({
       fullName,
@@ -255,9 +320,17 @@ export const doctorRegister = async (req, res) => {
       doctorRegistrationNo,
       password: hashedPassword,
       isActive: false,
+
+      documents: {
+        govtIdDocument,
+        degreeCertificate,
+        registrationCertificate,
+        clinicProof,
+      },
     });
 
     await newDoctor.save();
+
     res.status(201).json({
       success: true,
       message: "Registration successful",
@@ -272,33 +345,33 @@ export const doctorLogin = async (req, res) => {
   const { email, password } = req.body;
   try {
     const doctor = await Doctor.findOne({ email });
-  if (!doctor) {
-    return res.status(401).json({
-      message: "Invalid credentials",
-    });
-  }
-  const isPasswordCorrect = await bcrypt.compare(password, doctor.password);
-  if (!isPasswordCorrect) {
-    return res.status(401).json({
-      message: "Invalid credentials",
-    });
-  }
+    if (!doctor) {
+      return res.status(401).json({
+        message: "Invalid credentials",
+      });
+    }
+    const isPasswordCorrect = await bcrypt.compare(password, doctor.password);
+    if (!isPasswordCorrect) {
+      return res.status(401).json({
+        message: "Invalid credentials",
+      });
+    }
 
-  if (!doctor.isActive) {
-    return res.status(403).json({
-      message: "Id verification pending",
-    });
-  }
+    if (!doctor.isActive) {
+      return res.status(403).json({
+        message: "Id verification pending",
+      });
+    }
 
-  const { access_token, refresh_token } = generateToken(doctor._id, res);
-  return res.status(201).json({
+    const { access_token, refresh_token } = generateToken(doctor._id, res);
+    return res.status(201).json({
       doctor,
       data: {
         access_token: access_token,
         refresh_token: refresh_token,
       },
     });
-  } catch(err) {
+  } catch (err) {
     console.error("Error:", error);
     return res.status(500).json({ message: "Internal Server Error" });
   }

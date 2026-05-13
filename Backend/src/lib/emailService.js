@@ -124,7 +124,7 @@ export const doctorVerificationMail = async (email) => {
   }
 };
 
-export const doctorVerificationAlert = async (email) => {
+export const appointmentConfirmationMail = async (email, time, day) => {
   try {
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
@@ -140,15 +140,16 @@ export const doctorVerificationAlert = async (email) => {
     const mailOptions = {
       from: "cureon.med@gmail.com",
       to: email,
-      subject: "For identity verifcation",
+      subject: "For Appointment Confirmation",
       html:
         "<html>" +
         '<body style="font-family: Arial, sans-serif;">' +
         '<div style="background-color: #f5f5f5; padding: 20px;">' +
+        '<h2 style="color: #333;">Cureon</h2>' +
+        '<p style="font-size: 16px;">Appointment Confirmation</p>' +
         '<div style="background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">' +
-        '<h3 style="color: #333;">Verification alert:</h3>' +
         '<p style="font-size: 18px; font-weight: bold; color: #007bff;">' +
-        "Doctor verifications pending" +
+        `Your appointment has been confirmed for ${time} on ${day}` +
         "</p>" +
         "</div>" +
         "</div>" +
