@@ -87,7 +87,7 @@ export default function DoctorsHeader() {
         <div className="flex items-center gap-3 sm:gap-4">
           {/* Home Icon - Circular */}
           <a
-            href="/user-dashboard"
+            href="/"
             className="w-10 h-10 rounded-full bg-white/50 dark:bg-gray-800/50 hover:bg-white/80 dark:hover:bg-gray-700/80 flex items-center justify-center transition-all duration-300 border border-gray-300 dark:border-gray-600"
             title="Home"
           >

@@ -8,14 +8,14 @@ import AuthUserRouter from "./router/AuthUserRouter";
 import GuestRouter from "./router/GuestRouter";
 
 export default function App() {
-  const { token } = useAuth();
+  const { token, user, doctor, role } = useAuth();
   return (
     <>
       {token ? (
         <AuthLayout>
-          <AuthUserRouter />
-          <AuthAdminRouter />
-          <AuthDoctorRouter />
+          {user && role === "user" && <AuthUserRouter />}
+          {user && role === "admin" && <AuthAdminRouter />}
+          {doctor && <AuthDoctorRouter />}
         </AuthLayout>
       ) : (
         <GuestLayout>

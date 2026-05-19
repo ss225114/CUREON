@@ -138,9 +138,10 @@ import {
   FaExclamationTriangle,
 } from "react-icons/fa";
 import { useProfile } from "../context/profileContext";
+import { useEffect, useState } from "react";
 
 export default function AvailabilityCard() {
-  const { doctorProfile } = useProfile();
+  const { doctorProfile, getScheduleForDate } = useProfile();
 
   const consultationTypes = {
     "In-person": <FaHome className="h-4 w-4" />,
@@ -159,25 +160,58 @@ export default function AvailabilityCard() {
     "Sunday",
   ];
 
-  // Get working hours for each day (this would come from your data structure)
+  // Get working hours for each day
   const getWorkingHoursForDay = (day) => {
-    // This is a mock function - you would get this from your actual data
-    // For now, return different hours for different days as an example
-    const hoursMap = {
-      // Monday: "9:00 AM - 5:00 PM",
-      // Tuesday: "9:00 AM - 5:00 PM",
-      // Wednesday: "10:00 AM - 6:00 PM",
-      // Thursday: "9:00 AM - 5:00 PM",
-      // Friday: "9:00 AM - 4:00 PM",
-      // Saturday: "9:00 AM - 1:00 PM",
-      // Sunday: "Closed",
-    };
-    return hoursMap[day] || "Not available";
+    const schedule = scheduleMap[day];
+
+    if (!schedule || !schedule.working || !schedule.timings.length) {
+      return "Not available";
+    }
+
+    const firstSlot = schedule.timings[0];
+
+    const lastSlot = schedule.timings[schedule.timings.length - 1];
+
+    return `${firstSlot.startTime} - ${lastSlot.endTime}`;
   };
+
+  const [scheduleMap, setScheduleMap] = useState({});
+
+  useEffect(() => {
+    const fetchSchedules = async () => {
+      if (!doctorProfile?._id) return;
+
+      const tempMap = {};
+
+      for (let i = 0; i < daysOfWeek.length; i++) {
+        const today = new Date();
+
+        const currentDay = today.getDay();
+
+        const normalizedToday = currentDay === 0 ? 6 : currentDay - 1;
+
+        const diff = i - normalizedToday;
+
+        const targetDate = new Date(today);
+
+        targetDate.setDate(today.getDate() + diff);
+
+        const data = await getScheduleForDate(targetDate);
+
+        tempMap[daysOfWeek[i]] = data;
+      }
+
+      setScheduleMap(tempMap);
+    };
+
+    fetchSchedules();
+  }, [doctorProfile?._id]);
 
   // Check if day is a working day
   const isWorkingDay = (day) => {
-    return doctorProfile?.availability?.workingDays?.includes(day);
+    const schedule = scheduleMap[day];
+
+    return schedule?.working;
   };
 
   return (
@@ -234,15 +268,6 @@ export default function AvailabilityCard() {
                       >
                         {day}
                       </span>
-                      <p
-                        className={`text-sm ${
-                          isWorking
-                            ? "text-gray-700 dark:text-gray-300"
-                            : "text-gray-500 dark:text-gray-500"
-                        }`}
-                      >
-                        {isWorking ? "Working day" : "Day off"}
-                      </p>
                     </div>
                   </div>
 

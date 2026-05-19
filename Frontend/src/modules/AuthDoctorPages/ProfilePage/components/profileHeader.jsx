@@ -105,7 +105,7 @@ export default function ProfileHeader() {
           </p>
 
           {/* Quick Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
             {[
               {
                 label: "Experience",
@@ -114,10 +114,6 @@ export default function ProfileHeader() {
               {
                 label: "Patients",
                 value: doctorProfile?.statistics?.totalPatients || "0",
-              },
-              {
-                label: "Success Rate",
-                value: doctorProfile?.statistics?.successRate || "0%",
               },
               {
                 label: "Consultation Fee",

@@ -70,7 +70,7 @@ docsearch = PineconeVectorStore.from_existing_index(
 
 retriever = docsearch.as_retriever(
     search_type="similarity",
-    search_kwargs={"k": 3}
+    search_kwargs={"k": 5}
 )
 
 # chat_history = []
@@ -192,7 +192,10 @@ def rewrite_query(chat_history, new_query):
 #     return cleaned
 
 def retrieval_chain(query: str, chat_history) -> str:
-    rewritten_query = rewrite_query(chat_history, query)
+    if len(chat_history) == 0:
+        rewritten_query = query
+    else:
+        rewritten_query = rewrite_query(chat_history, query)
 
     docs = retriever.invoke(rewritten_query)
     context = "\n\n".join(d.page_content for d in docs)

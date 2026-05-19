@@ -128,6 +128,9 @@ export const DoctorsProvider = ({ children }) => {
     const updated = { ...filters, ...newFilters };
     setFilters(updated);
 
+    console.log(filters);
+    
+
     // Trigger search with filters
     fetchDoctors(searchQuery, updated);
   };
@@ -190,32 +193,49 @@ export const DoctorsProvider = ({ children }) => {
     const lowerQuery = query.toLowerCase();
     const suggestions = new Set();
 
-    // const docs = await getDoctors();
-
-    // docs.forEach((doctor) => {
-    //   // if (doctor.specialization.toLowerCase().includes(lowerQuery)) {
-    //   //   suggestions.add(doctor.specialization);
-    //   // }
-    //   if (doctor.fullName.toLowerCase().includes(lowerQuery)) {
-    //     suggestions.add(doctor.fullName);
-    //   }
-    //   // if (doctor.clinic.toLowerCase().includes(lowerQuery)) {
-    //   //   suggestions.add(doctor.clinic);
-    //   // }
-    // });
-
     // Add common specialties
     const commonSpecialties = [
-      "Dermatology",
-      "Pediatrics",
-      "Gynecology",
-      "General Physician",
-      "Dentistry",
-      "Cardiology",
-      "Neurology",
-      "Orthopedics",
-      "Psychiatry",
-    ];
+        "GENERAL_PHYSICIAN",
+        "INTERNAL_MEDICINE",
+        "PEDIATRICS",
+        "GYNECOLOGY",
+        "OBSTETRICS",
+        "CARDIOLOGY",
+        "DERMATOLOGY",
+        "ORTHOPEDICS",
+        "NEUROLOGY",
+        "NEUROSURGERY",
+        "PSYCHIATRY",
+        "PSYCHOLOGY",
+        "ENT",
+        "OPHTHALMOLOGY",
+        "GASTROENTEROLOGY",
+        "PULMONOLOGY",
+        "ENDOCRINOLOGY",
+        "NEPHROLOGY",
+        "UROLOGY",
+        "ONCOLOGY",
+        "HEMATOLOGY",
+        "RHEUMATOLOGY",
+        "GENERAL_SURGERY",
+        "PLASTIC_SURGERY",
+        "VASCULAR_SURGERY",
+        "ANESTHESIOLOGY",
+        "RADIOLOGY",
+        "PATHOLOGY",
+        "EMERGENCY_MEDICINE",
+        "FAMILY_MEDICINE",
+        "GERIATRICS",
+        "INFECTIOUS_DISEASE",
+        "SPORTS_MEDICINE",
+        "PAIN_MANAGEMENT",
+        "DENTISTRY",
+        "ORTHODONTICS",
+        "AYURVEDA",
+        "HOMEOPATHY",
+        "UNANI",
+        "OTHER",
+      ];
 
     commonSpecialties.forEach((specialty) => {
       if (specialty.toLowerCase().includes(lowerQuery)) {

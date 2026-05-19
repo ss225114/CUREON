@@ -117,6 +117,7 @@ export const login = async (req, res) => {
     const { access_token, refresh_token } = generateToken(user._id, res);
     return res.status(201).json({
       name: user.fullName,
+      isAdmin: user.isAdmin,
       data: {
         access_token: access_token,
         refresh_token: refresh_token,
@@ -372,7 +373,7 @@ export const doctorLogin = async (req, res) => {
       },
     });
   } catch (err) {
-    console.error("Error:", error);
+    console.error("Error:", err);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };

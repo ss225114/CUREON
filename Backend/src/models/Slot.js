@@ -31,6 +31,11 @@ const slotSchema = new mongoose.Schema(
       ref: "Appointment",
       default: null,
     },
+
+    isComplete: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true },
 );

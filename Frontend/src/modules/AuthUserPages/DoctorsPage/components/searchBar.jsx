@@ -47,8 +47,8 @@ export default function SearchBar({ onSearch }) {
   const [query, setQuery] = useState("");
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
   const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
-  const [location, setLocation] = useState("Kolkata");
-  const [tempLocation, setTempLocation] = useState("Kolkata");
+  const [location, setLocation] = useState("");
+  const [tempLocation, setTempLocation] = useState("");
   const [suggestions, setSuggestions] = useState([]);
 
   const locationButtonRef = useRef(null);
@@ -116,25 +116,38 @@ export default function SearchBar({ onSearch }) {
 
   // Handle input change with debounce for suggestions
   useEffect(() => {
-    if (query.trim()) {
-      const suggestionsList = getSearchSuggestions(query);
-      setSuggestions(suggestionsList);
-      setShowSearchSuggestions(true);
-    } else {
-      setSuggestions([]);
-      setShowSearchSuggestions(false);
-    }
-  }, [query, getSearchSuggestions]);
+    const fetchSuggestions = async () => {
+      if (!query.trim()) {
+        setSuggestions([]);
+        setShowSearchSuggestions(false);
+        return;
+      }
+
+      try {
+        const suggestionsList = await getSearchSuggestions(query);
+
+        console.log("suggestions:", suggestionsList);
+
+        setSuggestions(suggestionsList || []);
+
+        setShowSearchSuggestions(suggestionsList?.length > 0);
+      } catch (error) {
+        console.error("Suggestion Error:", error);
+
+        setSuggestions([]);
+        setShowSearchSuggestions(false);
+      }
+    };
+
+    fetchSuggestions();
+  }, [query]);
 
   const detectSearchType = (query) => {
     const q = query.toLowerCase();
 
     // If starts with "dr" → name search
     if (q.startsWith("dr")) {
-      return { name: query,
-        useSimilarity: true,
-        specialization: "",
-       };
+      return { name: query, useSimilarity: true, specialization: "" };
     }
 
     // // If contains clinic/hospital keywords
@@ -147,7 +160,11 @@ export default function SearchBar({ onSearch }) {
     // }
 
     // Otherwise assume specialization
-    return { specialization: query.toUpperCase() };
+    return {
+      name: "",
+      specialization: query.toUpperCase(),
+      useSimilarity: false,
+    };
   };
 
   // const handleSearch = (e) => {
@@ -194,22 +211,25 @@ export default function SearchBar({ onSearch }) {
     updateFilters({ location: loc });
   };
 
-  const handleQuickSearch = (specialty) => {
-    setQuery(specialty);
-    searchDoctors(specialty);
-    setShowSearchSuggestions(false);
-    if (onSearch) {
-      onSearch(specialty);
-    }
-  };
+ const handleQuickSearch = (specialty) => {
+  setQuery(specialty);
+
+  const searchPayload = detectSearchType(specialty);
+
+  console.log("payload:", searchPayload);
+
+  updateFilters(searchPayload);
+
+  setShowSearchSuggestions(false);
+
+  if (onSearch) {
+    onSearch(specialty);
+  }
+};
 
   const handleSuggestionClick = (suggestion) => {
     setQuery(suggestion);
-    searchDoctors(suggestion);
     setShowSearchSuggestions(false);
-    if (onSearch) {
-      onSearch(suggestion);
-    }
   };
 
   const handleInputChange = (e) => {
@@ -259,7 +279,6 @@ export default function SearchBar({ onSearch }) {
                     onClick={() => {
                       setQuery("");
                       setShowSearchSuggestions(false);
-                      if (onSearch) onSearch("");
                     }}
                     className="absolute right-4 top-1/2 transform -translate-y-1/2
                              text-gray-400 hover:text-gray-600 dark:hover:text-gray-300
@@ -360,11 +379,11 @@ export default function SearchBar({ onSearch }) {
               </p>
               <div className="flex flex-wrap gap-2">
                 {[
-                  "Dermatologist",
-                  "Pediatrician",
-                  "Gynecologist/Obstetrician",
-                  "General Physician",
-                  "Dentist",
+                  "DERMATOLOGY",
+                  "PEDIATRICS",
+                  "GYNECOLOGY",
+                  "GENERAL_PHYSICIAN",
+                  "DENTISTRY",
                 ].map((specialty) => (
                   <button
                     key={specialty}

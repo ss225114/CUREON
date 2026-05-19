@@ -54,7 +54,7 @@ function DoctorProfile() {
             </p>
           </div>
           <Button
-            onClick={() => navigate("/doctor-dashboard")}
+            onClick={() => navigate("/")}
             variant="outline"
             className="flex items-center gap-2 border-[#293379] text-[#293379] hover:bg-[#293379] hover:text-white dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-400 dark:hover:text-white"
           >

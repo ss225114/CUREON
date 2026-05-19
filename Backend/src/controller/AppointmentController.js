@@ -1,6 +1,7 @@
-import { appointmentConfirmationMail } from "../lib/emailService.js";
+import { appointmentConfirmationMail, feedbackMail } from "../lib/emailService.js";
 import Appointment from "../models/Appointment.js";
 import Slot from "../models/Slot.js";
+import User from "../models/User.js";
 import UserProfile from "../models/UserProfile.js";
 
 export const fetchAvailability = async (req, res) => {
@@ -171,6 +172,13 @@ export const acceptAppointment = async (req, res) => {
 
     await slot.save();
 
+    // FIND all pending appointments that will be rejected
+    const rejectedAppointments = await Appointment.find({
+      slotId: slot._id,
+      _id: { $ne: appointment._id },
+      status: "pending",
+    }).populate("patientId", "email fullName");
+
     // REJECT all others for same slot
     await Appointment.updateMany(
       {
@@ -186,7 +194,20 @@ export const acceptAppointment = async (req, res) => {
       },
     );
 
-    await appointmentConfirmationMail(appointment.patientId.email, slot.startTime, slot.dayOfWeek);
+    // SEND rejection mails
+    for (const rejected of rejectedAppointments) {
+      await appointmentRejectionMail(
+        rejected.patientId.email,
+        slot.startTime,
+        slot.dayOfWeek,
+      );
+    }
+
+    await appointmentConfirmationMail(
+      appointment.patientId.email,
+      slot.startTime,
+      slot.dayOfWeek,
+    );
 
     res.json({
       message: "Appointment accepted",
@@ -278,7 +299,7 @@ export const getMyAppointments = async (req, res) => {
   }
 };
 
-export const getDoctorAppointments = async (req, res) => {
+export const getAcceptedAppointments = async (req, res) => {
   try {
     const doctorId = req.user.userID;
 
@@ -289,6 +310,42 @@ export const getDoctorAppointments = async (req, res) => {
       .populate("patientId", "fullName email")
       .populate("slotId")
       .sort({ createdAt: -1 });
+
+    appointments = await Promise.all(
+      appointments.map(async (appointment) => {
+        const userProfile = await UserProfile.findOne({
+          userId: appointment.patientId._id,
+        });
+
+        return {
+          ...appointment.toObject(),
+          patientId: {
+            ...appointment.patientId.toObject(),
+            userProfile,
+          },
+        };
+      }),
+    );
+
+    res.json(appointments);
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      error: "Failed to fetch appointments",
+    });
+  }
+};
+
+export const getAllDoctorAppointments = async (req, res) => {
+  try {
+    const doctorId = req.user.userID;
+
+    let appointments = await Appointment.find({
+      doctorId,
+    })
+      .populate("patientId", "fullName email")
+      .populate("slotId")
 
     appointments = await Promise.all(
       appointments.map(async (appointment) => {
@@ -367,7 +424,17 @@ export const completeAppointment = async (req, res) => {
 
     appointment.status = "completed";
 
+    const slot = await Slot.findById(appointment.slotId);
+
+    slot.isComplete = true;
+
     await appointment.save();
+
+    await slot.save();
+
+    const user = await User.findOne({ _id: appointment.patientId });
+
+    await feedbackMail(user.fullName, user.email, appointment.doctorId);
 
     res.status(200).json({
       message: "Appointment completed",
@@ -380,7 +447,6 @@ export const completeAppointment = async (req, res) => {
     });
   }
 };
-
 
 // export const getDoctorAppointments = async (req, res) => {
 //   try {

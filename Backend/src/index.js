@@ -13,6 +13,7 @@ import scheduleRoutes from "./routes/ScheduleRoutes.js";
 import documentRoutes from "./routes/DocumentRoutes.js";
 import folderRoutes from "./routes/FolderRoutes.js";
 import appointmentRoutes from "./routes/AppointmentRoutes.js";
+import feedbackRoutes from "./routes/FeedbackRoutes.js";
 import path from "path";
 
 dotenv.config();
@@ -42,6 +43,7 @@ app.use("/api/schedule", scheduleRoutes);
 app.use("/api/documents", documentRoutes);
 app.use("/api/folders", folderRoutes);
 app.use("/api/appointment", appointmentRoutes);
+app.use("/feedback", feedbackRoutes);
 
 const PORT = process.env.PORT || 5000;
 

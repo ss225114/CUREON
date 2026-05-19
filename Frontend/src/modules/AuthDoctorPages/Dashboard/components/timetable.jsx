@@ -42,11 +42,32 @@ const getAppointmentTypeColor = (type) => {
 
 export default function Timetable() {
   // const [selectedDate, setSelectedDate] = useState(new Date());
-  const { slots, getSlotsByDate, acceptedAppointments, selectedDate, setSelectedDate } = useDashboard();
+  const {
+    slots,
+    getSlotsByDate,
+    acceptedAppointments,
+    selectedDate,
+    setSelectedDate,
+  } = useDashboard();
 
   // Separate booked and available slots
-  const bookedSlots = slots.filter((slot) => slot.isBooked);
+  const bookedSlots = slots.filter((slot) => slot.isBooked && !slot.isComplete);
   const availableSlots = slots.filter((slot) => !slot.isBooked);
+
+//   const bookedSlots = slots.filter((slot) => {
+//   if (!slot.isBooked) return false;
+
+//   const matchedAppointment = acceptedAppointments.find((appointment) => {
+//     const appointmentSlotId =
+//       appointment.slotId?._id?.toString() ||
+//       appointment.slotId?.toString();
+
+//     return appointmentSlotId === slot._id.toString();
+//   });
+
+//   // remove completed appointments
+//   return matchedAppointment?.status !== "completed";
+// });
 
   const combinedBookedAppointments = bookedSlots.map((slot) => {
     const matchedAppointment = acceptedAppointments.find(
@@ -292,57 +313,20 @@ export default function Timetable() {
                               • Status: Confirmed
                             </div>
                           </div>
+                        </div>
+                        <div className="space-y-3">
                           <div>
                             <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                               Contact Info
                             </div>
                             <div className="text-sm text-gray-800 dark:text-gray-200 mt-1">
-                              • Phone: {slot.appointment?.patientId?.userProfile?.phone}
+                              • Phone:{" "}
+                              {slot.appointment?.patientId?.userProfile?.phone}
                             </div>
                             <div className="text-sm text-gray-800 dark:text-gray-200">
                               • Email: {slot.appointment?.patientId?.email}
                             </div>
                           </div>
-                        </div>
-                        <div className="space-y-3">
-                          <div>
-                            <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                              Actions
-                            </div>
-                            <div className="flex flex-wrap gap-2 mt-2">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="border-[#293379] text-[#293379] hover:bg-[#293379] hover:text-white dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-400 dark:hover:text-white"
-                              >
-                                Reschedule
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400 dark:border-red-700 dark:text-red-400 dark:hover:bg-red-900/30"
-                              >
-                                Cancel
-                              </Button>
-                              {/* <Button
-                                size="sm"
-                                className="bg-[#016b61] hover:bg-[#015951] text-white"
-                              >
-                                Start Call
-                              </Button> */}
-                            </div>
-                          </div>
-                          {/* <div>
-                            <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                              Contact Info
-                            </div>
-                            <div className="text-sm text-gray-800 dark:text-gray-200 mt-1">
-                              • Phone: (555) 123-4567
-                            </div>
-                            <div className="text-sm text-gray-800 dark:text-gray-200">
-                              • Email: {slot.appointment.patientId?.email}
-                            </div>
-                          </div> */}
                         </div>
                       </div>
                     </div>
@@ -458,4 +442,47 @@ export default function Timetable() {
       </CardContent>
     </Card>
   );
+}
+
+{
+  /* <div>
+                            <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                              Actions
+                            </div>
+                            <div className="flex flex-wrap gap-2 mt-2">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="border-[#293379] text-[#293379] hover:bg-[#293379] hover:text-white dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-400 dark:hover:text-white"
+                              >
+                                Reschedule
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400 dark:border-red-700 dark:text-red-400 dark:hover:bg-red-900/30"
+                              >
+                                Cancel
+                              </Button>
+                              {/* <Button
+                                size="sm"
+                                className="bg-[#016b61] hover:bg-[#015951] text-white"
+                              >
+                                Start Call
+                              </Button> 
+                            </div>
+</div> */
+}
+{
+  /* <div>
+                            <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                              Contact Info
+                            </div>
+                            <div className="text-sm text-gray-800 dark:text-gray-200 mt-1">
+                              • Phone: (555) 123-4567
+                            </div>
+                            <div className="text-sm text-gray-800 dark:text-gray-200">
+                              • Email: {slot.appointment.patientId?.email}
+                            </div>
+</div> */
 }

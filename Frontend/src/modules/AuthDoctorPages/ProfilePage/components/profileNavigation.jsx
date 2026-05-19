@@ -14,9 +14,6 @@ const tabs = [
   { id: "overview", label: "Overview", icon: <FaUser /> },
   { id: "professional", label: "Professional", icon: <FaStethoscope /> },
   { id: "availability", label: "Availability", icon: <FaCalendarAlt /> },
-  { id: "statistics", label: "Statistics", icon: <FaChartLine /> },
-  { id: "documents", label: "Documents", icon: <FaBriefcaseMedical /> },
-  { id: "settings", label: "Settings", icon: <FaCog /> },
 ];
 
 export default function ProfileNavigation() {

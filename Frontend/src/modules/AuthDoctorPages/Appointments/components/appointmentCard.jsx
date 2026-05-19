@@ -18,6 +18,7 @@ import {
   FaNotesMedical,
 } from "react-icons/fa";
 import { useAppointments } from "../context/AppointmentsContext";
+import { ca } from 'zod/v4/locales';
 
 const getTypeIcon = (type) => {
   switch (type) {
@@ -70,7 +71,7 @@ const getStatusConfig = (status) => {
         textColor: 'text-amber-700 dark:text-amber-300',
         icon: FaClock
       };
-    case 'confirmed':
+    case 'accepted':
       return {
         text: 'Confirmed',
         bg: 'bg-green-50 dark:bg-green-900/20',
@@ -136,6 +137,44 @@ const AppointmentCard = ({ appointment, isUpcoming = false }) => {
   const handleAccept = () => updateAppointmentStatus(appointment.id, 'confirmed');
   const handleReject = () => updateAppointmentStatus(appointment.id, 'rejected');
 
+  const calculateDuration = (startTime, endTime) => {
+    if (!startTime || !endTime) return "N/A";
+
+    const convertToMinutes = (timeStr) => {
+      const [time, modifier] = timeStr.split(" ");
+
+      let [hours, minutes] = time.split(":").map(Number);
+
+      if (modifier === "PM" && hours !== 12) {
+        hours += 12;
+      }
+
+      if (modifier === "AM" && hours === 12) {
+        hours = 0;
+      }
+
+      return hours * 60 + minutes;
+    };
+
+    const startMinutes = convertToMinutes(startTime);
+    const endMinutes = convertToMinutes(endTime);
+
+    const duration = endMinutes - startMinutes;
+
+    const hours = Math.floor(duration / 60);
+    const minutes = duration % 60;
+
+    if (hours > 0 && minutes > 0) {
+      return `${hours}h ${minutes}m`;
+    }
+
+    if (hours > 0) {
+      return `${hours}h`;
+    }
+
+    return `${minutes}m`;
+  };
+
   return (
     <Card className={`${typeConfig.border} bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-all duration-300`}>
       <CardContent className="p-0">
@@ -150,19 +189,16 @@ const AppointmentCard = ({ appointment, isUpcoming = false }) => {
               </div>
               <div>
                 <h3 className="font-bold text-gray-900 dark:text-white">
-                  {appointment.patientName}
+                  {appointment.patientId.fullName}
                 </h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {appointment.patientAge} yrs • {appointment.gender}
-                </p>
               </div>
             </div>
             <div className="text-right">
               <div className="text-lg font-semibold text-gray-900 dark:text-white">
-                {appointment.appointmentTime}
+                {appointment.slotId.startTime}
               </div>
               <div className="text-sm text-gray-500 dark:text-gray-400">
-                {appointment.duration}
+                {calculateDuration(appointment.slotId.startTime, appointment.slotId.endTime)}
               </div>
             </div>
           </div>
@@ -176,20 +212,20 @@ const AppointmentCard = ({ appointment, isUpcoming = false }) => {
               <StatusIcon className="h-3 w-3" />
               {statusConfig.text}
             </span>
-            <span className={`px-3 py-1.5 rounded-md text-xs font-medium ${priorityConfig.bg} ${priorityConfig.text}`}>
+            {/* <span className={`px-3 py-1.5 rounded-md text-xs font-medium ${priorityConfig.bg} ${priorityConfig.text}`}>
               {appointment.priority} Priority
-            </span>
+            </span> */}
           </div>
 
           {/* Medical Details */}
           <div className="space-y-3 mb-4">
-            <div className="flex items-start gap-3">
+            {/* <div className="flex items-start gap-3">
               <FaNotesMedical className="h-4 w-4 text-gray-400 mt-1 flex-shrink-0" />
               <div>
                 <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Reason</p>
                 <p className="text-sm text-gray-900 dark:text-gray-200">{appointment.reason}</p>
               </div>
-            </div>
+            </div> */}
             <div className="flex items-start gap-3">
               <FaStethoscope className="h-4 w-4 text-gray-400 mt-1 flex-shrink-0" />
               <div>
@@ -205,11 +241,11 @@ const AppointmentCard = ({ appointment, isUpcoming = false }) => {
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="flex items-center gap-2">
                 <FaEnvelope className="h-3.5 w-3.5 text-gray-400" />
-                <span className="text-sm text-gray-900 dark:text-gray-200 truncate">{appointment.email}</span>
+                <span className="text-sm text-gray-900 dark:text-gray-200 truncate">{appointment.patientId.email}</span>
               </div>
               <div className="flex items-center gap-2">
                 <FaPhoneAlt className="h-3.5 w-3.5 text-gray-400" />
-                <span className="text-sm text-gray-900 dark:text-gray-200">{appointment.phone}</span>
+                <span className="text-sm text-gray-900 dark:text-gray-200">{appointment.patientId.userProfile?.phone}</span>
               </div>
             </div>
           </div>
@@ -235,14 +271,14 @@ const AppointmentCard = ({ appointment, isUpcoming = false }) => {
             </div>
           )}
 
-          {!isUpcoming && appointment.status !== 'pending' && (
+          {/* {!isUpcoming && appointment.status !== 'pending' && (
             <Button 
               className="w-full bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-800 hover:to-gray-900 text-white font-medium"
             >
               <FaUserMd className="mr-2 h-4 w-4" />
               View Patient Details
             </Button>
-          )}
+          )} */}
         </div>
       </CardContent>
     </Card>

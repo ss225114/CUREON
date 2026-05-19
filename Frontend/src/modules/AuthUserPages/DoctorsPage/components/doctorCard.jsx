@@ -128,7 +128,7 @@ export default function DoctorCard({ doctor }) {
                   <div className="flex items-center gap-1">
                     <FaStar className="h-5 w-5 text-amber-500" />
                     <span className="text-2xl font-bold text-gray-900 dark:text-white">
-                      {doctor.rating || 4.5}
+                      {doctor.rating}
                     </span>
                   </div>
                 </div>

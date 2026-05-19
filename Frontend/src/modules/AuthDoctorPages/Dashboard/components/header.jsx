@@ -119,7 +119,7 @@ export default function Header() {
             </Button>
 
             {/* Notifications */}
-            <Button
+            {/* <Button
               variant="ghost"
               size="icon"
               className="relative rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
@@ -127,7 +127,7 @@ export default function Header() {
             >
               <FaBell className="h-5 w-5 text-gray-600 dark:text-gray-400" />
               <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full animate-pulse"></span>
-            </Button>
+            </Button> */}
 
             {/* Profile with dropdown */}
             <div className="relative" ref={profileMenuRef}>

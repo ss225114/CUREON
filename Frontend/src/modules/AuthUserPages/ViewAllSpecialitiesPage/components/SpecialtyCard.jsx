@@ -26,10 +26,10 @@ function SpecialtyCard({ sp, dark, onClick }) {
         <p className={`text-sm font-semibold ${dark ? "text-white" : "text-gray-800"}`}>{sp.name}</p>
         <p className={`text-xs leading-relaxed mt-0.5 ${dark ? "text-gray-400" : "text-gray-500"}`}>{sp.desc}</p>
       </div>
-      <div className="flex justify-between items-center mt-auto">
+      {/* <div className="flex justify-between items-center mt-auto">
         <span className={`text-sm font-semibold ${dark ? "text-blue-400" : "text-blue-700"}`}>{sp.price}</span>
         <span className={`text-xs ${dark ? "text-gray-500" : "text-gray-400"}`}>{sp.wait} wait</span>
-      </div>
+      </div> */}
       <div className="flex flex-wrap gap-1 mt-1">
         {sp.modes.map((m) => <ModeTag key={m} label={m} dark={dark} />)}
       </div>
