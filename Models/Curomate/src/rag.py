@@ -20,11 +20,15 @@ docsearch = PineconeVectorStore.from_existing_index(
 
 retriever = docsearch.as_retriever(
     search_type="similarity",
-    search_kwargs={"k": 3}
+    search_kwargs={"k": 5}
 )
 
 
 def rewrite_query(chat_history, new_query):
+    """
+    Rewrites follow-up questions into standalone questions
+    using previous conversation context.
+    """
 
     history_text = "\n".join(
         [f"{m['role']}: {m['content']}" for m in chat_history]
@@ -40,9 +44,7 @@ def rewrite_query(chat_history, new_query):
         messages=[
             {
                 "role": "system",
-                "content": (
-                    "Rewrite follow-up questions into standalone questions."
-                )
+                "content": "You rewrite follow-up questions into standalone complete questions."
             },
             {
                 "role": "user",
@@ -56,17 +58,17 @@ def rewrite_query(chat_history, new_query):
     return response.choices[0].message.content.strip()
 
 
-def retrieval_chain(query, chat_history):
+def retrieval_chain(query: str, chat_history) -> str:
+    rewritten_query = ""
+    if len(chat_history) == 0:
+        rewritten_query = query
+    else:
+        rewritten_query = rewrite_query(chat_history, query)
+    
+    print(rewritten_query)
 
-    rewritten_query = rewrite_query(
-        chat_history,
-        query
-    )
     docs = retriever.invoke(rewritten_query)
-
-    context = "\n\n".join(
-        d.page_content for d in docs
-    )
+    context = "\n\n".join(d.page_content for d in docs)
 
     formatted_prompt = system_prompt.format(
         context=context,
@@ -78,7 +80,7 @@ def retrieval_chain(query, chat_history):
         messages=[
             {
                 "role": "system",
-                "content": "You are a helpful medical assistant."
+                "content": "You are a helpful assistant."
             },
             {
                 "role": "user",

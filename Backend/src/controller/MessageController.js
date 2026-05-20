@@ -94,8 +94,7 @@ export const communicateImage = async (req, res) => {
 
     const newMessage2 = new Conversations({
       conversationId: id,
-      // message: `the disease is ${response.data.prediction}`,
-      message: `The disease is ${response.data.prediction.prediction} with confidence ${(response.data.prediction.confidence * 100).toFixed(2)}%`,
+      message: `the disease is ${response.data.prediction.prediction}`,
       imagePath: "",
       isImage: false,
       isUser: false,
