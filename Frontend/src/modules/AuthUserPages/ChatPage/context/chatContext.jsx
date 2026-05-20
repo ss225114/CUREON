@@ -32,7 +32,6 @@ export const ChatProvider = ({ children }) => {
   useEffect(() => {
     getChats();
     console.log(messages);
-    
   }, []);
 
   // Toggle dark mode
@@ -135,11 +134,12 @@ export const ChatProvider = ({ children }) => {
 
     try {
       // Call the prediction endpoint
-      const response = await apiClient.post(`/message/image-analysis/${id}`,
+      const response = await apiClient.post(
+        `/message/image-analysis/${id}`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
-        }
+        },
       );
       console.log("Prediction response:", response);
       setMessages((prev) => [...prev, response.data.newMessage2]);
@@ -161,32 +161,32 @@ export const ChatProvider = ({ children }) => {
   };
 
   // Helper function to format prediction message
-//   const formatPredictionMessage = (prediction) => {
-//     const confidencePercentage = (prediction.confidence * 100).toFixed(2);
-//     return `🔬 **Image Analysis Result**
+  //   const formatPredictionMessage = (prediction) => {
+  //     const confidencePercentage = (prediction.confidence * 100).toFixed(2);
+  //     return `🔬 **Image Analysis Result**
 
-// **Predicted Condition:** ${prediction.prediction}
-// **Confidence:** ${confidencePercentage}%
+  // **Predicted Condition:** ${prediction.prediction}
+  // **Confidence:** ${confidencePercentage}%
 
-// ${getConditionAdvice(prediction.prediction)}`;
-//   };
+  // ${getConditionAdvice(prediction.prediction)}`;
+  //   };
 
-//   // Helper function to get advice based on condition
-//   const getConditionAdvice = (condition) => {
-//     const adviceMap = {
-//       Acne: "Consider consulting a dermatologist. Maintain good skincare routine and avoid picking at lesions.",
-//       Melanoma:
-//         "⚠️ This requires immediate medical attention. Please consult a dermatologist as soon as possible.",
-//       Eczema:
-//         "Keep skin moisturized and avoid triggers. Consult a dermatologist for proper treatment.",
-//       // Add more advice as needed
-//     };
+  //   // Helper function to get advice based on condition
+  //   const getConditionAdvice = (condition) => {
+  //     const adviceMap = {
+  //       Acne: "Consider consulting a dermatologist. Maintain good skincare routine and avoid picking at lesions.",
+  //       Melanoma:
+  //         "⚠️ This requires immediate medical attention. Please consult a dermatologist as soon as possible.",
+  //       Eczema:
+  //         "Keep skin moisturized and avoid triggers. Consult a dermatologist for proper treatment.",
+  //       // Add more advice as needed
+  //     };
 
-//     return (
-//       adviceMap[condition] ||
-//       "Please consult a healthcare professional for proper diagnosis and treatment."
-//     );
-//   };
+  //     return (
+  //       adviceMap[condition] ||
+  //       "Please consult a healthcare professional for proper diagnosis and treatment."
+  //     );
+  //   };
 
   const value = {
     chats,

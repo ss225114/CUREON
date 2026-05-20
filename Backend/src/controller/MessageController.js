@@ -38,6 +38,8 @@ export const communicateMessage = async (req, res) => {
       },
     );
 
+    console.log("Flask API Response:", data);
+
     const newMessage2 = new Conversations({
       conversationId: id,
       message: data.response,
@@ -92,7 +94,8 @@ export const communicateImage = async (req, res) => {
 
     const newMessage2 = new Conversations({
       conversationId: id,
-      message: `the disease is ${response.data.prediction}`,
+      // message: `the disease is ${response.data.prediction}`,
+      message: `The disease is ${response.data.prediction.prediction} with confidence ${(response.data.prediction.confidence * 100).toFixed(2)}%`,
       imagePath: "",
       isImage: false,
       isUser: false,
@@ -102,7 +105,7 @@ export const communicateImage = async (req, res) => {
 
     const updatedChat = await Chat.findOneAndUpdate(
       { conversationId: id },
-      { $set: { lastMessage: `The disease is ${response.data.prediction}` } },
+      { $set: { lastMessage: `The disease is ${response.data.prediction.prediction}` } },
       { new: true },
     );
 

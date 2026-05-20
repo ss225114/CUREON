@@ -147,7 +147,7 @@ export default function SearchBar({ onSearch }) {
     // }
 
     // Otherwise assume specialization
-    return { specialization: query.toUpperCase() };
+    return { specialization: query.toUpperCase(), name: "", useSimilarity: false };
   };
 
   // const handleSearch = (e) => {
