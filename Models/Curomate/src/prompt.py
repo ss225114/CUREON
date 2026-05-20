@@ -1,12 +1,3 @@
-# system_prompt = (
-#     "You are an Mediacl assistant for question-answering tasks. "
-#     "Use the following pieces of retrieved ontext to answer "
-#     "the question. if you odn't know the answer, say that you "
-#     "don't know. Use three sentences maximum and keep the "
-#     "answer concise."
-#     "\n\n"
-#     "{context}"
-# )
 from langchain_core.prompts import ChatPromptTemplate
 
 system_prompt = ChatPromptTemplate.from_template("""

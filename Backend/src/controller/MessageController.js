@@ -92,7 +92,7 @@ export const communicateImage = async (req, res) => {
 
     const newMessage2 = new Conversations({
       conversationId: id,
-      message: `the disease is ${response.data.prediction}`,
+      message: `the disease is ${response.data.prediction.prediction}`,
       imagePath: "",
       isImage: false,
       isUser: false,
@@ -102,7 +102,7 @@ export const communicateImage = async (req, res) => {
 
     const updatedChat = await Chat.findOneAndUpdate(
       { conversationId: id },
-      { $set: { lastMessage: `The disease is ${response.data.prediction}` } },
+      { $set: { lastMessage: `The disease is ${response.data.prediction.prediction}` } },
       { new: true },
     );
 
