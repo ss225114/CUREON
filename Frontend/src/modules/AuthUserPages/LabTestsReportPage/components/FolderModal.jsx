@@ -4,19 +4,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useReports } from "../context/LabTestsReportContext";
 
 export default function FolderModal() {
-  const {
-    folderOpen,
-    setFolderOpen,
-    createFolder,
-    selectedFolder,
-    dark,
-  } = useReports();
+  const { folderOpen, setFolderOpen, createFolder, dark } = useReports();
 
-  const [folderName, setFolderName] =
-    useState("");
+  const [folderName, setFolderName] = useState("");
 
-  const [loading, setLoading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!folderOpen) {
@@ -24,11 +16,6 @@ export default function FolderModal() {
     }
   }, [folderOpen]);
 
-  /*
-    Create Folder
-    If selectedFolder exists,
-    create nested folder inside it
-  */
   const handleCreate = async () => {
     const name = folderName.trim();
 
@@ -37,10 +24,7 @@ export default function FolderModal() {
     try {
       setLoading(true);
 
-      await createFolder(
-        name,
-        selectedFolder || null
-      );
+      await createFolder(name, null);
 
       setFolderName("");
 
@@ -60,14 +44,10 @@ export default function FolderModal() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          onClick={() =>
-            setFolderOpen(false)
-          }
+          onClick={() => setFolderOpen(false)}
         >
           <motion.div
-            onClick={(e) =>
-              e.stopPropagation()
-            }
+            onClick={(e) => e.stopPropagation()}
             initial={{
               scale: 0.96,
               opacity: 0,
@@ -81,9 +61,7 @@ export default function FolderModal() {
               opacity: 0,
             }}
             className={`w-full max-w-md rounded-3xl shadow-2xl ${
-              dark
-                ? "bg-[#1A2B42]"
-                : "bg-white"
+              dark ? "bg-[#1A2B42]" : "bg-white"
             }`}
           >
             {/* Header */}
@@ -101,15 +79,13 @@ export default function FolderModal() {
               <div>
                 <h2
                   className={`font-semibold ${
-                    dark
-                      ? "text-white"
-                      : "text-slate-800"
+                    dark ? "text-white" : "text-slate-800"
                   }`}
                 >
                   New Folder
                 </h2>
 
-                {selectedFolder && (
+                {/* {selectedFolder && (
                   <p
                     className={`text-xs mt-1 ${
                       dark
@@ -120,20 +96,14 @@ export default function FolderModal() {
                     Creating inside selected
                     folder
                   </p>
-                )}
+                )} */}
               </div>
 
               <button
-                onClick={() =>
-                  setFolderOpen(false)
-                }
+                onClick={() => setFolderOpen(false)}
                 className={`
                   text-lg
-                  ${
-                    dark
-                      ? "text-slate-300"
-                      : "text-slate-600"
-                  }
+                  ${dark ? "text-slate-300" : "text-slate-600"}
                 `}
               >
                 ✕
@@ -146,11 +116,7 @@ export default function FolderModal() {
                 type="text"
                 placeholder="Folder name..."
                 value={folderName}
-                onChange={(e) =>
-                  setFolderName(
-                    e.target.value
-                  )
-                }
+                onChange={(e) => setFolderName(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     handleCreate();
@@ -166,9 +132,7 @@ export default function FolderModal() {
               {/* Actions */}
               <div className="grid grid-cols-2 gap-3 mt-5">
                 <button
-                  onClick={() =>
-                    setFolderOpen(false)
-                  }
+                  onClick={() => setFolderOpen(false)}
                   className={`py-3 rounded-2xl border text-sm transition ${
                     dark
                       ? "border-[#1E3A5F] text-white hover:bg-[#111C2E]"
@@ -193,9 +157,7 @@ export default function FolderModal() {
                     disabled:opacity-50
                   "
                 >
-                  {loading
-                    ? "Creating..."
-                    : "Create"}
+                  {loading ? "Creating..." : "Create"}
                 </button>
               </div>
             </div>

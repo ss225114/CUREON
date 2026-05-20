@@ -3,9 +3,11 @@ import { Button } from "@/components/ui/button";
 import { FaCalendarAlt, FaVideo, FaMapMarkerAlt } from "react-icons/fa";
 import { useProfile } from "../context/profileContext";
 import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
 
 export default function UpcomingAppointments() {
   const { appointments } = useProfile();
+  const navigate = useNavigate();
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       weekday: "long",
@@ -21,7 +23,7 @@ export default function UpcomingAppointments() {
         <CardTitle className="text-2xl font-bold text-[#293379] dark:text-white flex items-center gap-2">
           <FaCalendarAlt /> Upcoming Appointments
         </CardTitle>
-        <Button className="bg-[#016b61] hover:bg-[#015951]" size="sm">
+        <Button onClick={() => {navigate("/find-doctors")}} className="bg-[#016b61] hover:bg-[#015951]" size="sm">
           Book New
         </Button>
       </CardHeader>

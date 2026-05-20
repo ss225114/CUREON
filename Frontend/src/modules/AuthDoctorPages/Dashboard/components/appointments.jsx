@@ -113,7 +113,7 @@ export default function Appointments() {
         <div className="flex items-center justify-between">
           <CardTitle className="text-xl font-bold text-[#293379] dark:text-white flex items-center gap-2">
             <FaStethoscope className="h-5 w-5" />
-            Upcoming Appointments
+            Appointments
           </CardTitle>
         </div>
       </CardHeader>
@@ -357,7 +357,7 @@ export default function Appointments() {
 
                           <Button
                             onClick={() =>
-                              handleStatusUpdate(apt._id, "completed")
+                              handleStatusUpdate(apt._id, "completed", apt.slotId?.date,)
                             }
                             variant="outline"
                             className="border-green-300 text-green-700 hover:bg-green-50"
@@ -365,6 +365,52 @@ export default function Appointments() {
                             Mark Completed
                           </Button>
                         </>
+                      )}
+
+                      {/* COMPLETED */}
+                      {apt.status === "completed" && (
+                        <div className="w-full">
+                          <div className="p-4 rounded-xl border border-green-200 dark:border-green-800 bg-gradient-to-r from-green-50/60 to-white dark:from-green-900/10 dark:to-gray-900/20">
+                            <div className="flex items-center gap-3 mb-3">
+                              <div className="p-2 rounded-full bg-green-100 dark:bg-green-900/30">
+                                <FaCheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+                              </div>
+
+                              <div>
+                                <h4 className="font-semibold text-green-700 dark:text-green-300">
+                                  Appointment Completed
+                                </h4>
+
+                                <p className="text-sm text-gray-600 dark:text-gray-400">
+                                  Consultation has been successfully completed.
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* <div className="flex flex-wrap gap-3 mt-4">
+                              <Button
+                                variant="outline"
+                                className="border-blue-300 text-blue-700 hover:bg-blue-50"
+                              >
+                                View Summary
+                              </Button>
+
+                              <Button
+                                variant="outline"
+                                className="border-purple-300 text-purple-700 hover:bg-purple-50"
+                              >
+                                Add Prescription
+                              </Button>
+
+                              <Button
+                                variant="outline"
+                                className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                              >
+                                Download Report
+                              </Button>
+                            </div> */}
+                          </div>
+                        </div>
                       )}
 
                       {/* COMMON */}

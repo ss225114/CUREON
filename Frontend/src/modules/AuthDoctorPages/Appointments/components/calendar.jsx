@@ -5,7 +5,7 @@ import { FaChevronLeft, FaChevronRight, FaCalendarAlt } from "react-icons/fa";
 import { useAppointments } from "../context/AppointmentsContext";
 
 const Calendar = () => {
-  const { selectedDate, setSelectedDate, appointments } = useAppointments();
+  const { selectedDate, setSelectedDate, appointments, getAppointmentsForDate } = useAppointments();
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   const monthNames = [
@@ -35,14 +35,14 @@ const Calendar = () => {
     return { daysInMonth, startingDay };
   };
 
-  const getAppointmentsForDate = (date) => {
-    try {
-      const dateString = date.toISOString().split("T")[0];
-      return appointments.filter((app) => app.appointmentDate === dateString);
-    } catch (error) {
-      return [];
-    }
-  };
+  // const getAppointmentsForDate = (date) => {
+  //   try {
+  //     const dateString = date.toISOString().split("T")[0];
+  //     return appointments.filter((app) => app.appointmentDate === dateString);
+  //   } catch (error) {
+  //     return [];
+  //   }
+  // };
 
   // Check if date is in the 7-day window (last 4, today, next 2)
   const isDateInDataWindow = (date) => {

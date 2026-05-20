@@ -9,6 +9,10 @@ const getSimilarDoctors = async (doc) => {
 
   const ids = response.data.map((r) => r.id);
 
+  ids = ids.filter((id) => id.toString() !== doctor._id.toString());
+
+  ids.unshift(doctor._id.toString());
+
   const doctors = await Doctor.find({ _id: { $in: ids } });
 
   return doctors;
@@ -59,7 +63,12 @@ export const searchDoctors = async (req, res) => {
       filter.rating = { $gte: minRating };
     }
 
-    let doctors = await Doctor.find(filter).sort({ clusterId: -1 }).limit(20);
+    let doctors = await Doctor.find(filter)
+      .sort({
+        rating: -1,
+        consultationFee: 1,
+      })
+      .limit(20);
 
     if (!useSimilarity) {
       return res.json(doctors);
@@ -161,7 +170,10 @@ export const getAllSpecializations = async (req, res) => {
 //     }
 
 //     let doctors = await Doctor.find(filter)
-//       .sort({ clusterId: -1 })
+//       .sort({
+//            rating: -1,
+//            consultationFee: 1,
+//        })
 //       .limit(20)
 //       .lean();
 

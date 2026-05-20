@@ -89,6 +89,58 @@ export const getSlotsByDate = async (req, res) => {
   }
 };
 
+export const getDoctorScheduleByDate = async (req, res) => {
+  try {
+    const doctorId = req.user.userID;
+    const { date } = req.query;
+
+    if (!date) {
+      return res.status(400).json({
+        error: "Date is required",
+      });
+    }
+
+    const selectedDate = new Date(date);
+
+    selectedDate.setHours(0, 0, 0, 0);
+
+    const nextDay = new Date(selectedDate);
+
+    nextDay.setDate(nextDay.getDate() + 1);
+
+    const slots = await Slot.find({
+      doctorId,
+      date: {
+        $gte: selectedDate,
+        $lt: nextDay,
+      },
+    }).sort({ startTime: 1 });
+
+    if (!slots.length) {
+      return res.status(200).json({
+        working: false,
+        timings: [],
+      });
+    }
+
+    const timings = slots.map((slot) => ({
+      startTime: slot.startTime,
+      endTime: slot.endTime,
+    }));
+
+    res.status(200).json({
+      working: true,
+      timings,
+    });
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      error: "Failed to fetch schedule",
+    });
+  }
+};
+
 const generateSlotsForSingleDay = (schedule, doctorId, date) => {
   const slots = [];
 

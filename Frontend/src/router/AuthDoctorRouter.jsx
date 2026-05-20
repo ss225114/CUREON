@@ -6,7 +6,7 @@ import { Routes, Route } from "react-router-dom";
 const AuthDoctorRouter = () => {
   return (
     <Routes>
-        <Route path="/doctor-dashboard" element={<Dashboard />} />
+        <Route path="/" element={<Dashboard />} />
         <Route path="/doctor-profile" element={<ProfilePage />} />
         <Route path="/doctor-appointments" element={<AppointmentPage />} />
     </Routes>

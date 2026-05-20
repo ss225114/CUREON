@@ -52,7 +52,7 @@ export default function SearchResults() {
               : "Recommended Doctors"}
           </h2>
           <p className="text-gray-600 dark:text-gray-400 mt-2">
-            {doctors.length} doctors found {filters.location === "Others" ? "" : "in " + filters.location}
+            {doctors.length} doctors found {(filters.location === "Others" || filters.location === "") ? "" : "in " + filters.location}
           </p>
         </div>
 

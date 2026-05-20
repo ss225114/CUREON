@@ -11,7 +11,7 @@ const doctorProfileSchema = new mongoose.Schema(
 
      // STEP 1: Personal Info
     personalInfo: {
-      dateOfBirth: { type: String, required: true },
+      dateOfBirth: { type: String, },
       address: { type: String }, // since form uses string, not array
     },
 

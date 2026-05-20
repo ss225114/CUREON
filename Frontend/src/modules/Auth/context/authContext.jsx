@@ -79,7 +79,7 @@
 
 /* eslint-disable no-unused-vars */
 import { setupInterceptors } from "@/lib/apiClient";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, use, useContext, useEffect, useState } from "react";
 
 const AuthContext = createContext();
 
@@ -122,9 +122,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   const setUser = (data) => {
-    _setUser(data);
+    _setUser(data.name);
     if (data) {
-      localStorage.setItem("USER_DATA", data);
+      localStorage.setItem("USER_DATA", data.name);
     } else {
       localStorage.removeItem("USER_DATA");
     }

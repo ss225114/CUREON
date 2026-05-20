@@ -9,7 +9,7 @@ import LabTestsReport from "@/modules/AuthUserPages/LabTestsReportPage/LabTestsR
 const AuthUserRouter = () => {
   return (
     <Routes>
-      <Route path="/user-dashboard" element={<Dashboard />} />
+      <Route path="/" element={<Dashboard />} />
       <Route path="/chat" element={<ChatPage />} />
       <Route path="/userprofile" element={<ProfilePage />} />
       <Route path="/find-doctors" element={<DoctorsPage />} />

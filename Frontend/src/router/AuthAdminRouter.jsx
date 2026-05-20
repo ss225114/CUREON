@@ -4,7 +4,7 @@ import { Routes, Route } from "react-router-dom";
 const AuthAdminRouter = () => {
   return (
     <Routes>
-        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/" element={<AdminDashboard />} />
     </Routes>
   );
 };

@@ -135,7 +135,7 @@ export const ProfileProvider = ({ children }) => {
     return () => clearTimeout(timer);
   }, []);
 
-  const getDoctorData = async() => {
+  const getDoctorData = async () => {
     try {
       // Simulate API call
       // await new Promise((resolve) => setTimeout(resolve, 500));
@@ -153,18 +153,42 @@ export const ProfileProvider = ({ children }) => {
     } catch (err) {
       // setError("Failed to load profile");
       console.error("Profile fetch error:", err);
-    } 
-  }
+    }
+  };
 
-  const updateProfile = async(updatedProfile, updatedDoctorData) => {
+  const updateProfile = async (updatedProfile, updatedDoctorData) => {
     setDoctorProfile((prev) => ({
       ...prev,
       ...updatedProfile,
     }));
-    const profile = await apiClient.post("/doctor/profile/update", updatedProfile);
-    const data = await apiClient.post("/doctor/model/update", updatedDoctorData)
+    const profile = await apiClient.post(
+      "/doctor/profile/update",
+      updatedProfile,
+    );
+    const data = await apiClient.post(
+      "/doctor/model/update",
+      updatedDoctorData,
+    );
 
     getDoctorData();
+  };
+
+  const getScheduleForDate = async (date) => {
+    try {
+      const formattedDate = date.toISOString();
+
+      const res = await apiClient.get(
+        `/api/schedule/all?date=${formattedDate}`,
+      );
+
+      return res.data;
+    } catch (err) {
+      console.error(err);
+      return {
+        working: false,
+        timings: [],
+      };
+    }
   };
 
   const value = {
@@ -175,7 +199,8 @@ export const ProfileProvider = ({ children }) => {
     setIsEditing,
     activeTab,
     setActiveTab,
-    doctorData
+    doctorData,
+    getScheduleForDate,
   };
 
   return (

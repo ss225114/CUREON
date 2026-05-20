@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   AppointmentsProvider,
   useAppointments,
@@ -33,9 +33,20 @@ const AppointmentDashboard = () => {
   } = useAppointments();
 
   const selectedDateAppointments = getAppointmentsForDate(selectedDate);
+  // const normalizedSelectedDate = new Date(selectedDate);
+  // normalizedSelectedDate.setHours(0, 0, 0, 0);
+
+  // const selectedDateAppointments =
+  //   getAppointmentsForDate(normalizedSelectedDate) || [];
   const today = new Date();
   const isTodaySelected = selectedDate.toDateString() === today.toDateString();
   const isPastDate = selectedDate < today;
+
+  useEffect(() => {
+    console.log(upcomingAppointments);
+    console.log(selectedDate);
+    console.log("selected date apts:", selectedDateAppointments);
+  }, []);
 
   const formatDate = (date) => {
     return date.toLocaleDateString("en-US", {
@@ -84,7 +95,7 @@ const AppointmentDashboard = () => {
         </div>
 
         {/* Stats Cards */}
-        <StatsCards />
+        {/* <StatsCards /> */}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - Calendar & Upcoming */}
@@ -172,7 +183,7 @@ const AppointmentDashboard = () => {
                         Status Distribution
                       </div>
                       <div className="space-y-2">
-                        {["pending", "confirmed", "completed", "rejected"].map(
+                        {["pending", "accepted", "completed", "rejected"].map(
                           (status) => {
                             const count = selectedDateAppointments.filter(
                               (app) => app.status === status,
@@ -181,7 +192,7 @@ const AppointmentDashboard = () => {
 
                             const statusConfig = {
                               pending: { color: "bg-amber-500", icon: FaClock },
-                              confirmed: {
+                              accepted: {
                                 color: "bg-green-500",
                                 icon: FaCheckCircle,
                               },
@@ -195,7 +206,7 @@ const AppointmentDashboard = () => {
                               },
                             }[status];
 
-                            const Icon = statusConfig.icon;
+                            const Icon = statusConfig?.icon;
 
                             return (
                               <div
@@ -204,10 +215,10 @@ const AppointmentDashboard = () => {
                               >
                                 <div className="flex items-center gap-3">
                                   <div
-                                    className={`p-1.5 rounded ${statusConfig.color.replace("bg-", "bg-")} bg-opacity-10`}
+                                    className={`p-1.5 rounded ${statusConfig?.color.replace("bg-", "bg-")} bg-opacity-10`}
                                   >
                                     <Icon
-                                      className={`h-3.5 w-3.5 ${statusConfig.color.replace("bg-", "text-")}`}
+                                      className={`h-3.5 w-3.5 ${statusConfig?.color.replace("bg-", "text-")}`}
                                     />
                                   </div>
                                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300 capitalize">
@@ -249,10 +260,10 @@ const AppointmentDashboard = () => {
                   <div className="space-y-4">
                     {selectedDateAppointments.map((appointment) => (
                       <AppointmentCard
-                        key={appointment.id}
+                        key={appointment._id}
                         appointment={appointment}
                         isUpcoming={
-                          !isPastDate && appointment.status === "pending"
+                          !isPastDate && appointment.status === "accepted"
                         }
                       />
                     ))}
@@ -301,7 +312,7 @@ const AppointmentDashboard = () => {
                 Profile ID: {doctor?.id}
               </span>
               <span className="px-2 py-1 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 rounded text-xs font-medium">
-                Verified Physician
+                Verified
               </span>
             </div>
           </div>

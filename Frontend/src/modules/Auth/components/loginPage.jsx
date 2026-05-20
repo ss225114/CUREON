@@ -61,7 +61,7 @@ export default function LoginPage() {
       .then((res) => {
         setToken(res.data.data.access_token);
         setRefreshToken(res.data.data.refresh_token);
-        form.role === "user" || form.role === "admin" ? setUser(res.data.name) : setDoctor(res.data.doctor);
+        form.role === "user" || form.role === "admin" ? setUser({name: res.data.name, isAdmin: res.data.isAdmin}) : setDoctor(res.data.doctor);
         setRole(form.role); // Store role in auth context
         console.log("Set all data");
         console.log(res);
@@ -69,13 +69,13 @@ export default function LoginPage() {
         // Redirect based on role
         switch (form.role) {
           case "doctor":
-            navigate("/doctor-dashboard");
+            navigate("/");
             break;
           case "admin":
-            navigate("/admin-dashboard");
+            navigate("/");
             break;
           default:
-            navigate("/user-dashboard");
+            navigate("/");
         }
       })
       .catch((err) => {

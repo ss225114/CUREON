@@ -86,7 +86,6 @@ export const updateDoctorModel = async (req, res) => {
       },
       {
         new: true,
-        upsert: true,
         runValidators: true,
       },
     );

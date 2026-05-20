@@ -298,9 +298,10 @@ export const DashboardProvider = ({ children }) => {
     try {
       setAppointmentLoading(true);
 
-      const [pendingRes, acceptedRes] = await Promise.all([
+      const [pendingRes, acceptedRes, all] = await Promise.all([
         apiClient.get("/api/appointment/doctor/pending"),
         apiClient.get("/api/appointment/doctor/accepted"),
+        apiClient.get("/api/appointment/doctor/all-appointments"),
       ]);
 
       const pending = pendingRes.data || [];
@@ -310,7 +311,7 @@ export const DashboardProvider = ({ children }) => {
       setAcceptedAppointments(accepted);
 
       // Combined appointments for UI
-      setAppointments([...pending, ...accepted]);
+      setAppointments(all.data);
     } catch (err) {
       console.error(err);
     } finally {
@@ -328,6 +329,8 @@ export const DashboardProvider = ({ children }) => {
         endpoint = `/api/appointment/${appointmentId}/accept`;
       } else if (status === "rejected") {
         endpoint = `/api/appointment/${appointmentId}/reject`;
+      } else if(status === "completed") {
+        endpoint = `/api/appointment/${appointmentId}/complete`;
       } else {
         return;
       }

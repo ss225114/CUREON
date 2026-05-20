@@ -4,7 +4,8 @@ import {
   bookAppointment,
   completeAppointment,
   fetchAvailability,
-  getDoctorAppointments,
+  getAcceptedAppointments,
+  getAllDoctorAppointments,
   getMyAppointments,
   getPendingAppointments,
   rejectAppointment,
@@ -19,7 +20,9 @@ router.post("/book", protect, bookAppointment);
 
 router.get("/doctor/pending", protect, getPendingAppointments);
 
-router.get("/doctor/accepted", protect, getDoctorAppointments);
+router.get("/doctor/accepted", protect, getAcceptedAppointments);
+
+router.get("/doctor/all-appointments", protect, getAllDoctorAppointments);
 
 router.patch("/:appointmentId/accept", protect, acceptAppointment);
 
@@ -27,6 +30,6 @@ router.patch("/:appointmentId/reject", protect, rejectAppointment);
 
 router.get("/my-appointments", protect, getMyAppointments);
 
-router.patch("/complete/:appointmentId", protect, completeAppointment);
+router.patch("/:appointmentId/complete", protect, completeAppointment);
 
 export default router;
