@@ -32,7 +32,7 @@ export const communicateMessage = async (req, res) => {
   try {
     const { data } = await axios.post(
       "http://localhost:8005/get",
-      { msg: query, chat_history: chatHistory, },
+      { msg: query, chat_history: chatHistory },
       {
         headers: { "Content-Type": "application/json" },
       },
@@ -40,7 +40,8 @@ export const communicateMessage = async (req, res) => {
 
     const newMessage2 = new Conversations({
       conversationId: id,
-      message: data.response,
+      message: data.redirect ? `Redirect to ${data.url}` : data.response,
+      doctorSearchPayload: data.redirect ? data.payload : {},
       imagePath: "",
       isImage: false,
       isUser: false,
@@ -58,6 +59,7 @@ export const communicateMessage = async (req, res) => {
       success: true,
       newMessage1,
       newMessage2,
+      payload: data.redirect ? data.payload : {},
     });
   } catch (err) {
     console.error("Flask API Error:", err.message);
@@ -102,7 +104,11 @@ export const communicateImage = async (req, res) => {
 
     const updatedChat = await Chat.findOneAndUpdate(
       { conversationId: id },
-      { $set: { lastMessage: `The disease is ${response.data.prediction.prediction}` } },
+      {
+        $set: {
+          lastMessage: `The disease is ${response.data.prediction.prediction}`,
+        },
+      },
       { new: true },
     );
 

@@ -1,10 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDoctors } from "../context/DoctorsContext";
 import DoctorCard from "./DoctorCard";
 import { FaSearch, FaExclamationTriangle, FaSyncAlt } from "react-icons/fa";
 
 export default function SearchResults() {
   const { doctors, loading, error, searchQuery, refreshDoctors, filters } = useDoctors();
+
+  useEffect(() => {
+    console.log("doctors: ", doctors);
+    
+  }, [])
 
   if (loading) {
     return (
@@ -96,7 +101,7 @@ export default function SearchResults() {
         ) : (
           <div className="space-y-8">
             {doctors.map((doctor) => (
-              <DoctorCard key={doctor.id} doctor={doctor} />
+              <DoctorCard key={doctor._id} doctor={doctor} />
             ))}
           </div>
         )}

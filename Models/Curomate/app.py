@@ -9,6 +9,8 @@ from src.intent import detect_intent
 from src.rag import retrieval_chain
 from src.doctor_search import search_doctors
 from src.image_analysis import predict_disease
+from src.book_appointment import doctor_query
+from src.similarity_search import find_similar_filtered
 
 load_dotenv()
 
@@ -51,24 +53,9 @@ def chat():
 
         return jsonify({
             "type": "medical_response",
-            "response": response
+            "response": response,
+            "redirect": False,
         })
-
-    # DOCTOR SEARCH
-    # elif intent == "doctor_search":
-
-    #     print("Detected doctor search intent.")
-
-    #     doctors = search_doctors(msg)
-
-    #     # Convert list to single string
-        
-    #     doctors_string = ", ".join(doctors)
-
-    #     return jsonify({
-    #         "type": "doctor_search",
-    #         "response": doctors_string
-    #     })
 
     elif intent == "doctor_search":
 
@@ -86,34 +73,21 @@ def chat():
 
         return jsonify({
             "type": "doctor_search",
-            "response": doctors_string
+            "response": doctors_string,
+            "redirect": False,
+        })
+    
+    elif intent == "book_appointment":
+        doctor_query_payload = doctor_query(msg)
+        return jsonify({
+            "url": "http://localhost:5173/find-doctors",
+            "payload": doctor_query_payload,
+            "redirect": True,
         })
 
     return jsonify({
         "response": "Could not understand request."
     })
-
-# @app.route("/predict", methods=["POST"])
-# def predict():
-
-#     if "image" not in request.files:
-
-#         return jsonify({
-#             "error": "No image uploaded"
-#         }), 400
-
-#     file = request.files["image"]
-
-#     filepath = os.path.join(
-#         UPLOAD_FOLDER,
-#         file.filename
-#     )
-
-#     file.save(filepath)
-
-#     result = predict_disease(filepath)
-
-#     return jsonify(result)
 
 @app.route("/predict", methods=["POST"])
 def predict():
@@ -184,6 +158,19 @@ def predict():
             "error": str(e)
         }), 500
 
+@app.route("/similar", methods=["POST"])
+def similar():
+    doctor = request.json
+
+    results = find_similar_filtered(doctor)
+
+    return jsonify([
+        {
+            "id": match["id"],
+            "score": match["score"]
+        }
+        for match in results
+    ])
 
 if __name__ == "__main__":
 

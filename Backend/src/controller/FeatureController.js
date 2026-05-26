@@ -3,19 +3,28 @@ import axios from "axios";
 
 const getSimilarDoctors = async (doc) => {
   console.log("doctor data for similarity search:", doc);
+
   const doctor = await Doctor.findById(doc[0]._id);
 
   const response = await axios.post("http://localhost:8005/similar", doctor);
 
-  const ids = response.data.map((r) => r.id);
+  let ids = response.data.map((r) => r.id);
 
   ids = ids.filter((id) => id.toString() !== doctor._id.toString());
 
   ids.unshift(doctor._id.toString());
 
-  const doctors = await Doctor.find({ _id: { $in: ids } });
+  const doctors = await Doctor.find({
+    _id: { $in: ids },
+  });
 
-  return doctors;
+  const orderedDoctors = ids.map((id) =>
+    doctors.find(
+      (doc) => doc._id.toString() === id.toString()
+    )
+  );
+
+  return orderedDoctors;
 };
 
 export const searchDoctors = async (req, res) => {

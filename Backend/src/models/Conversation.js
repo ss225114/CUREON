@@ -9,6 +9,10 @@ const conversationSchema = mongoose.Schema(
     message: {
       type: String,
     },
+    doctorSearchPayload: {
+      type: mongoose.Schema.Types.Mixed,
+      default: {},
+    },
     imagePath: {
       type: String,
       default: "",

@@ -1,15 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { DoctorsProvider } from "./context/DoctorsContext";
+import { DoctorsProvider, useDoctors } from "./context/DoctorsContext";
 import DoctorsHeader from "./components/DoctorsHeader";
 import SearchBar from "./components/SearchBar";
 import SearchResults from "./components/SearchResults";
 import FiltersPanel from "./components/filtersPanel";
 import SortOptions from "./components/sortOptions";
+import { useLocation } from "react-router-dom";
 
 // Main Content Component
 function DoctorsContent() {
   const [showSearchResults, setShowSearchResults] = useState(false);
+  
+  const { doctors } = useDoctors();
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.filters) {
+      setShowSearchResults(true)
+    }
+  }, [location.state])
 
   const handleSearch = () => {
     setShowSearchResults(true);
