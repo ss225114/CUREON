@@ -20,7 +20,7 @@ import apiClient from "@/lib/apiClient";
 export default function RegisterPage() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ fullName: "", email: "", password: "" });
-  const { setToken, setUser, setRefreshToken } = useAuth();
+  const { setToken, setUser, setRefreshToken, setRole } = useAuth();
 
   //otp states
   const [otp, setOtp] = useState("");
@@ -78,8 +78,9 @@ export default function RegisterPage() {
         setIsOtpDialogOpen(false);
         setToken(response.data.data.access_token);
         setRefreshToken(response.data.data.refresh_token);
-        setUser(response.data.name);
-        navigate("/user-dashboard");
+        setUser({name: response.data.name});
+        setRole("user");
+        navigate("/");
       }
     } catch (err) {
       console.log(err.response);
