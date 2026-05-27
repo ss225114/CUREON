@@ -5,6 +5,16 @@ import connectDB from "./config/db.js";
 import authRoutes from "./routes/AuthRoutes.js";
 import chatRoutes from "./routes/ChatRoutes.js";
 import conversationRoutes from "./routes/ConversationRoutes.js";
+import userRoutes from "./routes/UserRoutes.js";
+import doctorRoutes from "./routes/DoctorRoutes.js";
+import adminRoutes from "./routes/AdminRoutes.js";
+import featureRoutes from "./routes/FeatureRoutes.js";
+import scheduleRoutes from "./routes/ScheduleRoutes.js";
+import documentRoutes from "./routes/DocumentRoutes.js";
+import folderRoutes from "./routes/FolderRoutes.js";
+import appointmentRoutes from "./routes/AppointmentRoutes.js";
+import feedbackRoutes from "./routes/FeedbackRoutes.js";
+import path from "path";
 
 dotenv.config();
 
@@ -20,9 +30,20 @@ app.use(
 );
 app.use(express.json());
 
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+
 app.use("/auth", authRoutes);
 app.use("/chat", chatRoutes);
 app.use("/message", conversationRoutes);
+app.use("/user", userRoutes);
+app.use("/doctor", doctorRoutes);
+app.use("/admin", adminRoutes);
+app.use("/feature", featureRoutes);
+app.use("/api/schedule", scheduleRoutes);
+app.use("/api/documents", documentRoutes);
+app.use("/api/folders", folderRoutes);
+app.use("/api/appointment", appointmentRoutes);
+app.use("/feedback", feedbackRoutes);
 
 const PORT = process.env.PORT || 5000;
 

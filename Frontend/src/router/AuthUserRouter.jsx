@@ -1,0 +1,22 @@
+import { Routes, Route } from "react-router-dom";
+import Dashboard from "@/modules/AuthUserPages/Dashboard/dashboard";
+import ChatPage from "@/modules/AuthUserPages/ChatPage/chatPage";
+import ProfilePage from "@/modules/AuthUserPages/ProfilePage/profilePage";
+import DoctorsPage from "@/modules/AuthUserPages/DoctorsPage/doctorsPage";
+import ViewAllSpecialitiesPage from "@/modules/AuthUserPages/ViewAllSpecialitiesPage/ViewAllSpecialitiesPage";
+import LabTestsReport from "@/modules/AuthUserPages/LabTestsReportPage/LabTestsReport";
+
+const AuthUserRouter = () => {
+  return (
+    <Routes>
+      <Route path="/" element={<Dashboard />} />
+      <Route path="/chat" element={<ChatPage />} />
+      <Route path="/userprofile" element={<ProfilePage />} />
+      <Route path="/find-doctors" element={<DoctorsPage />} />
+      <Route path="/tests-and-reports" element={<LabTestsReport />} />
+      <Route path="/all-specializations" element={<ViewAllSpecialitiesPage />} />
+    </Routes>
+  );
+};
+
+export default AuthUserRouter;

@@ -20,7 +20,7 @@ import apiClient from "@/lib/apiClient";
 export default function RegisterPage() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ fullName: "", email: "", password: "" });
-  const { setToken, setUser, setRefreshToken } = useAuth();
+  const { setToken, setUser, setRefreshToken, setRole } = useAuth();
 
   //otp states
   const [otp, setOtp] = useState("");
@@ -78,7 +78,8 @@ export default function RegisterPage() {
         setIsOtpDialogOpen(false);
         setToken(response.data.data.access_token);
         setRefreshToken(response.data.data.refresh_token);
-        setUser(response.data.name);
+        setUser({name: response.data.name});
+        setRole("user");
         navigate("/");
       }
     } catch (err) {
@@ -229,7 +230,7 @@ export default function RegisterPage() {
                 className="w-full hover:bg-blue-700 dark:hover:bg-blue-600 text-white transition-colors duration-300 disabled:opacity-50"
                 style={{ backgroundColor: "#293379" }}
               >
-                {loading ? "Registering..." : "Register"}
+                {loading ? "Registering..." : "Register as User"}
               </Button>
 
               <p className="text-center text-sm mt-2 text-gray-700 dark:text-gray-300">
@@ -238,17 +239,16 @@ export default function RegisterPage() {
                   to="/login"
                   className="font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-300"
                 >
-                  Sign In
+                  Login here
                 </Link>
               </p>
 
               <p className="text-center text-sm mt-2 text-gray-700 dark:text-gray-300">
-                Are you a doctor?{" "}
                 <Link
                   to="/doctor-register"
                   className="font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-300"
                 >
-                  Sign Up
+                  Are you a doctor?{" "}
                 </Link>
               </p>
             </form>

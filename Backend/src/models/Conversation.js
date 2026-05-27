@@ -8,7 +8,18 @@ const conversationSchema = mongoose.Schema(
     },
     message: {
       type: String,
-      required: true,
+    },
+    doctorSearchPayload: {
+      type: mongoose.Schema.Types.Mixed,
+      default: {},
+    },
+    imagePath: {
+      type: String,
+      default: "",
+    },
+    isImage: {
+      type: Boolean,
+      default: false,
     },
     isUser: {
       type: Boolean,
@@ -16,7 +27,7 @@ const conversationSchema = mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const Conversations = mongoose.model("Conversations", conversationSchema);
