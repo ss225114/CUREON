@@ -1,7 +1,9 @@
 import {
   appointmentCancellationMail,
   appointmentConfirmationMail,
+  appointmentRejectionMail,
   feedbackMail,
+  rejectAppointmentMail,
 } from "../lib/emailService.js";
 import Appointment from "../models/Appointment.js";
 import Slot from "../models/Slot.js";
@@ -236,7 +238,9 @@ export const rejectAppointment = async (req, res) => {
     const appointment = await Appointment.findOne({
       _id: appointmentId,
       doctorId,
-    });
+    }).populate("patientId", "email fullName");
+
+    const slot = await Slot.findById(appointment.slotId);
 
     if (!appointment) {
       return res.status(404).json({
@@ -255,6 +259,12 @@ export const rejectAppointment = async (req, res) => {
     appointment.rejectionReason = rejectionReason || "Rejected by doctor";
 
     await appointment.save();
+
+    await rejectAppointmentMail(
+        appointment.patientId.email,
+        slot.startTime,
+        slot.dayOfWeek,
+      );
 
     res.json({
       message: "Appointment rejected",
