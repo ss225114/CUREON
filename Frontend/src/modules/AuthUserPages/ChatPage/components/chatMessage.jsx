@@ -1,10 +1,13 @@
 import { useAuth } from "@/modules/Auth/context/authContext";
 import React from "react";
 import { useChat } from "../context/chatContext";
+import { useNavigate } from "react-router-dom";
 
 const Message = ({ message }) => {
   const { user } = useAuth();
   const { imageUrl } = useChat();
+
+  const navigate = useNavigate();
 
   // Function to get the first letter of username
   const getFirstLetter = (username) => {
@@ -17,6 +20,34 @@ const Message = ({ message }) => {
     }
     return username.trim().charAt(0).toUpperCase();
   };
+
+  const renderMessageWithLinks = (messageObj) => {
+  const text = messageObj.message;
+
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+
+  return text.split(urlRegex).map((part, index) => {
+    if (part.match(urlRegex)) {
+      return (
+        <button
+          key={index}
+          onClick={() =>
+            navigate("/find-doctors", {
+              state: {
+                filters: messageObj.doctorSearchPayload,
+              },
+            })
+          }
+          className="text-blue-400 underline"
+        >
+          this link
+        </button>
+      );
+    }
+
+    return part;
+  });
+};
 
   return (
     <div
@@ -80,19 +111,23 @@ const Message = ({ message }) => {
 
             <p className="leading-relaxed whitespace-pre-wrap text-sm relative z-10">
               {message.isImage ? (
-                imageUrl ? (<img
-                  src={imageUrl}
-                  alt="Uploaded"
-                  className="w-30 h-30 rounded-lg"
-                />) :
-                <img
-                  src={`http://localhost:5000/uploads/images/${message.imagePath.
-                    split("\\").pop()}`}
-                  alt="Uploaded"
-                  className="w-30 h-30 rounded-lg"
-                />
+                imageUrl ? (
+                  <img
+                    src={imageUrl}
+                    alt="Uploaded"
+                    className="w-30 h-30 rounded-lg"
+                  />
+                ) : (
+                  <img
+                    src={`http://localhost:5000/uploads/images/${message.imagePath
+                      .split("\\")
+                      .pop()}`}
+                    alt="Uploaded"
+                    className="w-30 h-30 rounded-lg"
+                  />
+                )
               ) : (
-                message.message
+                renderMessageWithLinks(message)
               )}
             </p>
 

@@ -23,6 +23,7 @@ Return ONLY one word:
 
 medical
 doctor_search
+book_appointment
 
 Message:
 {message}

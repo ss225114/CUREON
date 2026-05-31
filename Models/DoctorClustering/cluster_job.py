@@ -19,13 +19,11 @@ if not MONGO_URI:
     raise ValueError("MONGO_URI not found in environment variables")
 
 
-# 🔹 MongoDB connection
+# MongoDB connection
 client = MongoClient(MONGO_URI)
 
-# 👉 Use your actual DB name from URI
 db = client["Cureon-db"]
 
-# 👉 Make sure this matches your collection name
 collection = db["doctors"]
 
 

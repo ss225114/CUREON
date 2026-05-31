@@ -331,6 +331,8 @@ export const DashboardProvider = ({ children }) => {
         endpoint = `/api/appointment/${appointmentId}/reject`;
       } else if(status === "completed") {
         endpoint = `/api/appointment/${appointmentId}/complete`;
+      } else if(status === "cancelled") {
+        endpoint = `/api/appointment/${appointmentId}/cancel`;
       } else {
         return;
       }

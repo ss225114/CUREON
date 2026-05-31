@@ -1,4 +1,8 @@
-import { appointmentConfirmationMail, feedbackMail } from "../lib/emailService.js";
+import {
+  appointmentCancellationMail,
+  appointmentConfirmationMail,
+  feedbackMail,
+} from "../lib/emailService.js";
 import Appointment from "../models/Appointment.js";
 import Slot from "../models/Slot.js";
 import User from "../models/User.js";
@@ -345,7 +349,7 @@ export const getAllDoctorAppointments = async (req, res) => {
       doctorId,
     })
       .populate("patientId", "fullName email")
-      .populate("slotId")
+      .populate("slotId");
 
     appointments = await Promise.all(
       appointments.map(async (appointment) => {
@@ -375,13 +379,11 @@ export const getAllDoctorAppointments = async (req, res) => {
 
 export const cancelAppointment = async (req, res) => {
   try {
-    const patientId = req.user.userID;
     const { appointmentId } = req.params;
 
     const appointment = await Appointment.findOne({
       _id: appointmentId,
-      patientId,
-    });
+    }).populate("patientId", "fullName email");
 
     if (!appointment) {
       return res.status(404).json({
@@ -395,8 +397,17 @@ export const cancelAppointment = async (req, res) => {
     // Free slot
     await Slot.findByIdAndUpdate(appointment.slotId, {
       isBooked: false,
+      isComplete: false,
       appointment_id: null,
     });
+
+    const slot = await Slot.findById(appointment.slotId);
+
+    await appointmentCancellationMail(
+      appointment.patientId.email,
+      slot.startTime,
+      slot.dayOfWeek,
+    );
 
     res.json({
       message: "Appointment cancelled successfully",

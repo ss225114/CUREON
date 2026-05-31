@@ -2,6 +2,7 @@ import express from "express";
 import {
   acceptAppointment,
   bookAppointment,
+  cancelAppointment,
   completeAppointment,
   fetchAvailability,
   getAcceptedAppointments,
@@ -31,5 +32,7 @@ router.patch("/:appointmentId/reject", protect, rejectAppointment);
 router.get("/my-appointments", protect, getMyAppointments);
 
 router.patch("/:appointmentId/complete", protect, completeAppointment);
+
+router.patch("/:appointmentId/cancel", protect, cancelAppointment);
 
 export default router;

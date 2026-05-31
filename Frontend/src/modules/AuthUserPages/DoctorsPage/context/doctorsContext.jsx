@@ -1,5 +1,6 @@
 import apiClient from "@/lib/apiClient";
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 const DoctorsContext = createContext();
 
@@ -35,6 +36,8 @@ export const DoctorsProvider = ({ children }) => {
   const [bookingLoading, setBookingLoading] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [selectedDate, setSelectedDate] = useState("");
+
+  const navlocation = useLocation();
 
   // Mock data
   // const mockDoctors = [
@@ -129,7 +132,6 @@ export const DoctorsProvider = ({ children }) => {
     setFilters(updated);
 
     console.log(filters);
-    
 
     // Trigger search with filters
     fetchDoctors(searchQuery, updated);
@@ -195,47 +197,47 @@ export const DoctorsProvider = ({ children }) => {
 
     // Add common specialties
     const commonSpecialties = [
-        "GENERAL_PHYSICIAN",
-        "INTERNAL_MEDICINE",
-        "PEDIATRICS",
-        "GYNECOLOGY",
-        "OBSTETRICS",
-        "CARDIOLOGY",
-        "DERMATOLOGY",
-        "ORTHOPEDICS",
-        "NEUROLOGY",
-        "NEUROSURGERY",
-        "PSYCHIATRY",
-        "PSYCHOLOGY",
-        "ENT",
-        "OPHTHALMOLOGY",
-        "GASTROENTEROLOGY",
-        "PULMONOLOGY",
-        "ENDOCRINOLOGY",
-        "NEPHROLOGY",
-        "UROLOGY",
-        "ONCOLOGY",
-        "HEMATOLOGY",
-        "RHEUMATOLOGY",
-        "GENERAL_SURGERY",
-        "PLASTIC_SURGERY",
-        "VASCULAR_SURGERY",
-        "ANESTHESIOLOGY",
-        "RADIOLOGY",
-        "PATHOLOGY",
-        "EMERGENCY_MEDICINE",
-        "FAMILY_MEDICINE",
-        "GERIATRICS",
-        "INFECTIOUS_DISEASE",
-        "SPORTS_MEDICINE",
-        "PAIN_MANAGEMENT",
-        "DENTISTRY",
-        "ORTHODONTICS",
-        "AYURVEDA",
-        "HOMEOPATHY",
-        "UNANI",
-        "OTHER",
-      ];
+      "GENERAL_PHYSICIAN",
+      "INTERNAL_MEDICINE",
+      "PEDIATRICS",
+      "GYNECOLOGY",
+      "OBSTETRICS",
+      "CARDIOLOGY",
+      "DERMATOLOGY",
+      "ORTHOPEDICS",
+      "NEUROLOGY",
+      "NEUROSURGERY",
+      "PSYCHIATRY",
+      "PSYCHOLOGY",
+      "ENT",
+      "OPHTHALMOLOGY",
+      "GASTROENTEROLOGY",
+      "PULMONOLOGY",
+      "ENDOCRINOLOGY",
+      "NEPHROLOGY",
+      "UROLOGY",
+      "ONCOLOGY",
+      "HEMATOLOGY",
+      "RHEUMATOLOGY",
+      "GENERAL_SURGERY",
+      "PLASTIC_SURGERY",
+      "VASCULAR_SURGERY",
+      "ANESTHESIOLOGY",
+      "RADIOLOGY",
+      "PATHOLOGY",
+      "EMERGENCY_MEDICINE",
+      "FAMILY_MEDICINE",
+      "GERIATRICS",
+      "INFECTIOUS_DISEASE",
+      "SPORTS_MEDICINE",
+      "PAIN_MANAGEMENT",
+      "DENTISTRY",
+      "ORTHODONTICS",
+      "AYURVEDA",
+      "HOMEOPATHY",
+      "UNANI",
+      "OTHER",
+    ];
 
     commonSpecialties.forEach((specialty) => {
       if (specialty.toLowerCase().includes(lowerQuery)) {
@@ -382,9 +384,36 @@ export const DoctorsProvider = ({ children }) => {
     });
   };
 
+  // useEffect(() => {
+  //   fetchDoctors();
+  // }, []);
+
   useEffect(() => {
-    fetchDoctors();
+    const loadDoctors = async () => {
+      if (navlocation.state?.filters) {
+        const incomingFilters = navlocation.state.filters;
+
+        console.log("Incoming Filters:", incomingFilters);
+
+        const updatedFilters = {
+          ...filters,
+          ...incomingFilters,
+        };
+
+        setFilters(updatedFilters);
+
+        await fetchDoctors("", updatedFilters);
+      } else {
+        await fetchDoctors();
+      }
+    };
+
+    loadDoctors();
   }, []);
+
+  useEffect(() => {
+    console.log("filteredDoctors updated:", filteredDoctors);
+  }, [filteredDoctors]);
 
   const value = {
     doctors: filteredDoctors,

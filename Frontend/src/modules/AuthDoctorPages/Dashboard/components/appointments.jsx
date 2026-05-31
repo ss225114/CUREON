@@ -357,7 +357,11 @@ export default function Appointments() {
 
                           <Button
                             onClick={() =>
-                              handleStatusUpdate(apt._id, "completed", apt.slotId?.date,)
+                              handleStatusUpdate(
+                                apt._id,
+                                "completed",
+                                apt.slotId?.date,
+                              )
                             }
                             variant="outline"
                             className="border-green-300 text-green-700 hover:bg-green-50"
@@ -413,12 +417,51 @@ export default function Appointments() {
                         </div>
                       )}
 
+                      {/* CANCELLED */}
+                      {apt.status === "cancelled" && (
+                        <div className="w-full">
+                          <div className="p-4 rounded-xl border border-red-200 dark:border-red-800 bg-gradient-to-r from-red-50/60 to-white dark:from-red-900/10 dark:to-gray-900/20">
+                            <div className="flex items-center gap-3 mb-3">
+                              <div className="p-2 rounded-full bg-red-100 dark:bg-red-900/30">
+                                <FaTimesCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
+                              </div>
+
+                              <div>
+                                <h4 className="font-semibold text-red-700 dark:text-red-300">
+                                  Appointment Cancelled
+                                </h4>
+
+                                <p className="text-sm text-gray-600 dark:text-gray-400">
+                                  This appointment has been cancelled and is no
+                                  longer active.
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="flex flex-wrap gap-3 mt-4">
+                              <Button
+                                variant="outline"
+                                className="border-red-300 text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                disabled
+                              >
+                                Cancelled
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
                       {/* COMMON */}
                       {apt.status !== "cancelled" &&
-                        apt.status !== "completed" && (
+                        apt.status !== "completed" &&
+                        apt.status !== "pending" && (
                           <Button
                             onClick={() =>
-                              handleStatusUpdate(apt._id, "cancelled")
+                              handleStatusUpdate(
+                                apt._id,
+                                "cancelled",
+                                apt.slotId?.date,
+                              )
                             }
                             variant="outline"
                             className="border-gray-300 text-gray-700 hover:bg-gray-50"
