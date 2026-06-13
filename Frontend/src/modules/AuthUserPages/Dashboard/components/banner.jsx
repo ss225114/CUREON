@@ -24,8 +24,8 @@ const Banner = () => {
           <div className="space-y-6">
             <p className="text-xl leading-relaxed text-gray-700 dark:text-gray-300 font-light transition-colors duration-300">
               Experience the future of healthcare with Curomate. Our intelligent
-              platform streamlines medical appointments, provides smart
-              medication reminders, and keeps your health journey organized and
+              platform streamlines medical appointments, provides instant
+              medical consultations, and keeps your health journey organized and
               stress-free.
             </p>
 
@@ -34,8 +34,8 @@ const Banner = () => {
               {[
                 "Instant Medical Consultation",
                 "Smart Appointment Scheduling",
-                "Medication Reminders",
-                "Health Progress Tracking",
+                "Health Record Management",
+                "AI Automated Features",
               ].map((feature, index) => (
                 <div key={index} className="flex items-center gap-3">
                   <div
@@ -125,29 +125,34 @@ const Banner = () => {
                   {
                     img: "https://cdn-icons-png.flaticon.com/512/3774/3774299.png",
                     label: "Consult",
-                    stat: "12 Today",
+                    stat: "1 Today",
+                    route: "/find-doctors",
                   },
                   {
                     img: "https://cdn-icons-png.flaticon.com/512/3050/3050525.png",
-                    label: "Meds",
-                    stat: "3 Pending",
+                    label: "Chats",
+                    stat: "3 Today",
+                    route: "/chat",
                   },
                   {
                     img: "https://cdn-icons-png.flaticon.com/512/747/747310.png",
-                    label: "Schedule",
-                    stat: "5 Upcoming",
+                    label: "Appointments",
+                    stat: "2 Upcoming",
+                    route: "/userprofile",
                   },
                   {
                     img: "https://cdn-icons-png.flaticon.com/512/3373/3373480.png",
                     label: "Reports",
-                    stat: "12 Reports",
+                    stat: "4 Saved",
+                    route: "/tests-and-reports",
                   },
                 ].map((item, index) => (
-                  <div
+                  <Link
                     key={index}
+                    to={item.route}
                     className="rounded-2xl p-4 text-center transition-all duration-300 cursor-pointer group relative overflow-hidden
-                      bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-sm
-                      hover:shadow-md hover:scale-[1.03] dark:hover:border-blue-500"
+        bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-sm
+        hover:shadow-md hover:scale-[1.03] dark:hover:border-blue-500 block"
                   >
                     {/* Hover overlay */}
                     <div
@@ -180,7 +185,7 @@ const Banner = () => {
                         {item.stat}
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>

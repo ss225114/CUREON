@@ -1,4 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { FaSun, FaMoon, FaHome} from "react-icons/fa";
+import {Link} from "react-router-dom";
 import SpecialtyCard from "./components/SpecialtyCard";
 import { useNavigate } from "react-router-dom";
 import apiClient from "@/lib/apiClient";
@@ -407,33 +409,66 @@ const ViewAllSpecialitiesPage = () => {
     <div className={`min-h-screen transition-colors duration-300 ${pageBg}`}>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
         {/* ── Top bar: title + dark/light toggle ── */}
-        <div className="flex items-start justify-between mb-5">
-          <div>
-            <h1
-              className={`text-2xl font-bold tracking-tight ${dark ? "text-white" : "text-[#1B3A5C]"}`}
+        <nav
+          className={`fixed top-0 left-0 right-0 z-50 border-b backdrop-blur-md ${
+            dark
+              ? "bg-[#111C2E]/95 border-[#1E3A5F]"
+              : "bg-white/95 border-slate-200"
+          }`}
+        >
+          <div className="max-w-[1400px] mx-auto px-4 h-16 flex items-center justify-between">
+            {/* Logo */}
+            <Link
+              to="/"
+              className={`text-2xl md:text-3xl font-bold tracking-wide ${
+                dark ? "text-indigo-300" : "text-[#293379]"
+              }`}
             >
-              All Specialties
-            </h1>
-            <p className={`text-sm mt-1 ${textSec}`}>
-              Find the right specialist for your health concern
-            </p>
-          </div>
+              Cureon
+            </Link>
 
-          {/* Day / Night toggle — matches the moon icon in your Cureon navbar */}
-          <button
-            onClick={() => setDark(!dark)}
-            aria-label="Toggle dark mode"
-            className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium transition-all ${
-              dark
-                ? "bg-gray-800 border-gray-600 text-yellow-300 hover:bg-gray-700"
-                : "bg-white border-gray-200 text-gray-500 hover:border-blue-300"
+            {/* Actions */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setDark(!dark)}
+                className={`w-11 h-11 flex items-center justify-center rounded-full border transition-all duration-300 shadow-sm ${
+                  dark
+                    ? "bg-[#1A2B42] border-[#1E3A5F] hover:bg-[#243855]"
+                    : "bg-white border-slate-200 hover:bg-slate-100"
+                }`}
+              >
+                {dark ? (
+                  <FaSun className="text-yellow-400 text-lg" />
+                ) : (
+                  <FaMoon className="text-[#293379] text-lg" />
+                )}
+              </button>
+
+              <Link
+                to="/"
+                className={`w-11 h-11 flex items-center justify-center rounded-full border transition-all duration-300 shadow-sm ${
+                  dark
+                    ? "bg-[#1A2B42] border-[#1E3A5F] text-indigo-300 hover:bg-[#243855]"
+                    : "bg-white border-slate-200 text-[#293379] hover:bg-slate-100"
+                }`}
+              >
+                <FaHome size={18} />
+              </Link>
+            </div>
+          </div>
+        </nav>
+        <div className="pt-18 pb-6">
+          <h1
+            className={`text-4xl font-bold ${
+              dark ? "text-white" : "text-[#293379]"
             }`}
           >
-            <span className="text-base leading-none">{dark ? "☀️" : "🌙"}</span>
-            <span className="hidden sm:inline">
-              {dark ? "Light mode" : "Dark mode"}
-            </span>
-          </button>
+            All Specialties
+          </h1>
+
+          <p className={`mt-2 text-base ${textSec}`}>
+            Find the right specialist for your health concern
+          </p>
         </div>
 
         {/* ── Search ── */}
@@ -540,6 +575,18 @@ const ViewAllSpecialitiesPage = () => {
           </button>
         </div>
       </div>
+      <footer className="mt-8 px-6 py-4 border-t border-white/20 dark:border-gray-700 bg-[#293379] dark:bg-gray-900 backdrop-blur-md shadow-inner transition-colors">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="text-sm text-white/80 dark:text-gray-300">
+            &copy; {new Date().getFullYear()} Cureon Medical Profile. All rights
+            reserved.
+          </div>
+
+          <span className="px-2 py-1 bg-green-500/20 dark:bg-green-900/30 text-green-200 dark:text-green-300 rounded text-xs border border-green-400/20">
+            Verified
+          </span>
+        </div>
+      </footer>
     </div>
   );
 };

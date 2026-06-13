@@ -75,6 +75,22 @@ export const getAllDoctors = async (req, res) => {
   }
 };
 
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({});
+    // console.log("Users from Mongo:", users);
+
+    res.status(200).json({
+      success: true,
+      users,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      error,
+    });
+  }
+};
+
 export const getPendingRequests = async (req, res) => {
   try {
     const id = req.user.userID;

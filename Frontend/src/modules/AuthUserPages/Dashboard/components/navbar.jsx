@@ -12,6 +12,8 @@ import {
   FaCalendar,
   FaFileMedical,
   FaSignOutAlt,
+  FaPhone,
+  FaMapMarkerAlt,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
@@ -23,6 +25,8 @@ const Navbar = () => {
     if (savedMode !== null) return JSON.parse(savedMode);
     return window.matchMedia("(prefers-color-scheme: dark)").matches;
   });
+  const [contactOpen, setContactOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
 
   const dropdownRef = useRef(null);
   const mobileMenuRef = useRef(null);
@@ -89,6 +93,7 @@ const Navbar = () => {
         <div className="hidden lg:flex items-center space-x-6">
           {/* Contact Us */}
           <button
+            onClick={() => setContactOpen(true)}
             className="flex items-center space-x-2 px-5 py-2.5 text-white dark:text-gray-900 rounded-full shadow-md hover:shadow-lg transition-all duration-300"
             style={{
               backgroundColor: darkMode ? "#a5b4fc" : "#293379",
@@ -99,7 +104,10 @@ const Navbar = () => {
           </button>
 
           {/* Help */}
-          <button className="flex items-center space-x-2 px-5 py-2.5 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-gray-700 dark:text-gray-300 rounded-full border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm hover:shadow-md transition-all duration-300">
+          <button
+            onClick={() => setHelpOpen(true)}
+            className="flex items-center space-x-2 px-5 py-2.5 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-gray-700 dark:text-gray-300 rounded-full border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm hover:shadow-md transition-all duration-300"
+          >
             <FaQuestionCircle size={16} />
             <span className="font-semibold">Help</span>
           </button>
@@ -160,7 +168,6 @@ const Navbar = () => {
                       </div>
                     </div>
                   </Link>
-
 
                   {/* Divider */}
                   <div className="my-1 border-t border-gray-200 dark:border-gray-800"></div>
@@ -225,11 +232,10 @@ const Navbar = () => {
               </div>
             </Link>
 
-
             {/* Contact Us item */}
             <button
               onClick={() => {
-                // Handle contact us
+                setContactOpen(true);
                 setMobileMenuOpen(false);
               }}
               className="w-full flex items-center gap-3 p-3 text-left rounded-lg hover:bg-gray-100 cursor-pointer dark:hover:bg-gray-800 transition-colors duration-200"
@@ -250,7 +256,7 @@ const Navbar = () => {
             {/* Help item */}
             <button
               onClick={() => {
-                // Handle help
+                setHelpOpen(true);
                 setMobileMenuOpen(false);
               }}
               className="w-full flex items-center gap-3 p-3 text-left rounded-lg hover:bg-gray-100 cursor-pointer dark:hover:bg-gray-800 transition-colors duration-200"
@@ -316,6 +322,183 @@ const Navbar = () => {
                 </div>
               </div>
             </button>
+          </div>
+        </div>
+      )}
+      {contactOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div
+            className={`w-full max-w-md rounded-3xl shadow-2xl border overflow-hidden ${
+              darkMode
+                ? "bg-gray-900 border-gray-700"
+                : "bg-white border-gray-200"
+            }`}
+          >
+            {/* Header */}
+            <div
+              className="px-6 py-4 flex items-center justify-between"
+              style={{
+                background: darkMode
+                  ? "linear-gradient(135deg,#a5b4fc,#818cf8)"
+                  : "linear-gradient(135deg,#293379,#4454d9)",
+              }}
+            >
+              <h2 className="text-xl font-bold text-white">Contact Cureon</h2>
+
+              <button
+                onClick={() => setContactOpen(false)}
+                className="text-white hover:opacity-80 transition"
+              >
+                {/* <FaTimes size={18} /> */}
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="p-6 space-y-5">
+              <div className="flex items-start gap-4">
+                <div className="p-3 rounded-xl bg-blue-100 dark:bg-blue-900/30">
+                  <FaPhone className="text-[#293379] dark:text-blue-400" />
+                </div>
+
+                <div>
+                  <h3 className="font-semibold text-gray-900 dark:text-white">
+                    Phone
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    +91 98765 43210
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="p-3 rounded-xl bg-blue-100 dark:bg-blue-900/30">
+                  <FaEnvelope className="text-[#293379] dark:text-blue-400" />
+                </div>
+
+                <div>
+                  <h3 className="font-semibold text-gray-900 dark:text-white">
+                    Email
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    support@cureon.com
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="p-3 rounded-xl bg-blue-100 dark:bg-blue-900/30">
+                  <FaMapMarkerAlt className="text-[#293379] dark:text-blue-400" />
+                </div>
+
+                <div>
+                  <h3 className="font-semibold text-gray-900 dark:text-white">
+                    Address
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    Cureon Healthcare Pvt. Ltd.
+                    <br />
+                    Salt Lake Sector V
+                    <br />
+                    Kolkata, West Bengal, India
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setContactOpen(false)}
+                className="w-full py-3 rounded-xl text-white font-semibold transition"
+                style={{
+                  backgroundColor: darkMode ? "#818cf8" : "#293379",
+                }}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {helpOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div
+            className={`w-full max-w-lg rounded-3xl shadow-2xl border overflow-hidden ${
+              darkMode
+                ? "bg-gray-900 border-gray-700"
+                : "bg-white border-gray-200"
+            }`}
+          >
+            {/* Header */}
+            <div
+              className="px-6 py-4 flex items-center justify-between"
+              style={{
+                background: darkMode
+                  ? "linear-gradient(135deg,#a5b4fc,#818cf8)"
+                  : "linear-gradient(135deg,#293379,#4454d9)",
+              }}
+            >
+              <h2 className="text-xl font-bold text-white">
+                Cureon Help Center
+              </h2>
+
+              <button
+                onClick={() => setHelpOpen(false)}
+                className="text-white hover:opacity-80"
+              >
+                {/* <FaTimes /> */}
+              </button>
+            </div>
+
+            {/* FAQs */}
+            <div className="p-6 space-y-4">
+              <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-800">
+                <h3 className="font-semibold text-gray-900 dark:text-white">
+                  How do I book an appointment?
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  Visit the Find Doctors page, choose a doctor, and select an
+                  available time slot.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-800">
+                <h3 className="font-semibold text-gray-900 dark:text-white">
+                  Where can I view my reports?
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  Open the Tests & Reports section to upload, organize, and view
+                  all your medical documents.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-800">
+                <h3 className="font-semibold text-gray-900 dark:text-white">
+                  How do I contact support?
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  Click the Contact Us button to access Cureon's phone number,
+                  email, and office address.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-800">
+                <h3 className="font-semibold text-gray-900 dark:text-white">
+                  Is my medical data secure?
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  Yes. Cureon stores and processes your data securely using
+                  encrypted communication and protected storage.
+                </p>
+              </div>
+
+              <button
+                onClick={() => setHelpOpen(false)}
+                className="w-full py-3 rounded-xl text-white font-semibold mt-2"
+                style={{
+                  backgroundColor: darkMode ? "#818cf8" : "#293379",
+                }}
+              >
+                Got It
+              </button>
+            </div>
           </div>
         </div>
       )}

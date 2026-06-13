@@ -183,7 +183,8 @@ const mockUsers = [
 export const DashboardProvider = ({ children }) => {
   const [pendingRequests, setPendingRequests] = useState([]);
   const [allDoctors, setAllDoctors] = useState([]);
-  const [users, setUsers] = useState(mockUsers);
+  // const [users, setUsers] = useState(mockUsers);
+  const [users, setUsers] = useState([]);
   const [viewMode, setViewMode] = useState("pending"); // pending, doctors, users
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
@@ -223,9 +224,25 @@ export const DashboardProvider = ({ children }) => {
     }
   }
 
+  //get all users from db
+  const getAllUsers = async () => {
+    try {
+      const response = await apiClient.get("/admin/all-users");
+      console.log("API Response:", response.data);
+
+      if (response.data.success) {
+        setUsers(response.data.users);
+        console.log(users);
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
   useEffect(() => {
     getPendingRequests();
     getAllDoctors();
+    getAllUsers();
   }, []) 
 
   const getGreeting = () => {
@@ -329,7 +346,7 @@ export const DashboardProvider = ({ children }) => {
   const value = {
     pendingRequests,
     allDoctors: filteredDoctors,
-    users: filteredUsers,
+    allUsers: filteredUsers,
     viewMode,
     setViewMode,
     searchQuery,

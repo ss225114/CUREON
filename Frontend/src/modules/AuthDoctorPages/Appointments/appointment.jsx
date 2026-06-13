@@ -65,32 +65,27 @@ const AppointmentDashboard = () => {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 p-4 md:p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Minimal Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Appointment Management
-            </h1>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-              {doctor?.name} • {doctor?.specialization}
-            </p>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="text-right hidden md:block">
-              <div className="text-sm text-gray-600 dark:text-gray-400">
+        <div className="mb-8">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+              <h1 className="text-3xl font-bold text-[#293379] dark:text-white">
+                Appointment Management
+              </h1>
+
+              <p className="text-gray-600 dark:text-gray-400 mt-2">
+                Manage appointments, schedules and patient bookings
+              </p>
+            </div>
+
+            <div className="bg-white dark:bg-gray-900 border border-blue-200/50 dark:border-gray-700/50 rounded-xl px-5 py-3 shadow-sm">
+              <div className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
                 Today's Date
               </div>
-              <div className="font-medium text-gray-900 dark:text-white">
+
+              <div className="font-semibold text-[#293379] dark:text-blue-300 mt-1">
                 {formatDate(selectedDate)}
               </div>
             </div>
-            {/* <Button
-              variant="outline"
-              size="sm"
-              className="border-gray-300 dark:border-gray-700"
-            >
-              <FaSignOutAlt className="mr-2 h-3 w-3" />
-              Sign Out
-            </Button> */}
           </div>
         </div>
 
