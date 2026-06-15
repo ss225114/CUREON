@@ -145,7 +145,7 @@ function ProfileContent() {
 
           {/* Back to Dashboard Button */}
           <Button
-            onClick={() => navigate("/user-dashboard")}
+            onClick={() => navigate("/")}
             variant="outline"
             className="flex items-center gap-2 border-[#293379] text-[#293379] hover:bg-[#293379] hover:text-white dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-400 dark:hover:text-white"
           >
@@ -258,15 +258,16 @@ function ProfileContent() {
       </motion.div>
 
       {/* Footer */}
-      <footer className="mt-8 px-6 py-4 border-t border-gray-200 dark:border-gray-800 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
+      <footer className="mt-8 px-6 py-4 border-t border-white/20 dark:border-gray-700 bg-[#293379] dark:bg-gray-900 backdrop-blur-md shadow-inner transition-colors">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="text-sm text-gray-600 dark:text-gray-400">
+          <div className="text-sm text-white/80 dark:text-gray-300">
             &copy; {new Date().getFullYear()} Cureon Medical Profile. All rights
             reserved.
           </div>
-            <span className="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 rounded text-xs">
-              Verified
-            </span>
+
+          <span className="px-2 py-1 bg-green-500/20 dark:bg-green-900/30 text-green-200 dark:text-green-300 rounded text-xs border border-green-400/20">
+            Verified
+          </span>
         </div>
       </footer>
     </>

@@ -41,6 +41,7 @@ const AdminDashboardContent = () => {
   const {
     pendingRequests,
     allDoctors,
+    allUsers,
     users,
     viewMode,
     setViewMode,
@@ -153,7 +154,7 @@ const AdminDashboardContent = () => {
               </Link>
 
               {/* Desktop Navigation */}
-              <div className="hidden md:flex items-center gap-2 ml-4">
+              {/* <div className="hidden md:flex items-center gap-2 ml-4">
                 <Button
                   variant={viewMode === "pending" ? "default" : "ghost"}
                   className={`text-sm ${
@@ -195,13 +196,13 @@ const AdminDashboardContent = () => {
                   <FaUsers className="mr-2 h-4 w-4" />
                   Users
                 </Button>
-              </div>
+              </div> */}
             </div>
 
             {/* Right side icons */}
             <div className="flex items-center gap-3">
               {/* Weather - from image */}
-              <div className="hidden md:flex items-center gap-2 bg-blue-50 dark:bg-gray-800 px-3 py-1.5 rounded-full">
+              {/* <div className="hidden md:flex items-center gap-2 bg-blue-50 dark:bg-gray-800 px-3 py-1.5 rounded-full">
                 <FaSun className="h-4 w-4 text-yellow-500" />
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   29°C
@@ -209,10 +210,10 @@ const AdminDashboardContent = () => {
                 <span className="text-xs text-gray-500 dark:text-gray-400">
                   Sunny
                 </span>
-              </div>
+              </div> */}
 
               {/* Notifications */}
-              <DropdownMenu
+              {/* <DropdownMenu
                 open={showNotifications}
                 onOpenChange={setShowNotifications}
               >
@@ -261,7 +262,7 @@ const AdminDashboardContent = () => {
                     )}
                   </div>
                 </DropdownMenuContent>
-              </DropdownMenu>
+              </DropdownMenu> */}
 
               {/* Dark Mode Toggle */}
               <button
@@ -291,15 +292,18 @@ const AdminDashboardContent = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem className="cursor-pointer">
+                  {/* <DropdownMenuItem className="cursor-pointer">
                     <FaUserCircle className="mr-2 h-4 w-4" />
                     Profile
                   </DropdownMenuItem>
                   <DropdownMenuItem className="cursor-pointer">
                     <FaChartLine className="mr-2 h-4 w-4" />
                     Analytics
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer text-red-600 dark:text-red-400" onClick={logout}>
+                  </DropdownMenuItem> */}
+                  <DropdownMenuItem
+                    className="cursor-pointer text-red-600 dark:text-red-400"
+                    onClick={logout}
+                  >
                     <FaSignOutAlt className="mr-2 h-4 w-4" />
                     Sign Out
                   </DropdownMenuItem>
@@ -432,32 +436,35 @@ const AdminDashboardContent = () => {
           <Card className="border border-blue-200/50 dark:border-gray-700/50 bg-white dark:bg-gray-900 hover:shadow-lg transition-all duration-300">
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-md">
-                  <FaDollarSign className="h-6 w-6 text-white" />
+                <div className="p-3 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl shadow-md">
+                  <FaShieldAlt className="h-6 w-6 text-white" />
                 </div>
-                <span className="text-sm font-medium text-green-600 flex items-center gap-1">
-                  <FaArrowUp className="h-3 w-3" />
-                  +15%
-                </span>
               </div>
+
               <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                $18,450
+                {stats.totalDoctors > 0
+                  ? `${Math.round(
+                      (stats.totalDoctors /
+                        (stats.totalDoctors + stats.totalPending)) *
+                        100,
+                    )}%`
+                  : "0%"}
               </p>
+
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                Platform Revenue
+                Verification Rate
               </p>
+
               <p className="text-xs text-gray-400 dark:text-gray-500 mt-3 flex items-center gap-1">
                 <span className="inline-block w-2 h-2 bg-green-500 rounded-full"></span>
-                Positive trend
+                Doctor onboarding success
               </p>
             </div>
           </Card>
         </div>
 
-        
-
         {/* Search Bar */}
-        <div className="mb-6">
+        {/* <div className="mb-6">
           <div className="relative max-w-md">
             <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
@@ -467,6 +474,70 @@ const AdminDashboardContent = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
+          </div>
+        </div> */}
+        {/* CENTER NAVIGATION BAR */}
+        <div className="hidden md:flex flex-1 justify-center">
+          <div
+            className="
+      flex items-center gap-1
+      p-1.5
+      rounded-full
+      bg-white/80 dark:bg-[#1A2B42]/80
+      backdrop-blur-md
+      border border-slate-200 dark:border-[#1E3A5F]
+      shadow-sm mb-6
+    "
+          >
+            <Button
+              variant="ghost"
+              className={`rounded-full px-5 h-10 transition-all ${
+                viewMode === "pending"
+                  ? "bg-[#293379] text-white hover:bg-[#3a4a9c]"
+                  : "text-gray-700 dark:text-gray-300 hover:bg-slate-100 dark:hover:bg-[#243855]"
+              }`}
+              onClick={() => setViewMode("pending")}
+            >
+              <FaClock className="mr-2 h-4 w-4" />
+              Pending
+              {stats.totalPending > 0 && (
+                <span
+                  className={`ml-2 px-2 py-0.5 rounded-full text-xs font-bold ${
+                    viewMode === "pending"
+                      ? "bg-white text-[#293379]"
+                      : "bg-[#293379] text-white"
+                  }`}
+                >
+                  {stats.totalPending}
+                </span>
+              )}
+            </Button>
+
+            <Button
+              variant="ghost"
+              className={`rounded-full px-5 h-10 transition-all ${
+                viewMode === "doctors"
+                  ? "bg-[#293379] text-white hover:bg-[#3a4a9c]"
+                  : "text-gray-700 dark:text-gray-300 hover:bg-slate-100 dark:hover:bg-[#243855]"
+              }`}
+              onClick={() => setViewMode("doctors")}
+            >
+              <FaUserMd className="mr-2 h-4 w-4" />
+              Doctors
+            </Button>
+
+            <Button
+              variant="ghost"
+              className={`rounded-full px-5 h-10 transition-all ${
+                viewMode === "users"
+                  ? "bg-[#293379] text-white hover:bg-[#3a4a9c]"
+                  : "text-gray-700 dark:text-gray-300 hover:bg-slate-100 dark:hover:bg-[#243855]"
+              }`}
+              onClick={() => setViewMode("users")}
+            >
+              <FaUsers className="mr-2 h-4 w-4" />
+              Users
+            </Button>
           </div>
         </div>
 
@@ -510,7 +581,15 @@ const AdminDashboardContent = () => {
             />
           )}
 
-          {viewMode === "users" && <UserList users={users} />}
+          {viewMode === "users" && (
+            <UserList
+              users={allUsers}
+              onViewUser={(user) => {
+                setSelectedRequest(user);
+                setIsModalOpen(true);
+              }}
+            />
+          )}
         </div>
 
         {/* Footer - Matching landing page style */}

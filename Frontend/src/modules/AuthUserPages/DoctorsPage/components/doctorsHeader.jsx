@@ -10,6 +10,7 @@ import {
   FaShieldAlt,
   FaClock,
   FaCheckCircle,
+  FaUserCircle,
 } from "react-icons/fa";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useState } from "react";
@@ -78,7 +79,11 @@ export default function DoctorsHeader() {
       <nav className="flex justify-between items-center p-4 sm:p-6 bg-white/30 dark:bg-gray-900/30 backdrop-blur-md sticky top-0 z-50 shadow-xl transition-colors border-b border-white/10 dark:border-gray-700/30">
         {/* Logo - Left Side */}
         <div className="flex items-center gap-2">
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#293379] dark:text-blue-300 tracking-wide hover:cursor-default">
+          <h1
+            className={`text-2xl md:text-3xl font-bold tracking-wide select-none ${
+              isDarkMode ? "text-indigo-300" : "text-[#293379]"
+            }`}
+          >
             Cureon
           </h1>
         </div>
@@ -95,13 +100,13 @@ export default function DoctorsHeader() {
           </a>
 
           {/* Profile Icon - Circular */}
-          <a
+          {/* <a
             href="/userprofile"
             className="w-10 h-10 rounded-full bg-white/50 dark:bg-gray-800/50 hover:bg-white/80 dark:hover:bg-gray-700/80 flex items-center justify-center transition-all duration-300 border border-gray-300 dark:border-gray-600"
             title="My Profile"
           >
             <FaUser className="h-5 w-5 text-gray-700 dark:text-gray-300 hover:text-[#293379] dark:hover:text-blue-400" />
-          </a>
+          </a> */}
 
           {/* Dark Mode Toggle - Circular */}
           <button
@@ -119,24 +124,20 @@ export default function DoctorsHeader() {
           </button>
 
           {/* User Avatar - Circular */}
-          <div className="flex items-center gap-3 group relative">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-100 to-blue-300 dark:from-blue-800 dark:to-blue-600 flex items-center justify-center border-2 border-white/50 dark:border-gray-700/50">
-              <Avatar className="h-9 w-9">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="bg-transparent">
-                  {initials}
-                </AvatarFallback>
-              </Avatar>
-            </div>
+          <a href="/userprofile" className="flex items-center gap-3 group">
+            <FaUserCircle
+              size={38}
+              className="text-[#293379] dark:text-indigo-300 transition-transform duration-300 group-hover:scale-105"
+            />
 
-            {/* User Name - Hidden on mobile, shown on medium+ screens */}
-            <div className="hidden md:block text-left">
+            {/* User Name */}
+            {/* <div className="hidden md:block text-left">
               <p className="text-sm font-semibold text-gray-800 dark:text-white">
-                {user.name.split(" ")[0]} {/* Show only first name */}
+                {user.name.split(" ")[0]}
               </p>
               <p className="text-xs text-gray-600 dark:text-gray-400">User</p>
-            </div>
-          </div>
+            </div> */}
+          </a>
         </div>
       </nav>
 

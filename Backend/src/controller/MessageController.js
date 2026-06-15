@@ -38,6 +38,8 @@ export const communicateMessage = async (req, res) => {
       },
     );
 
+    console.log("Flask API Response:", data);
+
     const newMessage2 = new Conversations({
       conversationId: id,
       message: data.redirect ? `Redirect to ${data.url}` : data.response,

@@ -211,21 +211,21 @@ export default function SearchBar({ onSearch }) {
     updateFilters({ location: loc });
   };
 
- const handleQuickSearch = (specialty) => {
-  setQuery(specialty);
+  const handleQuickSearch = (specialty) => {
+    setQuery(specialty);
 
-  const searchPayload = detectSearchType(specialty);
+    const searchPayload = detectSearchType(specialty);
 
-  console.log("payload:", searchPayload);
+    console.log("payload:", searchPayload);
 
-  updateFilters(searchPayload);
+    updateFilters(searchPayload);
 
-  setShowSearchSuggestions(false);
+    setShowSearchSuggestions(false);
 
-  if (onSearch) {
-    onSearch(specialty);
-  }
-};
+    if (onSearch) {
+      onSearch(specialty);
+    }
+  };
 
   const handleSuggestionClick = (suggestion) => {
     setQuery(suggestion);
