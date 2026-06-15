@@ -105,7 +105,7 @@ function ProfileContent() {
         <p className="text-gray-600 dark:text-gray-400 mb-6">{error}</p>
         <div className="flex gap-3 justify-center">
           <Button
-            onClick={() => navigate("/user-dashboard")}
+            onClick={() => navigate("/")}
             className="bg-gray-600 hover:bg-gray-700"
           >
             <FaArrowLeft className="mr-2" /> Back to Dashboard
